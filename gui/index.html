@@ -75,7 +75,7 @@ void on_measurement(struct bench_frame *frame) {
     bench_set_algorithm_from_config(frame);
     bench_write_frequency(frame-&gt;estimated_hz);
 }</textarea>
-            <p class="field-hint" id="software-hint">The local contract checks the entrypoint and hardware handoff. Arbitrary code is never executed by the browser.</p>
+            <p class="field-hint" id="software-hint">The bench-v1 contract checks the entrypoint and hardware handoff. Arbitrary code is never executed.</p>
           </section>
 
           <details class="model-note">
@@ -167,7 +167,7 @@ void on_measurement(struct bench_frame *frame) {
               <figure class="plot-card waveform-card">
                 <div class="plot-heading"><div><span class="plot-label">WAVEFORM / NORMALISED</span><strong>Inputs → fused trace → circuit output</strong></div><span class="plot-unit">time / μs</span></div>
                 <canvas id="waveform" width="900" height="260" role="img" aria-label="Normalised sensor, fused, and DAC output waveforms" aria-describedby="waveform-caption"></canvas>
-                <figcaption id="waveform-caption">The chart appears after a successful local run.</figcaption>
+                <figcaption id="waveform-caption">The chart appears after a successful co-simulation.</figcaption>
               </figure>
               <figure class="plot-card frequency-card">
                 <div class="plot-heading"><div><span class="plot-label">FREQUENCY / CHANNELS</span><strong>What each stage believes</strong></div><span class="plot-unit">kHz</span></div>
