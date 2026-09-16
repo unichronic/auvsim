@@ -1,0 +1,34 @@
+* SIM-2 -- 8-bit voltage-mode R-2R ladder, operating point for one code.
+* Independent cross-check of sim2_r2r.py's nodal solve.
+* Driven by sweep_codes.sh, which rewrites the Vb* sources per code.
+* Run: ngspice -b r2r_ladder.cir
+.param R=10k
+Vb0 b0 0 DC 0
+Vb1 b1 0 DC 0
+Vb2 b2 0 DC 0
+Vb3 b3 0 DC 0
+Vb4 b4 0 DC 0
+Vb5 b5 0 DC 0
+Vb6 b6 0 DC 0
+Vb7 b7 0 DC 0
+Rs0 b0 n0 {2*R}
+Rs1 b1 n1 {2*R}
+Rs2 b2 n2 {2*R}
+Rs3 b3 n3 {2*R}
+Rs4 b4 n4 {2*R}
+Rs5 b5 n5 {2*R}
+Rs6 b6 n6 {2*R}
+Rs7 b7 n7 {2*R}
+Rl0 n0 n1 {R}
+Rl1 n1 n2 {R}
+Rl2 n2 n3 {R}
+Rl3 n3 n4 {R}
+Rl4 n4 n5 {R}
+Rl5 n5 n6 {R}
+Rl6 n6 n7 {R}
+Rt  n0 0  {2*R}
+.control
+op
+print v(n7)
+.endc
+.end

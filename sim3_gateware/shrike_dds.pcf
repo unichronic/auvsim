@@ -1,0 +1,24 @@
+# Shrike/Shrike-Lite SLG47910V Rev-BB pin map for the DDS smoke project.
+# The eight pins are intended for the external 8-bit R-2R ladder.
+
+set_io clk       CLK
+# GPIO18 is the reset/control line used by the Shrike examples.
+set_io reset_n   PIN_9_IN
+set_io clk_en    OSC_EN
+
+set_io dac[0]    PIN_13
+set_io dac_oe[0] PIN_13_OE
+set_io dac[1]    PIN_14
+set_io dac_oe[1] PIN_14_OE
+set_io dac[2]    PIN_15
+set_io dac_oe[2] PIN_15_OE
+set_io dac[3]    PIN_16
+set_io dac_oe[3] PIN_16_OE
+set_io dac[4]    PIN_17
+set_io dac_oe[4] PIN_17_OE
+set_io dac[5]    PIN_18
+set_io dac_oe[5] PIN_18_OE
+set_io dac[6]    PIN_19
+set_io dac_oe[6] PIN_19_OE
+set_io dac[7]    PIN_20
+set_io dac_oe[7] PIN_20_OE

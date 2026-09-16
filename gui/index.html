@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#07121f">
+    <title>Pre-Silicon Bench · Signal Lab</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Pre-Silicon Bench home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span><strong>PRE-SILICON</strong><small>bench / signal lab</small></span>
+        </a>
+        <div class="topbar-meta">
+          <span class="eyebrow">SIH26058 · transmitter chain</span>
+          <span class="local-chip" id="deployment-chip"><i aria-hidden="true"></i> LOCAL / NO EXTERNAL UPLOAD</span>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <aside class="toolbox" aria-labelledby="toolbox-title">
+          <div class="section-kicker">01 / build the chain</div>
+          <h1 id="toolbox-title">Signal bench</h1>
+          <p class="intro">Build the signal path, tune the physical model, and run your software handoff against the circuit.</p>
+
+          <section class="palette-section" aria-labelledby="palette-title">
+            <div class="section-label" id="palette-title">Component palette</div>
+            <p class="helper">Click to add, or drag onto the board.</p>
+            <div class="palette" role="list">
+              <button class="palette-item sensor-palette" type="button" draggable="true" data-add-kind="sensor" role="listitem">
+                <span class="palette-icon" aria-hidden="true">∿</span>
+                <span><strong>Sensor input</strong><small>frequency · phase · noise</small></span>
+                <span class="add-glyph" aria-hidden="true">＋</span>
+              </button>
+              <button class="palette-item algorithm-palette" type="button" draggable="true" data-add-kind="algorithm" role="listitem">
+                <span class="palette-icon" aria-hidden="true">∑</span>
+                <span><strong>Algorithm stage</strong><small>fusion / vote / pick</small></span>
+                <span class="add-glyph" aria-hidden="true">＋</span>
+              </button>
+              <button class="palette-item hardware-palette" type="button" draggable="true" data-add-kind="hardware" role="listitem">
+                <span class="palette-icon" aria-hidden="true">⌁</span>
+                <span><strong>Hardware output</strong><small>DDS → R-2R → tag</small></span>
+                <span class="add-glyph" aria-hidden="true">＋</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="bench-actions" aria-labelledby="actions-title">
+            <div class="section-label" id="actions-title">Bench controls</div>
+            <button class="run-button" id="run-button" type="button">
+              <span class="run-dot" aria-hidden="true"></span>
+              Run co-simulation
+              <span class="button-arrow" aria-hidden="true">↗</span>
+            </button>
+            <button class="secondary-button" id="reset-layout" type="button">Reset board layout</button>
+            <p class="run-status" id="run-status" role="status" aria-live="polite">Ready. Four channels are loaded.</p>
+          </section>
+
+          <section class="software-panel" aria-labelledby="software-title">
+            <div class="section-label" id="software-title">Software plugin</div>
+            <p class="helper">Paste the adapter that turns measured frames into hardware commands.</p>
+            <div class="plugin-state"><i aria-hidden="true"></i><span id="plugin-status">BENCH-V1 CONTRACT READY</span></div>
+            <div class="field-grid sidebar-fields">
+              <div class="field"><label for="plugin-name">plugin name</label><input id="plugin-name" type="text" maxlength="64" value="Signal fusion adapter"></div>
+              <div class="field"><label for="plugin-language">language</label><select id="plugin-language"><option value="c">C / firmware</option><option value="cpp">C++ / firmware</option><option value="python">Python / host</option></select></div>
+              <div class="field field-wide"><label for="plugin-entrypoint">entrypoint</label><input id="plugin-entrypoint" type="text" maxlength="64" value="on_measurement"></div>
+              <div class="field field-wide"><label for="test-scenario">test scenario</label><select id="test-scenario"><option value="nominal">Nominal frame stream</option><option value="sensor_dropout">Sensor 4 dropout</option><option value="low_coherence">Low-coherence inputs</option></select></div>
+            </div>
+            <label class="code-label" for="software-code">adapter code</label>
+            <textarea id="software-code" rows="9" spellcheck="false" required aria-describedby="software-hint">// bench-v1 software adapter
+void on_measurement(struct bench_frame *frame) {
+    bench_set_algorithm_from_config(frame);
+    bench_write_frequency(frame-&gt;estimated_hz);
+}</textarea>
+            <p class="field-hint" id="software-hint">The local contract checks the entrypoint and hardware handoff. Arbitrary code is never executed by the browser.</p>
+          </section>
+
+          <details class="model-note">
+            <summary>What is simulated here?</summary>
+            <p>The sensor stage generates deterministic noisy sine streams. Your software adapter is contract-checked, then the selected algorithm drives a configurable DDS → R-2R → reconstruction filter → output probe model.</p>
+            <p class="muted">Compiler, FPGA synthesis, SPICE, and physical sensor behaviour remain separate verification steps.</p>
+          </details>
+        </aside>
+
+        <section class="work-area" aria-labelledby="workspace-title">
+          <div class="work-header">
+            <div>
+              <div class="section-kicker">02 / wire the thought</div>
+              <h2 id="workspace-title">Live signal flow</h2>
+            </div>
+            <div class="flow-legend" aria-label="Signal flow legend">
+              <span><i class="legend-dot sensor-dot"></i> input</span>
+              <span><i class="legend-dot algorithm-dot"></i> decision</span>
+              <span><i class="legend-dot hardware-dot"></i> output</span>
+            </div>
+          </div>
+
+          <p class="board-help" id="board-help">Drag a block by its top handle. Use the arrow keys after focusing a handle for precise moves. Connections follow the active chain automatically.</p>
+          <div class="board-wrap">
+            <div class="board" id="board" tabindex="0" aria-describedby="board-help" aria-label="Draggable sensor, algorithm, and hardware simulation board">
+              <svg class="wires" id="wires" aria-hidden="true" focusable="false" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="wire-gradient" x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0" stop-color="#67d7ce" />
+                    <stop offset="0.55" stop-color="#f2b95d" />
+                    <stop offset="1" stop-color="#ef826c" />
+                  </linearGradient>
+                </defs>
+                <g id="wire-layer"></g>
+              </svg>
+              <div class="drop-hint" id="drop-hint"><span>＋</span><strong>Drop a component here</strong><small>or use the palette</small></div>
+              <div id="nodes" aria-live="polite"></div>
+            </div>
+          </div>
+
+          <section class="hardware-circuit" aria-labelledby="hardware-title">
+            <div class="circuit-header">
+              <div>
+                <div class="section-kicker">03 / model the physical plane</div>
+                <h2 id="hardware-title">Hardware circuit</h2>
+              </div>
+              <span class="circuit-chip"><i aria-hidden="true"></i> independent from software</span>
+            </div>
+            <p class="circuit-help">Tune the operational limits of each hardware stage. The patch bay below is the source of truth for the simulated netlist.</p>
+            <div class="circuit-chain" id="circuit-chain" aria-label="Hardware circuit stages"></div>
+            <div class="patch-bay">
+              <div>
+                <div class="section-label">Patch bay</div>
+                <p class="helper">Connect the supported chain explicitly: sensor → algorithm → DDS → R-2R → filter → probe. Duplicate or unsupported wires are rejected.</p>
+              </div>
+              <div class="connection-fields">
+                <div class="field"><label for="connection-from">from</label><select id="connection-from"></select></div>
+                <span class="connection-arrow" aria-hidden="true">→</span>
+                <div class="field"><label for="connection-to">to</label><select id="connection-to"></select></div>
+                <button class="secondary-button add-connection" id="add-connection" type="button">Add connection</button>
+              </div>
+              <div class="connection-list" id="connection-list" role="list" aria-live="polite"></div>
+            </div>
+          </section>
+
+          <section class="results-panel" aria-labelledby="results-title">
+            <div class="results-header">
+              <div>
+                <div class="section-kicker">04 / inspect the output</div>
+                <h2 id="results-title">Run readout</h2>
+              </div>
+              <p id="result-summary" class="result-summary">Run the pipeline to populate the readout.</p>
+            </div>
+
+            <div class="verification-strip" aria-live="polite">
+              <div class="verification-card"><span>Software plugin</span><strong id="software-verdict">Not run</strong><small id="software-checks">Contract checks appear after a run.</small></div>
+              <div class="verification-card"><span>Hardware path</span><strong id="hardware-verdict">Not run</strong><small id="hardware-checks">DDS → R-2R → filter → probe</small></div>
+              <div class="verification-card"><span>Output probe</span><strong id="probe-voltage">—</strong><small id="probe-details">Voltage after circuit model</small></div>
+            </div>
+
+            <div class="metrics" id="metrics" aria-live="polite">
+              <div class="metric-card metric-primary"><span>Output frequency</span><strong id="metric-frequency">—</strong><small>quantised DDS result</small></div>
+              <div class="metric-card"><span>Sensor coherence</span><strong id="metric-coherence">—</strong><small>agreement across enabled channels</small></div>
+              <div class="metric-card"><span>FTW</span><strong id="metric-ftw">—</strong><small>32-bit tuning word</small></div>
+              <div class="metric-card"><span>Quantisation error</span><strong id="metric-error">—</strong><small>output vs algorithm estimate</small></div>
+            </div>
+
+            <div class="plot-grid">
+              <figure class="plot-card waveform-card">
+                <div class="plot-heading"><div><span class="plot-label">WAVEFORM / NORMALISED</span><strong>Inputs → fused trace → circuit output</strong></div><span class="plot-unit">time / μs</span></div>
+                <canvas id="waveform" width="900" height="260" role="img" aria-label="Normalised sensor, fused, and DAC output waveforms" aria-describedby="waveform-caption"></canvas>
+                <figcaption id="waveform-caption">The chart appears after a successful local run.</figcaption>
+              </figure>
+              <figure class="plot-card frequency-card">
+                <div class="plot-heading"><div><span class="plot-label">FREQUENCY / CHANNELS</span><strong>What each stage believes</strong></div><span class="plot-unit">kHz</span></div>
+                <div class="frequency-bars" id="frequency-bars" aria-label="Estimated frequency by channel"></div>
+                <figcaption>Requested frequency is the pale tick; estimated frequency is the solid bar.</figcaption>
+              </figure>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script src="/app.js" defer></script>
+  </body>
+</html>

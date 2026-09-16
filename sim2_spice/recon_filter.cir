@@ -1,0 +1,41 @@
+* SIM-2 -- 3rd-order Butterworth reconstruction filter, fc = 700 kHz.
+*
+* Topology order matters.  An earlier draft put the passive RC pole FIRST,
+* feeding the Sallen-Key: the SK's input resistor loads the RC and drags the
+* corner down to 449 kHz, giving 3.6 dB of droop at 500 kHz instead of 0.5 dB.
+* The RC now sits AFTER the op-amp, driven from its low-impedance output into
+* a high-impedance load, so the two sections do not interact.
+*
+* Unity-gain Sallen-Key with R1=R2=R gives Q = 0.5*sqrt(C1/C2); Q=1 (Butterworth)
+* needs C1 = 4*C2.  C1=390p/C2=100p (E12) gives Q=0.987, R=1.15k -> f0=700.8 kHz.
+* RC pole: 2.26k/100p -> 704 kHz.  All E96/E12 stock values.
+*
+* Swap XOP for a real vendor model (TI/ADI) before trusting the stopband.
+.param R=1.15k R3=2.26k C1=390p C2=100p C3=100p
+Vin in 0 AC 1
+* --- unity-gain Sallen-Key, 2nd order, Q = 1 ---
+R1f in  b      {R}
+R2f b   c      {R}
+C1f b   outsk  {C1}
+C2f c   0      {C2}
+XOP c   outsk  outsk  OPAMP
+* --- real pole, driven from the op-amp output into a high-Z load ---
+R3f outsk out  {R3}
+C3f out   0    {C3}
+*
+* Single-pole op-amp macromodel.  GBW = A0 / (2*pi*Rp*Cp).
+* A0=1e5, Rp=200, Cp=3.98u -> GBW = 20 MHz (the minimum part we would source).
+* NOTE: Cp=39.8p here would give GBW=2e12 Hz -- an ideal op-amp that hides
+* every bandwidth problem this stage exists to find.
+.subckt OPAMP inp inn out
+Egain g 0 inp inn 1e5
+Rp g out 200
+Cp out 0 3.98u
+.ends
+.ac dec 200 1k 50meg
+.control
+set numdgt=12
+run
+print vdb(out)
+.endc
+.end

@@ -1,0 +1,36 @@
+[dumpfile] "/home/unichronic/presilicon-bench/sim3_gateware/dds.vcd"
+[savefile] "/home/unichronic/presilicon-bench/sim3_gateware/dds.gtkw"
+[timestart] 0
+[size] 1500 850
+[pos] -1 -1
+*-16.700000 0 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] dds_tb.
+[treeopen] dds_tb.uut.
+[sst_width] 220
+[signals_width] 260
+[sst_expanded] 1
+[pattern_trace] 1
+[pattern_trace] 0
+@28
+dds_tb.clk
+dds_tb.rst_n
+dds_tb.en
+@200
+-
+@22
+dds_tb.ftw[31:0]
+dds_tb.uut.phase[31:0]
+@22
+dds_tb.uut.addr[11:0]
+@28
+dds_tb.uut.neg
+dds_tb.uut.mir
+@22
+dds_tb.uut.j[10:0]
+dds_tb.uut.q[7:0]
+@200
+-
+@8422
+dds_tb.dac[7:0]
+[pattern_trace] 1
+[pattern_trace] 0
