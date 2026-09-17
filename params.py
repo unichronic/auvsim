@@ -6,8 +6,6 @@ in exactly one place. Values trace to the Pre-Silicon Bench spec:
 8-bit R-2R DAC clocked at 10 MS/s, 100-500 kHz acoustic passband,
 3rd-order reconstruction filter, image at fs - f_max = 9.5 MHz.
 """
-import numpy as np
-
 # ---- DAC / sampling ---------------------------------------------------
 FS          = 10e6        # DAC update rate [S/s]
 DAC_BITS    = 8           # R-2R ladder width
@@ -20,7 +18,7 @@ F_HI        = 500e3       # top of passband [Hz]
 F_IMAGE     = FS - F_HI   # first image to suppress = 9.5 MHz
 
 # Spot frequencies the predicted spectrogram is reported at (Sim-4)
-F_TEST      = np.array([100e3, 200e3, 350e3, 500e3])
+F_TEST      = (100e3, 200e3, 350e3, 500e3)
 
 # ---- Pulse ------------------------------------------------------------
 T_PULSE     = 1e-3        # 1 ms transmit pulse
@@ -37,7 +35,7 @@ def ftw(f_hz, fs=FS):
     return int(round(f_hz / fs * PHASE_SCALE)) & (PHASE_SCALE - 1)
 
 # ---- Barker-13 (phase-coded mode) -------------------------------------
-BARKER13 = np.array([1,1,1,1,1,-1,-1,1,1,-1,1,-1,1], dtype=np.int8)
+BARKER13 = (1, 1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1)
 
 # ---- Windows ----------------------------------------------------------
 WINDOWS = ("rect", "hamming", "hann", "blackman")

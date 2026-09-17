@@ -24,6 +24,20 @@ const DEFAULT_ENVIRONMENT = {
   ph: 8,
   range_m: 100,
   ambient_noise_db: 48,
+  turbidity_ntu: 0,
+};
+
+const SCENARIO_PRESETS = {
+  muddy_estuary: {
+    label: "Entering Muddy Estuary",
+    description: "High suspended sediment: favor penetration and link margin over fine range resolution.",
+    environment: { temperature_c: 26, salinity_psu: 20, depth_m: 12, ph: 7.6, range_m: 250, ambient_noise_db: 42, turbidity_ntu: 250 },
+  },
+  clear_shallow_reef: {
+    label: "Entering Clear Shallow Reef",
+    description: "Low suspended sediment and shallow water: spend margin on a wider, higher-frequency pulse for resolution.",
+    environment: { temperature_c: 24, salinity_psu: 35, depth_m: 8, ph: 8.1, range_m: 120, ambient_noise_db: 48, turbidity_ntu: 2 },
+  },
 };
 
 const DEFAULT_POSITIONS = {
@@ -90,6 +104,7 @@ const state = {
   algorithm: "weighted_fusion",
   hardware: { ...DEFAULT_HARDWARE },
   environment: { ...DEFAULT_ENVIRONMENT },
+  scenario: "custom",
   software: { ...DEFAULT_SOFTWARE },
   connections: DEFAULT_CONNECTIONS.map((connection) => ({ ...connection })),
 };
@@ -198,7 +213,10 @@ function normalizeState() {
     ph: Math.max(6, Math.min(10, finiteNumber(environment.ph, DEFAULT_ENVIRONMENT.ph))),
     range_m: Math.max(1, Math.min(20000, finiteNumber(environment.range_m, DEFAULT_ENVIRONMENT.range_m))),
     ambient_noise_db: Math.max(0, Math.min(90, finiteNumber(environment.ambient_noise_db, DEFAULT_ENVIRONMENT.ambient_noise_db))),
+    turbidity_ntu: Math.max(0, Math.min(1000, finiteNumber(environment.turbidity_ntu, DEFAULT_ENVIRONMENT.turbidity_ntu))),
   };
+
+  state.scenario = ["custom", ...Object.keys(SCENARIO_PRESETS)].includes(state.scenario) ? state.scenario : "custom";
 
   const hardware = state.hardware && typeof state.hardware === "object" ? state.hardware : {};
   state.hardware = {
@@ -241,6 +259,7 @@ function loadLayout() {
     if (saved.algorithm && ALGORITHM_LABELS[saved.algorithm]) state.algorithm = saved.algorithm;
     if (saved.hardware && typeof saved.hardware === "object") state.hardware = { ...state.hardware, ...saved.hardware };
     if (saved.environment && typeof saved.environment === "object") state.environment = { ...state.environment, ...saved.environment };
+    if (typeof saved.scenario === "string") state.scenario = saved.scenario;
     if (saved.software && typeof saved.software === "object") state.software = { ...state.software, ...saved.software };
     if (Array.isArray(saved.connections)) state.connections = saved.connections;
     if (Array.isArray(saved.nodes)) {
@@ -273,6 +292,7 @@ function saveLayout() {
       positions: state.positions,
       hardware: state.hardware,
       environment: state.environment,
+      scenario: state.scenario,
       software: state.software,
       connections: state.connections,
     }));
@@ -296,8 +316,9 @@ function renderWorkflow() {
   const recorded = state.sensors.filter((sensor) => sensor.source === "trace" && sensor.samples.length >= 2).length;
   const modeled = state.sensors.length - recorded;
   const enabled = state.sensors.filter((sensor) => sensor.enabled).length;
+  const scenarioLabel = SCENARIO_PRESETS[state.scenario]?.label || "Custom water conditions";
   const inputDetail = document.querySelector("#workflow-input-detail");
-  if (inputDetail) inputDetail.textContent = `${state.sensors.length} channel${state.sensors.length === 1 ? "" : "s"} · ${enabled} enabled · ${modeled} modeled${recorded ? ` · ${recorded} recorded` : ""} · water conditions set`;
+  if (inputDetail) inputDetail.textContent = `${state.sensors.length} channel${state.sensors.length === 1 ? "" : "s"} · ${enabled} enabled · ${modeled} modeled${recorded ? ` · ${recorded} recorded` : ""} · ${scenarioLabel}`;
   const programDetail = document.querySelector("#workflow-program-detail");
   if (programDetail) programDetail.textContent = `${state.software.source_file || "inline program"} · ready to check`;
   const hardwareDetail = document.querySelector("#workflow-hardware-detail");
@@ -323,16 +344,53 @@ function environmentAbsorptionDbPerKm(frequencyHz, environment = state.environme
   return Math.max(0, boric + magnesium + water);
 }
 
+function environmentScatteringDbPerKm(frequencyHz, environment = state.environment) {
+  const frequencyRatio = Math.max(Number(frequencyHz) / 100000, 0.1);
+  return 0.02 * Math.max(environment.turbidity_ntu, 0) * frequencyRatio ** 1.8;
+}
+
 function renderEnvironmentSummary() {
   const speed = environmentSoundSpeed();
-  const absorption = environmentAbsorptionDbPerKm(250000);
+  const waterLoss = environmentAbsorptionDbPerKm(250000) + environmentScatteringDbPerKm(250000);
   const delay = state.environment.range_m / Math.max(speed, 1) * 1000;
   const soundSpeed = document.querySelector("#environment-sound-speed");
   const absorptionReadout = document.querySelector("#environment-absorption");
   const delayReadout = document.querySelector("#environment-delay");
   if (soundSpeed) soundSpeed.textContent = `${speed.toFixed(1)} m/s`;
-  if (absorptionReadout) absorptionReadout.textContent = `${absorption.toFixed(3)} dB/km @ 250 kHz`;
+  if (absorptionReadout) absorptionReadout.textContent = `${waterLoss.toFixed(3)} dB/km @ 250 kHz`;
   if (delayReadout) delayReadout.textContent = `${delay.toFixed(3)} ms`;
+}
+
+function renderScenario() {
+  const select = document.querySelector("#mission-scenario");
+  const description = document.querySelector("#scenario-description");
+  if (select) select.value = state.scenario;
+  if (description) description.textContent = SCENARIO_PRESETS[state.scenario]?.description || "Edit the water controls directly, then run the custom condition.";
+}
+
+function applyScenario(scenario) {
+  if (scenario === "custom") {
+    state.scenario = "custom";
+    renderScenario();
+    renderWorkflow();
+    saveLayout();
+    status.textContent = "Custom water conditions selected. Edit the controls, then run the pipeline.";
+    return;
+  }
+  const preset = SCENARIO_PRESETS[scenario];
+  if (!preset) return;
+  state.scenario = scenario;
+  Object.assign(state.environment, preset.environment);
+  document.querySelectorAll("[data-environment-field]").forEach((input) => {
+    input.value = state.environment[input.dataset.environmentField];
+    input.removeAttribute("aria-invalid");
+    input.removeAttribute("aria-describedby");
+  });
+  renderScenario();
+  renderEnvironmentSummary();
+  renderWorkflow();
+  saveLayout();
+  status.textContent = `${preset.label} loaded. Run the pipeline to simulate its sensor and sonar response.`;
 }
 
 function renderEnvironment() {
@@ -348,13 +406,16 @@ function renderEnvironment() {
       input.removeAttribute("aria-invalid");
       input.removeAttribute("aria-describedby");
       state.environment[input.dataset.environmentField] = Number(input.value);
+      state.scenario = "custom";
       renderEnvironmentSummary();
+      renderScenario();
       renderWorkflow();
       saveLayout();
       status.textContent = "Water condition changed. Run the pipeline to apply it to modeled inputs.";
     });
   });
   renderEnvironmentSummary();
+  renderScenario();
 }
 
 function readEnvironmentState() {
@@ -886,6 +947,7 @@ function readPayload() {
   return {
     algorithm: state.algorithm,
     preview_samples: 384,
+    scenario: state.scenario,
     sensors,
     environment: { ...state.environment },
     hardware: { ...state.hardware },
@@ -900,6 +962,13 @@ function formatKHz(value) {
 
 function formatHz(value) {
   return `${(Number(value) / 1000).toFixed(1)}k`;
+}
+
+function formatMeters(value) {
+  const meters = Number(value);
+  if (meters >= 1000) return `${(meters / 1000).toFixed(2)} km`;
+  if (meters < 1) return `${(meters * 100).toFixed(2)} cm`;
+  return `${meters.toFixed(1)} m`;
 }
 
 function setMetric(id, value) {
@@ -955,14 +1024,17 @@ function drawWaveform(result) {
     .filter((row) => row.enabled)
     .map((row) => `${row.name} (${row.source === "trace" ? "recorded" : (BEHAVIOR_LABELS[row.behavior] || "modeled")})`)
     .join(", ");
-  document.querySelector("#waveform-caption").textContent = `${sourceSummary} → ${ALGORITHM_LABELS[result.algorithm]} → ${formatKHz(result.hardware.actual_frequency_hz)} output probe.`;
+  const outputSummary = result.hardware.waveform === "adaptive LFM pulse"
+    ? `${result.hardware.waveform} · ${formatKHz(result.hardware.actual_frequency_hz)} centre`
+    : `${formatKHz(result.hardware.actual_frequency_hz)} output probe`;
+  document.querySelector("#waveform-caption").textContent = `${sourceSummary} → ${ALGORITHM_LABELS[result.algorithm]} → ${outputSummary}.`;
 }
 
 function renderFrequencyBars(result) {
   const container = document.querySelector("#frequency-bars");
   const rows = result.sensor_rows.map((row) => ({ label: row.name, estimate: row.estimated_hz, requested: row.requested_hz, kind: "sensor", enabled: row.enabled }));
-  rows.push({ label: "algorithm", estimate: result.algorithm_estimate_hz, requested: result.algorithm_estimate_hz, kind: "algorithm", enabled: true });
-  rows.push({ label: "output probe", estimate: result.hardware.actual_frequency_hz, requested: result.algorithm_estimate_hz, kind: "output", enabled: true });
+  rows.push({ label: "algorithm estimate", estimate: result.algorithm_estimate_hz, requested: result.algorithm_estimate_hz, kind: "algorithm", enabled: true });
+  rows.push({ label: "output probe", estimate: result.hardware.actual_frequency_hz, requested: result.hardware.actual_frequency_hz, kind: "output", enabled: true });
   const max = 500000;
   container.innerHTML = rows.map((row) => {
     const opacity = row.enabled ? "" : " style=\"opacity:.28\"";
@@ -977,10 +1049,13 @@ function renderFrequencyBars(result) {
 }
 
 function renderResults(result) {
+  const sonar = result.sonar || {};
   setMetric("metric-frequency", formatKHz(result.hardware.actual_frequency_hz));
   setMetric("metric-coherence", `${Math.round(result.coherence * 100)}%`);
   setMetric("metric-ftw", `0x${result.hardware.ftw.toString(16).toUpperCase().padStart(8, "0")}`);
   setMetric("metric-error", `${result.hardware.quantization_error_hz.toFixed(3)} Hz`);
+  setMetric("metric-resolution", sonar.range_resolution_m == null ? "—" : formatMeters(sonar.range_resolution_m));
+  setMetric("metric-margin", sonar.detection_margin_db == null ? "—" : `${sonar.detection_margin_db.toFixed(1)} dB`);
   document.querySelector("#result-summary").textContent = result.summary;
   const softwareVerdict = document.querySelector("#software-verdict");
   if (softwareVerdict) softwareVerdict.textContent = result.software.passed ? "Contract passed" : "Contract failed";
@@ -989,11 +1064,18 @@ function renderResults(result) {
   const hardwareVerdict = document.querySelector("#hardware-verdict");
   if (hardwareVerdict) hardwareVerdict.textContent = `${result.connections.length} connections valid`;
   const hardwareChecks = document.querySelector("#hardware-checks");
-  if (hardwareChecks) hardwareChecks.textContent = `${result.hardware.phase_bits}-bit DDS · ${result.hardware.dac_bits}-bit DAC · ${result.hardware.filter_order}P filter`;
+  if (hardwareChecks) hardwareChecks.textContent = `${result.hardware.phase_bits}-bit DDS · ${result.hardware.dac_bits}-bit DAC · ${result.hardware.waveform} · ${result.hardware.filter_order}P filter`;
   const probeVoltage = document.querySelector("#probe-voltage");
   if (probeVoltage) probeVoltage.textContent = `${result.hardware.peak_voltage_v.toFixed(3)} Vpk`;
   const probeDetails = document.querySelector("#probe-details");
   if (probeDetails) probeDetails.textContent = `${result.hardware.filter_gain_db.toFixed(2)} dB filter gain · ${result.hardware.resistor_tolerance_pct.toFixed(1)}% tolerance · ${result.environment.sound_speed_mps.toFixed(1)} m/s water`;
+  const sonarVerdict = document.querySelector("#sonar-verdict");
+  const sonarIsTransmitted = result.hardware.waveform === "adaptive LFM pulse";
+  if (sonarVerdict) sonarVerdict.textContent = sonarIsTransmitted
+    ? (sonar.detected_at_range ? `PASS · ${formatMeters(sonar.predicted_max_range_m)}` : "NO MARGIN")
+    : "PREVIEW ONLY";
+  const sonarDetails = document.querySelector("#sonar-details");
+  if (sonarDetails) sonarDetails.textContent = `${sonarIsTransmitted ? "TX" : "PREVIEW"} · ${String(sonar.modulation || "LFM").toUpperCase()} ${formatHz(sonar.start_frequency_hz)}–${formatHz(sonar.end_frequency_hz)} · ${Number(sonar.pulse_duration_ms || 0).toFixed(1)} ms · ${Number(sonar.detection_margin_db || 0).toFixed(1)} dB at range`;
   const pluginStatus = document.querySelector("#plugin-status");
   if (pluginStatus) pluginStatus.textContent = result.software.passed ? "BENCH-V1 CONTRACT PASSED" : "BENCH-V1 CONTRACT FAILED";
   const outputDetail = document.querySelector("#workflow-output-detail");
@@ -1004,7 +1086,7 @@ function renderResults(result) {
 }
 
 function clearResults(message) {
-  ["metric-frequency", "metric-coherence", "metric-ftw", "metric-error", "probe-voltage"].forEach((id) => setMetric(id, "—"));
+  ["metric-frequency", "metric-coherence", "metric-ftw", "metric-error", "metric-resolution", "metric-margin", "probe-voltage", "sonar-verdict"].forEach((id) => setMetric(id, "—"));
   const summary = document.querySelector("#result-summary");
   if (summary) summary.textContent = message;
   const bars = document.querySelector("#frequency-bars");
@@ -1022,6 +1104,8 @@ function clearResults(message) {
   if (hardwareChecks) hardwareChecks.textContent = "Resolve the circuit error and run again.";
   const probeDetails = document.querySelector("#probe-details");
   if (probeDetails) probeDetails.textContent = "No current output probe result";
+  const sonarDetails = document.querySelector("#sonar-details");
+  if (sonarDetails) sonarDetails.textContent = "Adaptive pulse preview appears after a run.";
   const outputDetail = document.querySelector("#workflow-output-detail");
   if (outputDetail) outputDetail.textContent = "Run to inspect the probe";
   renderWorkflow();
@@ -1102,6 +1186,13 @@ function wirePalette() {
   });
   const programFile = document.querySelector("#program-file");
   if (programFile) programFile.addEventListener("change", () => loadProgramFile(programFile));
+  const scenarioSelect = document.querySelector("#mission-scenario");
+  const scenarioButton = document.querySelector("#load-scenario");
+  if (scenarioSelect) scenarioSelect.addEventListener("change", () => {
+    const description = document.querySelector("#scenario-description");
+    if (description) description.textContent = SCENARIO_PRESETS[scenarioSelect.value]?.description || "Edit the water controls directly, then run the custom condition.";
+  });
+  if (scenarioButton) scenarioButton.addEventListener("click", () => applyScenario(scenarioSelect?.value || "custom"));
   document.querySelectorAll("#plugin-name, #plugin-language, #plugin-entrypoint, #test-scenario, #software-code").forEach((input) => {
     const eventName = input.tagName === "SELECT" ? "change" : "input";
     input.addEventListener(eventName, () => {

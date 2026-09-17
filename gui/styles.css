@@ -185,6 +185,10 @@ textarea:focus-visible,
 .environment-chip { display: inline-flex; align-items: center; gap: 7px; padding-top: 2px; color: var(--aqua); font: 600 9px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
 .environment-chip i { width: 6px; height: 6px; display: inline-block; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 4px rgba(103, 215, 206, .10); }
 .environment-help { max-width: 730px; margin: 13px 0 15px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.scenario-control { display: grid; grid-template-columns: minmax(0, 1.15fr) auto minmax(180px, 1.8fr); align-items: end; gap: 10px; margin: 15px 0 13px; padding: 11px; border: 1px solid rgba(103, 215, 206, .13); border-radius: 7px; background: rgba(5, 14, 25, .32); }
+.scenario-control .field { min-width: 0; }
+.scenario-button { width: auto; min-width: 175px; margin-top: 0; }
+.scenario-description { align-self: center; margin: 0; color: var(--muted); font: 9px/1.45 var(--mono); overflow-wrap: anywhere; }
 .environment-fields { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 .environment-readout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
 .environment-readout > div { min-width: 0; padding: 10px 11px; border: 1px solid rgba(103, 215, 206, .16); border-radius: 7px; background: rgba(5, 14, 25, .38); }
@@ -334,6 +338,7 @@ textarea:focus-visible,
   .workflow { grid-template-columns: 1fr; }
   .program-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .environment-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .verification-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 760px) {
@@ -360,6 +365,8 @@ textarea:focus-visible,
   .software-heading .plugin-state { margin-top: 14px; }
   .environment-heading { display: block; }
   .environment-chip { margin-top: 14px; }
+  .scenario-control { grid-template-columns: 1fr; align-items: stretch; }
+  .scenario-button { width: 100%; }
   .environment-fields { grid-template-columns: 1fr 1fr; }
   .environment-readout { grid-template-columns: 1fr; }
   .program-toolbar { align-items: flex-start; }

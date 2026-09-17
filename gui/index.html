@@ -85,7 +85,7 @@
             </ol>
           </section>
 
-          <p class="board-help" id="board-help">The board shows the live topology. Drag a block by its top handle, or use the patch bay below to repair a connection. The algorithm and hardware stages are required parts of this bench. The default channels are generic fixtures, not calibrated models of the project's three physical sensors.</p>
+          <p class="board-help" id="board-help">The board shows the live topology. Drag a block by its top handle, or use the patch bay below to repair a connection. The algorithm and hardware stages are required parts of this bench. PS 26058 does not prescribe a sensor count; these default channels are generic acoustic fixtures, not calibrated project sensors.</p>
           <div class="board-wrap">
             <div class="board" id="board" tabindex="0" aria-describedby="board-help" aria-label="Draggable sensor, algorithm, and hardware simulation board">
               <svg class="wires" id="wires" aria-hidden="true" focusable="false" preserveAspectRatio="none">
@@ -109,9 +109,14 @@
                 <div class="section-kicker">03 / set the environment</div>
                 <div class="section-label" id="environment-title">Water conditions</div>
               </div>
-              <div class="environment-chip"><i aria-hidden="true"></i> affects modeled inputs</div>
+              <div class="environment-chip"><i aria-hidden="true"></i> affects inputs + tx plan</div>
             </div>
-            <p class="environment-help">These conditions are part of the receive path. They change modeled acoustic propagation delay, water absorption, and ambient noise before the algorithm sees a signal.</p>
+            <p class="environment-help">These conditions are part of the receive path. They change modeled acoustic propagation delay, water absorption/scattering, and ambient noise before the algorithm sees a signal. Loading a named PS scenario also routes its adaptive pulse to the output probe.</p>
+            <div class="scenario-control">
+              <div class="field"><label for="mission-scenario">problem-statement scenario</label><select id="mission-scenario"><option value="custom">Custom water conditions</option><option value="muddy_estuary">Entering Muddy Estuary</option><option value="clear_shallow_reef">Entering Clear Shallow Reef</option></select></div>
+              <button class="secondary-button scenario-button" id="load-scenario" type="button">Load scenario into inputs</button>
+              <p class="scenario-description" id="scenario-description">Edit the water controls directly, then run the custom condition.</p>
+            </div>
             <div class="field-grid environment-fields">
               <div class="field"><label for="environment-temperature">temperature / °C</label><input id="environment-temperature" data-environment-field="temperature_c" type="number" min="-2" max="40" step="0.1" required></div>
               <div class="field"><label for="environment-salinity">salinity / PSU</label><input id="environment-salinity" data-environment-field="salinity_psu" type="number" min="0" max="45" step="0.1" required></div>
@@ -119,10 +124,11 @@
               <div class="field"><label for="environment-ph">pH</label><input id="environment-ph" data-environment-field="ph" type="number" min="6" max="10" step="0.01" required></div>
               <div class="field"><label for="environment-range">source range / m</label><input id="environment-range" data-environment-field="range_m" type="number" min="1" max="20000" step="1" required></div>
               <div class="field"><label for="environment-noise">ambient noise / dBc</label><input id="environment-noise" data-environment-field="ambient_noise_db" type="number" min="0" max="90" step="1" required></div>
+              <div class="field"><label for="environment-turbidity">turbidity / NTU</label><input id="environment-turbidity" data-environment-field="turbidity_ntu" type="number" min="0" max="1000" step="1" required></div>
             </div>
             <div class="environment-readout" aria-live="polite">
               <div><span>sound speed</span><strong id="environment-sound-speed">—</strong></div>
-              <div><span>absorption preview</span><strong id="environment-absorption">—</strong></div>
+              <div><span>water loss preview</span><strong id="environment-absorption">—</strong></div>
               <div><span>one-way delay</span><strong id="environment-delay">—</strong></div>
             </div>
             <p class="field-hint">Modeled channels use these values at run time. A recorded trace is treated as already captured under its original conditions and is not modified.</p>
@@ -195,13 +201,16 @@ void on_measurement(struct bench_frame *frame) {
               <div class="verification-card"><span>Software plugin</span><strong id="software-verdict">Not run</strong><small id="software-checks">Contract checks appear after a run.</small></div>
               <div class="verification-card"><span>Hardware path</span><strong id="hardware-verdict">Not run</strong><small id="hardware-checks">DDS → R-2R → filter → probe</small></div>
               <div class="verification-card"><span>Output probe</span><strong id="probe-voltage">—</strong><small id="probe-details">Voltage after circuit model</small></div>
+              <div class="verification-card"><span>Sonar link</span><strong id="sonar-verdict">—</strong><small id="sonar-details">Adaptive pulse preview appears after a run.</small></div>
             </div>
 
             <div class="metrics" id="metrics" aria-live="polite">
               <div class="metric-card metric-primary"><span>Output frequency</span><strong id="metric-frequency">—</strong><small>quantised DDS result</small></div>
               <div class="metric-card"><span>Sensor coherence</span><strong id="metric-coherence">—</strong><small>agreement across enabled channels</small></div>
               <div class="metric-card"><span>FTW</span><strong id="metric-ftw">—</strong><small>32-bit tuning word</small></div>
-              <div class="metric-card"><span>Quantisation error</span><strong id="metric-error">—</strong><small>output vs algorithm estimate</small></div>
+              <div class="metric-card"><span>Quantisation error</span><strong id="metric-error">—</strong><small>output vs requested frequency</small></div>
+              <div class="metric-card"><span>Sonar resolution</span><strong id="metric-resolution">—</strong><small>c / (2 × selected bandwidth)</small></div>
+              <div class="metric-card"><span>Detection margin</span><strong id="metric-margin">—</strong><small>at the selected scenario range</small></div>
             </div>
 
             <div class="plot-grid">

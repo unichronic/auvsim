@@ -23,6 +23,7 @@ python3 sim1_diff.py    # bit-exact firmware diff          (gcc)
 python3 run_sim2.py     # R-2R Monte Carlo + filter        (no extra tools, ~90 s)
 python3 run_sim4.py     # predicted spectrogram            (no extra tools)
 python3 run_sim5.py     # absorption + adaptation table    (no extra tools)
+python3 sim6_scenarios.py # PS scenarios → sensor inputs → adaptive sonar
 python3 gate_check.py   # the 8 go/no-go gates
 python3 sim2_spice_check.py  # ngspice vs the nodal solve, 256 codes
 python3 sim3_check.py        # gateware diff vs SIM-0
@@ -55,17 +56,20 @@ whether the adapter contract passed alongside the output frequency, voltage,
 FTW, coherence, and waveforms.
 
 The environment plane exposes temperature, salinity, depth, pH, source range,
-and ambient noise. For modeled channels, those values affect sound speed,
-frequency-dependent Ainslie-McColl absorption, propagation phase delay, and the
-noise floor before estimation. Uploaded traces are not re-shaped: they are
-treated as measurements that already include the conditions of their capture.
-These are propagation-level preview controls, not calibrated transfer
-functions for the project's final sensor hardware.
+ambient noise, and turbidity. For modeled channels, those values affect sound
+speed, frequency-dependent Ainslie-McColl absorption, a clearly-labelled
+turbidity scattering heuristic, propagation phase delay, and the noise floor
+before estimation. Uploaded traces are not re-shaped: they are treated as
+measurements that already include the conditions of their capture. These are
+propagation-level preview controls, not calibrated transfer functions for the
+project's final sensor hardware.
 
-The four defaults are deliberately generic fixtures, not a claim that the
-repository already contains the exact three project sensor models. To make the
-bench project-accurate, map each real sensor's model number/datasheet to a
-channel-specific response, sensitivity, bandwidth, and calibration file.
+PS 26058 does not specify a number, model, or datasheet for the environmental
+sensors. The four default inputs are therefore deliberately generic acoustic
+fixtures. They exercise fusion, dropout, burst, chirp, and trace-import paths;
+they are not claimed to be the project's physical sensors. To make the bench
+project-accurate, map each selected sensor's model number/datasheet to its
+response, sensitivity, bandwidth, and calibration file.
 
 ```bash
 python3 launch_gui.py
@@ -83,15 +87,42 @@ selected algorithm then drives the hardware model. This is the integration
 seam for the real product plugin; provide its SDK/API when it is ready to
 replace the contract check with an actual compiler/runtime adapter.
 
+## Run the PS scenarios
+
+`sim6_scenarios.py` is the scenario-level experiment for SIH26058. It runs the
+two conditions named by the PS—**Entering Muddy Estuary** and **Entering Clear
+Shallow Reef**—through three coherent modeled acoustic input channels, the
+existing fusion/DDS path, and an adaptive water-channel preview. The three
+channels are a test harness for redundant input fusion, not a claim that the PS
+requires three physical sensors.
+
+The Shrike-Lite policy is intentionally small and deterministic: condition the
+environment readings, select a fixed-point lookup profile with hysteresis on the
+RP2040, and leave deterministic DDS/window/pulse synthesis to the FPGA. The
+current profiles are LFM + Hann: 100–200 kHz for muddy water and 300–500 kHz
+for clear shallow water. The script also generates the selected integer DAC
+pulse through the SIM-0 waveform path and writes
+`out/sim6_scenario_report.json` plus `out/sim6_scenario_comparison.png`.
+In the GUI, loading either named scenario routes that adaptive pulse through
+the modeled DDS → R-2R → filter → probe chain; Custom water conditions keep the
+continuous DDS exploration mode and show the sonar result as a preview.
+
+The sonar result is a relative link-budget preview, not a physical detection
+claim. It currently omits target strength, beam pattern, multipath, transducer
+efficiency, amplifier limits, and calibrated sediment particle data. Those must
+be measured in a tank or open-water test before hardware settings are frozen.
+
 ## Deploy for team use
 
 Vercel is the supported hosted path. Import this repository into Vercel or run
 `vercel` from the repository root. The platform serves the `gui/` assets and
 maps `/api/simulate` and `/api/status` to the Python Functions in `api/`.
-No runtime dependencies are required. `launch_gui.py` remains the local path.
+The hosted API path uses no third-party runtime dependencies;
+`launch_gui.py` remains the local path.
 
 Hosted runs are independent per browser: the current layout is stored in
-`localStorage`, not in a shared database. The hosted API receives the submitted
+`localStorage`, not in a shared database. The hosted API uses the Python
+standard library only and receives the submitted
 sensor, hardware, connection, and plugin-contract payload for each run. Add
 authentication and persistent storage before putting sensitive code or shared
 project state behind a public URL. Netlify can serve the static GUI, but the
@@ -119,6 +150,7 @@ acoustic band, first image at 9.5 MHz, 3rd-order reconstruction filter at
 | `sim3_gateware/` + `sim3_check.py` | DDS RTL with quarter-wave LUT | iverilog ✅ |
 | `run_sim4.py` | chained prediction: codes → ladder → ZOH → filter → FFT | numpy/scipy |
 | `sim5_propagation.py` | Ainslie-McColl + François-Garrison absorption | numpy |
+| `sim6_scenarios.py` | PS scenarios → filtered inputs → Shrike-Lite pulse/link preview | numpy/scipy/matplotlib |
 
 ## Things this exercise actually found
 

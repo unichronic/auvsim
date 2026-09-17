@@ -78,6 +78,7 @@ def gen_geom(f0, f1, n, win_q15):
 
 def gen_bpsk(fc, n, win_q15, code=P.BARKER13):
     """Barker-13 BPSK. A -1 chip adds pi == 2^31 to the accumulator phase."""
+    code = np.asarray(code, dtype=np.int8)
     k        = np.arange(n, dtype=np.int64)
     chip     = (k * len(code)) // n                 # which chip each sample is in
     inv      = (code[chip] < 0).astype(np.int64) << 31

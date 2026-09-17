@@ -4,7 +4,8 @@ STAGES = [("run_sim0.py", "golden reference + C tables"),
           ("sim1_diff.py", "bit-exact firmware diff"),
           ("run_sim2.py",  "R-2R Monte Carlo + filter"),
           ("run_sim4.py",  "chained predicted spectrogram"),
-          ("run_sim5.py",  "absorption + adaptation table")]
+          ("run_sim5.py",  "absorption + adaptation table"),
+          ("sim6_scenarios.py", "PS scenarios + adaptive sonar preview")]
 OPTIONAL = [("sim2_spice_check.py", "ngspice", "SPICE cross-check of the nodal solve"),
             ("sim3_check.py",       "iverilog", "gateware vs SIM-0")]
 def main():

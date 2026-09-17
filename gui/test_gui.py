@@ -65,12 +65,42 @@ def main() -> None:
         # included in the complete run instead of being decorative settings.
         assert page.locator("#environment-panel").count() == 1
         assert page.locator("#environment-sound-speed").inner_text().endswith("m/s")
+        assert page.locator("#mission-scenario").input_value() == "custom"
+        assert page.locator("#environment-turbidity").input_value() == "0"
+
+        # The two PS scenarios load real environment inputs and select different
+        # adaptive transmit profiles. The selected scenario must reach the API.
+        page.locator("#mission-scenario").select_option("muddy_estuary")
+        page.locator("#load-scenario").click()
+        assert page.locator("#environment-turbidity").input_value() == "250"
+        assert "High suspended sediment" in page.locator("#scenario-description").inner_text()
+        assert "Muddy Estuary" in page.locator("#workflow-input-detail").inner_text()
+        page.locator("#run-button").click()
+        wait_complete(page)
+        assert "adaptive LFM 100–200 kHz output probe" in page.locator("#result-summary").inner_text()
+        assert page.locator("#metric-frequency").inner_text() == "150.00 kHz"
+        assert page.locator("#sonar-verdict").inner_text().startswith("PASS")
+        assert page.locator("#sonar-details").inner_text().startswith("TX · LFM 100.0k–200.0k")
+        assert page.locator("#metric-resolution").inner_text().endswith("cm")
+
+        page.locator("#mission-scenario").select_option("clear_shallow_reef")
+        page.locator("#load-scenario").click()
+        assert page.locator("#environment-turbidity").input_value() == "2"
+        page.locator("#run-button").click()
+        wait_complete(page)
+        assert "adaptive LFM 300–500 kHz output probe" in page.locator("#result-summary").inner_text()
+        assert page.locator("#metric-frequency").inner_text() == "400.00 kHz"
+        assert page.locator("#sonar-details").inner_text().startswith("TX · LFM 300.0k–500.0k")
+        assert page.locator("#metric-resolution").inner_text().endswith("cm")
+
         page.locator("#environment-temperature").fill("24")
         page.locator("#environment-salinity").fill("30")
         page.locator("#environment-depth").fill("500")
         page.locator("#environment-ph").fill("7.6")
         page.locator("#environment-range").fill("1000")
         page.locator("#environment-noise").fill("40")
+        page.locator("#environment-turbidity").fill("90")
+        assert page.locator("#mission-scenario").input_value() == "custom"
         changed_speed = page.locator("#environment-sound-speed").inner_text()
         assert changed_speed != "1502.0 m/s"
         page.locator("#run-button").click()
@@ -140,8 +170,10 @@ void on_measurement(struct bench_frame *frame) {
         assert float(page.locator("#hardware-phase").input_value()) == 24
         assert page.locator("#plugin-name").input_value() == "Dropout adapter"
         assert page.locator("#test-scenario").input_value() == "sensor_dropout"
+        assert page.locator("#mission-scenario").input_value() == "custom"
         assert float(page.locator("#environment-temperature").input_value()) == 24
         assert float(page.locator("#environment-depth").input_value()) == 500
+        assert float(page.locator("#environment-turbidity").input_value()) == 90
         page.locator('[data-remove-node="sensor-4"]').click()
         assert page.locator(".node.sensor").count() == 3
         assert page.locator(".connection-row").count() == 7
@@ -288,6 +320,25 @@ void on_measurement(struct bench_frame *frame) {
         assert environment_result["environment"]["temperature_c"] == 30
         assert environment_result["environment"]["sound_speed_mps"] > 1500
         assert environment_result["sensor_rows"][0]["environment_applied"] is True
+        scenario_response = page.request.post(
+            f"{BASE_URL}/api/simulate",
+            data=json.dumps({
+                "scenario": "muddy_estuary",
+                "sensors": [{"enabled": True, "frequency_hz": 150000}],
+            }),
+            headers=headers,
+        )
+        assert scenario_response.status == 200
+        scenario_result = scenario_response.json()
+        assert scenario_result["scenario"] == "muddy_estuary"
+        assert scenario_result["environment"]["turbidity_ntu"] == 250
+        assert scenario_result["sonar"]["classification"] == "muddy_estuary"
+        assert scenario_result["sensor_rows"][0]["environment_applied"] is True
+        assert page.request.post(
+            f"{BASE_URL}/api/simulate",
+            data=json.dumps({"scenario": "not-a-scenario", "sensors": [{"enabled": True}]}),
+            headers=headers,
+        ).status == 400
         unsupported = {"sensors": [{"enabled": True}], "connections": [{"from": "sensor-1", "to": "r2r"}, {"from": "algorithm", "to": "dds"}, {"from": "dds", "to": "r2r"}, {"from": "r2r", "to": "filter"}, {"from": "filter", "to": "probe"}]}
         assert page.request.post(f"{BASE_URL}/api/simulate", data=json.dumps(unsupported), headers=headers).status == 400
         missing_input = {"sensors": [{"enabled": True}], "connections": [{"from": "algorithm", "to": "dds"}, {"from": "dds", "to": "r2r"}, {"from": "r2r", "to": "filter"}, {"from": "filter", "to": "probe"}]}

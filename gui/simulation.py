@@ -5,7 +5,8 @@ interactive boundary without hiding the hardware model: sensor streams are
 generated at the configured clock or resampled from a recorded trace, the
 software adapter is contract-checked, the selected algorithm estimates a
 frequency, and the output passes through a configurable DDS, R-2R, and
-reconstruction-filter preview.
+reconstruction-filter preview. A named PS scenario additionally routes the
+selected adaptive LFM pulse through that output path.
 """
 
 from __future__ import annotations
@@ -20,6 +21,29 @@ try:
     import params as bench_params
 except ImportError:  # pragma: no cover - makes the module easy to run alone
     bench_params = None
+
+try:
+    from .sonar import (
+        SCENARIO_PRESETS,
+        adapt_transmit_plan,
+        absorption_db_per_km as sonar_absorption_db_per_km,
+        evaluate_sonar,
+        pulse_preview as sonar_pulse_preview,
+        scenario_environment,
+        sediment_scattering_db_per_km,
+        sound_speed_mps as sonar_sound_speed,
+    )
+except ImportError:  # pragma: no cover - supports python gui/simulation.py
+    from sonar import (  # type: ignore[no-redef]
+        SCENARIO_PRESETS,
+        adapt_transmit_plan,
+        absorption_db_per_km as sonar_absorption_db_per_km,
+        evaluate_sonar,
+        pulse_preview as sonar_pulse_preview,
+        scenario_environment,
+        sediment_scattering_db_per_km,
+        sound_speed_mps as sonar_sound_speed,
+    )
 
 
 FS = float(getattr(bench_params, "FS", 10_000_000.0))
@@ -45,6 +69,7 @@ ENVIRONMENT_DEFAULTS = {
     "ph": 8.0,
     "range_m": 100.0,
     "ambient_noise_db": 48.0,
+    "turbidity_ntu": 0.0,
 }
 
 
@@ -114,49 +139,32 @@ def _environment_config(raw: Any) -> dict[str, float]:
         "ph": _clamp(_number(raw.get("ph"), ENVIRONMENT_DEFAULTS["ph"]), 6.0, 10.0),
         "range_m": _clamp(_number(raw.get("range_m"), ENVIRONMENT_DEFAULTS["range_m"]), 1.0, 20_000.0),
         "ambient_noise_db": _clamp(_number(raw.get("ambient_noise_db"), ENVIRONMENT_DEFAULTS["ambient_noise_db"]), 0.0, 90.0),
+        "turbidity_ntu": _clamp(_number(raw.get("turbidity_ntu"), ENVIRONMENT_DEFAULTS["turbidity_ntu"]), 0.0, 1_000.0),
     }
 
 
 def _sound_speed(environment: dict[str, float]) -> float:
     """Mackenzie-style sound speed fit used by the propagation model."""
-    return (
-        1412.0
-        + 3.21 * environment["temperature_c"]
-        + 1.19 * environment["salinity_psu"]
-        + 0.0167 * environment["depth_m"]
-    )
+    return sonar_sound_speed(environment)
 
 
 def _absorption_db_per_km(frequency_hz: float, environment: dict[str, float]) -> float:
     """Scalar Ainslie-McColl absorption preview, matching sim5_propagation.py."""
-    frequency_khz = max(frequency_hz / 1000.0, 0.001)
-    temperature = environment["temperature_c"]
-    salinity = environment["salinity_psu"]
-    depth_km = environment["depth_m"] / 1000.0
-    f1 = 0.78 * math.sqrt(max(salinity, 0.0) / 35.0) * math.exp(temperature / 26.0)
-    f2 = 42.0 * math.exp(temperature / 17.0)
-    boric = 0.106 * (f1 * frequency_khz**2) / (f1**2 + frequency_khz**2) * math.exp((environment["ph"] - 8.0) / 0.56)
-    magnesium = (
-        0.52
-        * (1.0 + temperature / 43.0)
-        * (salinity / 35.0)
-        * (f2 * frequency_khz**2) / (f2**2 + frequency_khz**2)
-        * math.exp(-depth_km / 6.0)
-    )
-    water = 0.00049 * frequency_khz**2 * math.exp(-(temperature / 27.0 + depth_km / 17.0))
-    return max(0.0, boric + magnesium + water)
+    return sonar_absorption_db_per_km(frequency_hz, environment)
 
 
 def _environment_effects(frequency_hz: float, environment: dict[str, float]) -> dict[str, float]:
     speed = _sound_speed(environment)
     delay_s = environment["range_m"] / max(speed, 1.0)
     absorption = _absorption_db_per_km(frequency_hz, environment)
-    attenuation_db = absorption * environment["range_m"] / 1000.0
+    scattering = sediment_scattering_db_per_km(frequency_hz, environment)
+    attenuation_db = (absorption + scattering) * environment["range_m"] / 1000.0
     gain = 10.0 ** (-attenuation_db / 20.0)
     return {
         "sound_speed_mps": speed,
         "propagation_delay_s": delay_s,
         "absorption_db_per_km": absorption,
+        "scattering_db_per_km": scattering,
         "attenuation_db": attenuation_db,
         "gain": gain,
     }
@@ -293,6 +301,22 @@ def _dds_preview(
         normalized.append((raw - midpoint) / max(midpoint, 1.0))
         phase = (phase + ftw) & phase_mask
     return normalized, ftw, actual_frequency, codes
+
+
+def _adaptive_pulse_preview(
+    plan: dict[str, Any],
+    sample_count: int,
+    dac_bits: int,
+) -> tuple[list[float], list[int]]:
+    """Quantise the selected adaptive pulse for the visible DAC preview."""
+    levels = 1 << dac_bits
+    midpoint = (levels - 1) / 2.0
+    normalized = sonar_pulse_preview(plan, sample_count)
+    codes = [
+        max(0, min(levels - 1, math.floor((value + 1.0) * midpoint + 0.5)))
+        for value in normalized
+    ]
+    return [(code - midpoint) / max(midpoint, 1.0) for code in codes], codes
 
 
 def _hardware_config(raw: Any) -> dict[str, float | int]:
@@ -465,7 +489,15 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(f"Unknown algorithm: {requested_algorithm}")
 
     hardware_config = _hardware_config(payload.get("hardware"))
-    environment = _environment_config(payload.get("environment"))
+    scenario_id = str(payload.get("scenario") or "custom").strip()
+    if scenario_id != "custom" and scenario_id not in SCENARIO_PRESETS:
+        raise ValueError(f"unknown sonar scenario: {scenario_id}")
+    raw_environment = payload.get("environment")
+    if raw_environment is None and scenario_id in SCENARIO_PRESETS:
+        raw_environment = scenario_environment(scenario_id)
+    environment = _environment_config(raw_environment)
+    transmit_plan = adapt_transmit_plan(environment)
+    sonar = evaluate_sonar(transmit_plan, environment)
     software = _software_contract(payload.get("software"), requested_algorithm)
     algorithm = software["algorithm"]
     connections = _connections(payload.get("connections"), len(sensors))
@@ -516,7 +548,13 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
 
     estimate_hz, selected_index = _algorithm(rows, algorithm)
     estimate_hz = _clamp(estimate_hz, F_LO, F_HI)
-    raw_output, ftw, actual_hz, dac_codes = _dds_preview(estimate_hz, preview_count, clock_hz, phase_bits, dac_bits)
+    adaptive_output = scenario_id in SCENARIO_PRESETS
+    output_request_hz = float(transmit_plan["center_frequency_hz"]) if adaptive_output else estimate_hz
+    if adaptive_output:
+        raw_output, dac_codes = _adaptive_pulse_preview(transmit_plan, preview_count, dac_bits)
+        _, ftw, actual_hz, _ = _dds_preview(output_request_hz, 1, clock_hz, phase_bits, dac_bits)
+    else:
+        raw_output, ftw, actual_hz, dac_codes = _dds_preview(estimate_hz, preview_count, clock_hz, phase_bits, dac_bits)
     output = _low_pass(raw_output, clock_hz, filter_cutoff_hz, filter_order)
     fused = [
         round(
@@ -529,20 +567,23 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
     series["fused"] = fused
     series["output"] = output
 
-    tolerance = abs(actual_hz - estimate_hz)
+    tolerance = abs(actual_hz - output_request_hz)
     filter_ratio = actual_hz / max(filter_cutoff_hz, 1.0)
     filter_gain = (1.0 / math.sqrt(1.0 + filter_ratio * filter_ratio)) ** filter_order
     filter_gain_db = 20.0 * math.log10(max(filter_gain, 1e-12))
     ladder_gain = 1.0 - resistor_tolerance_pct / 100.0
-    output_environment = _environment_effects(estimate_hz, environment)
+    waveform_peak = max((abs(value) for value in raw_output), default=0.0)
+    output_environment = _environment_effects(output_request_hz, environment)
     return {
         "sample_rate_hz": clock_hz,
+        "scenario": scenario_id,
         "sensor_rows": rows,
         "active_sensor_names": active_names,
         "environment": {
             **environment,
             "sound_speed_mps": round(_sound_speed(environment), 4),
             "absorption_db_per_km": round(output_environment["absorption_db_per_km"], 6),
+            "scattering_db_per_km": round(output_environment["scattering_db_per_km"], 6),
             "one_way_attenuation_db": round(output_environment["attenuation_db"], 6),
             "propagation_delay_ms": round(output_environment["propagation_delay_s"] * 1000.0, 6),
         },
@@ -552,6 +593,8 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
         "coherence": round(_coherence(rows), 4),
         "hardware": {
             "stage": "DDS → R-2R DAC → reconstruction filter → output probe",
+            "waveform": "adaptive LFM pulse" if adaptive_output else "continuous DDS tone",
+            "pulse_duration_ms": transmit_plan["pulse_duration_ms"] if adaptive_output else None,
             "clock_hz": clock_hz,
             "phase_bits": phase_bits,
             "dac_bits": dac_bits,
@@ -564,15 +607,22 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
             "ftw": ftw,
             "actual_frequency_hz": round(actual_hz, 4),
             "quantization_error_hz": round(tolerance, 6),
-            "peak_voltage_v": round(vref_v * ladder_gain * filter_gain, 4),
+            "peak_voltage_v": round(vref_v * ladder_gain * filter_gain * (waveform_peak if adaptive_output else 1.0), 4),
             "codes": dac_codes,
         },
         "software": software,
         "connections": connections,
+        "sonar": sonar,
         "series": series,
         "summary": (
             f"{len(active_names)} sensor stream(s) → {algorithm.replace('_', ' ')} "
-            f"→ {software['plugin_name']} → {actual_hz / 1000:.3f} kHz output probe"
+            f"→ {software['plugin_name']} → "
+            f"adaptive {sonar['modulation'].upper()} {sonar['start_frequency_hz'] / 1000:.0f}–{sonar['end_frequency_hz'] / 1000:.0f} kHz output probe"
+            if adaptive_output
+            else
+            f"{len(active_names)} sensor stream(s) → {algorithm.replace('_', ' ')} "
+            f"→ {software['plugin_name']} → {actual_hz / 1000:.3f} kHz output probe; "
+            f"{sonar['modulation'].upper()} {sonar['start_frequency_hz'] / 1000:.0f}–{sonar['end_frequency_hz'] / 1000:.0f} kHz preview"
         ),
     }
 
@@ -602,6 +652,23 @@ def self_check() -> None:
     )
     assert warmer_deeper["environment"]["sound_speed_mps"] != result["environment"]["sound_speed_mps"]
     assert warmer_deeper["sensor_rows"][0]["environment_applied"] is True
+    assert warmer_deeper["sensor_rows"][0]["propagation_gain_db"] != result["sensor_rows"][0]["propagation_gain_db"]
+    scenario_results = {}
+    for scenario_id in SCENARIO_PRESETS:
+        scenario_result = run_simulation({"scenario": scenario_id, "sensors": [{"frequency_hz": 200_000, "enabled": True}]})
+        scenario_results[scenario_id] = scenario_result
+        assert scenario_result["scenario"] == scenario_id
+        assert scenario_result["sonar"]["policy"] == "shrike_lite_environment_lookup"
+        assert scenario_result["sonar"]["pulse_preview"]
+    assert scenario_results["muddy_estuary"]["sonar"]["center_frequency_hz"] < scenario_results["clear_shallow_reef"]["sonar"]["center_frequency_hz"]
+    assert scenario_results["muddy_estuary"]["sonar"]["range_resolution_m"] > scenario_results["clear_shallow_reef"]["sonar"]["range_resolution_m"]
+    assert scenario_results["muddy_estuary"]["hardware"]["waveform"] == "adaptive LFM pulse"
+    assert 149_000 < scenario_results["muddy_estuary"]["hardware"]["actual_frequency_hz"] < 151_000
+    assert scenario_results["muddy_estuary"]["hardware"]["quantization_error_hz"] < 1.0
+    assert scenario_results["clear_shallow_reef"]["hardware"]["waveform"] == "adaptive LFM pulse"
+    assert 399_000 < scenario_results["clear_shallow_reef"]["hardware"]["actual_frequency_hz"] < 401_000
+    assert adapt_transmit_plan({"temperature_c": 15, "salinity_psu": 35, "depth_m": 50, "ph": 8, "range_m": 100, "ambient_noise_db": 48, "turbidity_ntu": 90}, "clear_shallow_reef")["classification"] == "clear_shallow_reef"
+    assert adapt_transmit_plan({"temperature_c": 15, "salinity_psu": 35, "depth_m": 50, "ph": 8, "range_m": 100, "ambient_noise_db": 48, "turbidity_ntu": 90}, "muddy_estuary")["classification"] == "muddy_estuary"
     recorded_environment = run_simulation(
         {
             "sensors": [{"enabled": True, "source": "trace", "samples": [-1.0, 1.0, -1.0, 1.0, -1.0, 1.0]}],
@@ -634,6 +701,7 @@ def self_check() -> None:
             ],
         },
         {"sensors": [{"enabled": True}], "environment": "not an object"},
+        {"scenario": "missing_scenario", "sensors": [{"enabled": True}]},
     ):
         try:
             run_simulation(invalid)  # type: ignore[arg-type]
