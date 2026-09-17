@@ -61,6 +61,22 @@ def main() -> None:
         assert page.locator("#probe-voltage").inner_text().endswith("Vpk")
         assert page.locator("#deployment-chip").inner_text() == "LOCAL / NO EXTERNAL UPLOAD"
 
+        # Environmental controls are visible, persist with the bench, and are
+        # included in the complete run instead of being decorative settings.
+        assert page.locator("#environment-panel").count() == 1
+        assert page.locator("#environment-sound-speed").inner_text().endswith("m/s")
+        page.locator("#environment-temperature").fill("24")
+        page.locator("#environment-salinity").fill("30")
+        page.locator("#environment-depth").fill("500")
+        page.locator("#environment-ph").fill("7.6")
+        page.locator("#environment-range").fill("1000")
+        page.locator("#environment-noise").fill("40")
+        changed_speed = page.locator("#environment-sound-speed").inner_text()
+        assert changed_speed != "1502.0 m/s"
+        page.locator("#run-button").click()
+        wait_complete(page)
+        assert "m/s water" in page.locator("#probe-details").inner_text()
+
         # The source file is visible in the main workflow and can replace the example program.
         program = b'''// loaded from the team firmware workspace
 void on_measurement(struct bench_frame *frame) {
@@ -124,6 +140,8 @@ void on_measurement(struct bench_frame *frame) {
         assert float(page.locator("#hardware-phase").input_value()) == 24
         assert page.locator("#plugin-name").input_value() == "Dropout adapter"
         assert page.locator("#test-scenario").input_value() == "sensor_dropout"
+        assert float(page.locator("#environment-temperature").input_value()) == 24
+        assert float(page.locator("#environment-depth").input_value()) == 500
         page.locator('[data-remove-node="sensor-4"]').click()
         assert page.locator(".node.sensor").count() == 3
         assert page.locator(".connection-row").count() == 7
@@ -175,6 +193,12 @@ void on_measurement(struct bench_frame *frame) {
         assert page.locator("#sensor-0-frequency").get_attribute("aria-invalid") == "true"
         assert page.locator("#run-button").is_enabled()
         page.locator("#sensor-0-frequency").fill("180000")
+        page.locator("#environment-temperature").fill("")
+        page.locator("#run-button").click()
+        page.wait_for_function("document.querySelector('#run-status').textContent.includes('Fix the highlighted')")
+        assert page.locator("#environment-temperature").get_attribute("aria-invalid") == "true"
+        assert page.locator("#run-button").is_enabled()
+        page.locator("#environment-temperature").fill("24")
         page.locator("#software-code").fill("")
         page.locator("#run-button").click()
         page.wait_for_function("document.querySelector('#run-status').textContent.includes('Fix the highlighted')")
@@ -251,6 +275,19 @@ void on_measurement(struct bench_frame *frame) {
         )
         assert recorded_response.status == 200
         assert recorded_response.json()["sensor_rows"][0]["source"] == "trace"
+        environment_response = page.request.post(
+            f"{BASE_URL}/api/simulate",
+            data=json.dumps({
+                "sensors": [{"enabled": True, "frequency_hz": 200000}],
+                "environment": {"temperature_c": 30, "salinity_psu": 30, "depth_m": 500, "ph": 7.5, "range_m": 1000, "ambient_noise_db": 40},
+            }),
+            headers=headers,
+        )
+        assert environment_response.status == 200
+        environment_result = environment_response.json()
+        assert environment_result["environment"]["temperature_c"] == 30
+        assert environment_result["environment"]["sound_speed_mps"] > 1500
+        assert environment_result["sensor_rows"][0]["environment_applied"] is True
         unsupported = {"sensors": [{"enabled": True}], "connections": [{"from": "sensor-1", "to": "r2r"}, {"from": "algorithm", "to": "dds"}, {"from": "dds", "to": "r2r"}, {"from": "r2r", "to": "filter"}, {"from": "filter", "to": "probe"}]}
         assert page.request.post(f"{BASE_URL}/api/simulate", data=json.dumps(unsupported), headers=headers).status == 400
         missing_input = {"sensors": [{"enabled": True}], "connections": [{"from": "algorithm", "to": "dds"}, {"from": "dds", "to": "r2r"}, {"from": "r2r", "to": "filter"}, {"from": "filter", "to": "probe"}]}

@@ -78,14 +78,14 @@
               <p>Configure each stage in order. The result readout at the bottom reflects the whole path.</p>
             </div>
             <ol class="workflow-steps">
-              <li><a class="workflow-step input-step" href="#board"><span class="workflow-index">01</span><strong>Inputs</strong><small id="workflow-input-detail">4 modeled channels</small></a></li>
+              <li><a class="workflow-step input-step" href="#board"><span class="workflow-index">01</span><strong>Inputs</strong><small id="workflow-input-detail">4 modeled channels · water conditions below</small></a></li>
               <li><a class="workflow-step program-step" href="#program-panel"><span class="workflow-index">02</span><strong>Your program</strong><small id="workflow-program-detail">signal_adapter.c · ready to check</small></a></li>
               <li><a class="workflow-step hardware-step" href="#hardware-circuit"><span class="workflow-index">03</span><strong>Hardware chain</strong><small id="workflow-hardware-detail">DDS → R-2R → filter → probe</small></a></li>
               <li><a class="workflow-step output-step" href="#results-panel"><span class="workflow-index">04</span><strong>Output</strong><small id="workflow-output-detail">Run to inspect the probe</small></a></li>
             </ol>
           </section>
 
-          <p class="board-help" id="board-help">The board shows the live topology. Drag a block by its top handle, or use the patch bay below to repair a connection. The algorithm and hardware stages are required parts of this bench.</p>
+          <p class="board-help" id="board-help">The board shows the live topology. Drag a block by its top handle, or use the patch bay below to repair a connection. The algorithm and hardware stages are required parts of this bench. The default channels are generic fixtures, not calibrated models of the project's three physical sensors.</p>
           <div class="board-wrap">
             <div class="board" id="board" tabindex="0" aria-describedby="board-help" aria-label="Draggable sensor, algorithm, and hardware simulation board">
               <svg class="wires" id="wires" aria-hidden="true" focusable="false" preserveAspectRatio="none">
@@ -103,8 +103,33 @@
             </div>
           </div>
 
+          <section class="environment-panel" id="environment-panel" aria-labelledby="environment-title">
+            <div class="environment-heading">
+              <div>
+                <div class="section-kicker">03 / set the environment</div>
+                <div class="section-label" id="environment-title">Water conditions</div>
+              </div>
+              <div class="environment-chip"><i aria-hidden="true"></i> affects modeled inputs</div>
+            </div>
+            <p class="environment-help">These conditions are part of the receive path. They change modeled acoustic propagation delay, water absorption, and ambient noise before the algorithm sees a signal.</p>
+            <div class="field-grid environment-fields">
+              <div class="field"><label for="environment-temperature">temperature / °C</label><input id="environment-temperature" data-environment-field="temperature_c" type="number" min="-2" max="40" step="0.1" required></div>
+              <div class="field"><label for="environment-salinity">salinity / PSU</label><input id="environment-salinity" data-environment-field="salinity_psu" type="number" min="0" max="45" step="0.1" required></div>
+              <div class="field"><label for="environment-depth">depth / m</label><input id="environment-depth" data-environment-field="depth_m" type="number" min="0" max="11000" step="1" required></div>
+              <div class="field"><label for="environment-ph">pH</label><input id="environment-ph" data-environment-field="ph" type="number" min="6" max="10" step="0.01" required></div>
+              <div class="field"><label for="environment-range">source range / m</label><input id="environment-range" data-environment-field="range_m" type="number" min="1" max="20000" step="1" required></div>
+              <div class="field"><label for="environment-noise">ambient noise / dBc</label><input id="environment-noise" data-environment-field="ambient_noise_db" type="number" min="0" max="90" step="1" required></div>
+            </div>
+            <div class="environment-readout" aria-live="polite">
+              <div><span>sound speed</span><strong id="environment-sound-speed">—</strong></div>
+              <div><span>absorption preview</span><strong id="environment-absorption">—</strong></div>
+              <div><span>one-way delay</span><strong id="environment-delay">—</strong></div>
+            </div>
+            <p class="field-hint">Modeled channels use these values at run time. A recorded trace is treated as already captured under its original conditions and is not modified.</p>
+          </section>
+
           <section class="software-panel" id="program-panel" aria-labelledby="software-title">
-            <div class="section-kicker">03 / attach your program</div>
+            <div class="section-kicker">04 / attach your program</div>
             <div class="software-heading">
               <div>
                 <div class="section-label" id="software-title">Program input</div>
@@ -135,7 +160,7 @@ void on_measurement(struct bench_frame *frame) {
           <section class="hardware-circuit" id="hardware-circuit" aria-labelledby="hardware-title">
             <div class="circuit-header">
               <div>
-                <div class="section-kicker">04 / model the physical plane</div>
+                <div class="section-kicker">05 / model the physical plane</div>
                 <h2 id="hardware-title">Hardware circuit</h2>
               </div>
               <span class="circuit-chip"><i aria-hidden="true"></i> independent from software</span>
@@ -160,7 +185,7 @@ void on_measurement(struct bench_frame *frame) {
           <section class="results-panel" id="results-panel" aria-labelledby="results-title">
             <div class="results-header">
               <div>
-                <div class="section-kicker">05 / inspect the output</div>
+                <div class="section-kicker">06 / inspect the output</div>
                 <h2 id="results-title">Run readout</h2>
               </div>
               <p id="result-summary" class="result-summary">Run the pipeline to populate the readout.</p>

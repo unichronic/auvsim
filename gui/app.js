@@ -17,6 +17,15 @@ const DEFAULT_SENSORS = [
   { name: "Sensor 4", frequency_hz: 350000, amplitude: 0.28, phase_deg: 55, noise_db: 42, behavior: "dropout", sweep_hz: 50000, source: "model", source_file: "", samples: [], enabled: true, color: "#ef826c" },
 ];
 
+const DEFAULT_ENVIRONMENT = {
+  temperature_c: 15,
+  salinity_psu: 35,
+  depth_m: 10,
+  ph: 8,
+  range_m: 100,
+  ambient_noise_db: 48,
+};
+
 const DEFAULT_POSITIONS = {
   "sensor-1": { left: 4, top: 5 },
   "sensor-2": { left: 4, top: 53 },
@@ -80,6 +89,7 @@ const state = {
   positions: structuredClone(DEFAULT_POSITIONS),
   algorithm: "weighted_fusion",
   hardware: { ...DEFAULT_HARDWARE },
+  environment: { ...DEFAULT_ENVIRONMENT },
   software: { ...DEFAULT_SOFTWARE },
   connections: DEFAULT_CONNECTIONS.map((connection) => ({ ...connection })),
 };
@@ -180,6 +190,16 @@ function normalizeState() {
   }
   state.nodes = ordered;
 
+  const environment = state.environment && typeof state.environment === "object" ? state.environment : {};
+  state.environment = {
+    temperature_c: Math.max(-2, Math.min(40, finiteNumber(environment.temperature_c, DEFAULT_ENVIRONMENT.temperature_c))),
+    salinity_psu: Math.max(0, Math.min(45, finiteNumber(environment.salinity_psu, DEFAULT_ENVIRONMENT.salinity_psu))),
+    depth_m: Math.max(0, Math.min(11000, finiteNumber(environment.depth_m, DEFAULT_ENVIRONMENT.depth_m))),
+    ph: Math.max(6, Math.min(10, finiteNumber(environment.ph, DEFAULT_ENVIRONMENT.ph))),
+    range_m: Math.max(1, Math.min(20000, finiteNumber(environment.range_m, DEFAULT_ENVIRONMENT.range_m))),
+    ambient_noise_db: Math.max(0, Math.min(90, finiteNumber(environment.ambient_noise_db, DEFAULT_ENVIRONMENT.ambient_noise_db))),
+  };
+
   const hardware = state.hardware && typeof state.hardware === "object" ? state.hardware : {};
   state.hardware = {
     clock_hz: Math.max(1000000, Math.min(100000000, finiteNumber(hardware.clock_hz, DEFAULT_HARDWARE.clock_hz))),
@@ -220,6 +240,7 @@ function loadLayout() {
     if (Array.isArray(saved.sensors) && saved.sensors.length) state.sensors = saved.sensors.slice(0, 4);
     if (saved.algorithm && ALGORITHM_LABELS[saved.algorithm]) state.algorithm = saved.algorithm;
     if (saved.hardware && typeof saved.hardware === "object") state.hardware = { ...state.hardware, ...saved.hardware };
+    if (saved.environment && typeof saved.environment === "object") state.environment = { ...state.environment, ...saved.environment };
     if (saved.software && typeof saved.software === "object") state.software = { ...state.software, ...saved.software };
     if (Array.isArray(saved.connections)) state.connections = saved.connections;
     if (Array.isArray(saved.nodes)) {
@@ -251,6 +272,7 @@ function saveLayout() {
       algorithm: state.algorithm,
       positions: state.positions,
       hardware: state.hardware,
+      environment: state.environment,
       software: state.software,
       connections: state.connections,
     }));
@@ -275,11 +297,80 @@ function renderWorkflow() {
   const modeled = state.sensors.length - recorded;
   const enabled = state.sensors.filter((sensor) => sensor.enabled).length;
   const inputDetail = document.querySelector("#workflow-input-detail");
-  if (inputDetail) inputDetail.textContent = `${state.sensors.length} channel${state.sensors.length === 1 ? "" : "s"} · ${enabled} enabled · ${modeled} modeled${recorded ? ` · ${recorded} recorded` : ""}`;
+  if (inputDetail) inputDetail.textContent = `${state.sensors.length} channel${state.sensors.length === 1 ? "" : "s"} · ${enabled} enabled · ${modeled} modeled${recorded ? ` · ${recorded} recorded` : ""} · water conditions set`;
   const programDetail = document.querySelector("#workflow-program-detail");
   if (programDetail) programDetail.textContent = `${state.software.source_file || "inline program"} · ready to check`;
   const hardwareDetail = document.querySelector("#workflow-hardware-detail");
   if (hardwareDetail) hardwareDetail.textContent = `${HARDWARE_STAGES.map((stage) => stage.label.replace(/^\d+-bit /, "")).join(" → ")}`;
+}
+
+function environmentSoundSpeed(environment = state.environment) {
+  return 1412.0
+    + 3.21 * environment.temperature_c
+    + 1.19 * environment.salinity_psu
+    + 0.0167 * environment.depth_m;
+}
+
+function environmentAbsorptionDbPerKm(frequencyHz, environment = state.environment) {
+  const frequencyKHz = Math.max(Number(frequencyHz) / 1000, 0.001);
+  const f1 = 0.78 * Math.sqrt(Math.max(environment.salinity_psu, 0) / 35.0) * Math.exp(environment.temperature_c / 26.0);
+  const f2 = 42.0 * Math.exp(environment.temperature_c / 17.0);
+  const depthKm = environment.depth_m / 1000.0;
+  const boric = 0.106 * (f1 * frequencyKHz ** 2) / (f1 ** 2 + frequencyKHz ** 2) * Math.exp((environment.ph - 8.0) / 0.56);
+  const magnesium = 0.52 * (1 + environment.temperature_c / 43.0) * (environment.salinity_psu / 35.0)
+    * (f2 * frequencyKHz ** 2) / (f2 ** 2 + frequencyKHz ** 2) * Math.exp(-depthKm / 6.0);
+  const water = 0.00049 * frequencyKHz ** 2 * Math.exp(-(environment.temperature_c / 27.0 + depthKm / 17.0));
+  return Math.max(0, boric + magnesium + water);
+}
+
+function renderEnvironmentSummary() {
+  const speed = environmentSoundSpeed();
+  const absorption = environmentAbsorptionDbPerKm(250000);
+  const delay = state.environment.range_m / Math.max(speed, 1) * 1000;
+  const soundSpeed = document.querySelector("#environment-sound-speed");
+  const absorptionReadout = document.querySelector("#environment-absorption");
+  const delayReadout = document.querySelector("#environment-delay");
+  if (soundSpeed) soundSpeed.textContent = `${speed.toFixed(1)} m/s`;
+  if (absorptionReadout) absorptionReadout.textContent = `${absorption.toFixed(3)} dB/km @ 250 kHz`;
+  if (delayReadout) delayReadout.textContent = `${delay.toFixed(3)} ms`;
+}
+
+function renderEnvironment() {
+  document.querySelectorAll("[data-environment-field]").forEach((input) => {
+    input.value = state.environment[input.dataset.environmentField];
+    input.addEventListener("input", () => {
+      if (!input.checkValidity()) {
+        input.setAttribute("aria-invalid", "true");
+        input.setAttribute("aria-describedby", "run-status");
+        status.textContent = "Fix the highlighted environmental value before running.";
+        return;
+      }
+      input.removeAttribute("aria-invalid");
+      input.removeAttribute("aria-describedby");
+      state.environment[input.dataset.environmentField] = Number(input.value);
+      renderEnvironmentSummary();
+      renderWorkflow();
+      saveLayout();
+      status.textContent = "Water condition changed. Run the pipeline to apply it to modeled inputs.";
+    });
+  });
+  renderEnvironmentSummary();
+}
+
+function readEnvironmentState() {
+  let valid = true;
+  document.querySelectorAll("[data-environment-field]").forEach((input) => {
+    if (!input.checkValidity()) {
+      input.setAttribute("aria-invalid", "true");
+      input.setAttribute("aria-describedby", "run-status");
+      valid = false;
+      return;
+    }
+    input.removeAttribute("aria-invalid");
+    input.removeAttribute("aria-describedby");
+    state.environment[input.dataset.environmentField] = Number(input.value);
+  });
+  return valid;
 }
 
 function inferLanguage(fileName) {
@@ -785,9 +876,10 @@ function updateWires() {
 
 function readPayload() {
   const sensorValid = readEditorState();
+  const environmentValid = readEnvironmentState();
   const hardwareValid = readHardwareState();
   const softwareValid = readSoftwareState();
-  if (!sensorValid || !hardwareValid || !softwareValid) return null;
+  if (!sensorValid || !environmentValid || !hardwareValid || !softwareValid) return null;
   const sensors = state.sensors.slice(0, 4).map((sensor) => ({ ...sensor }));
   if (state.software.test_scenario === "sensor_dropout" && sensors.length > 1) sensors[sensors.length - 1].enabled = false;
   if (state.software.test_scenario === "low_coherence" && sensors.length > 1) sensors[sensors.length - 1].frequency_hz = 490000;
@@ -795,6 +887,7 @@ function readPayload() {
     algorithm: state.algorithm,
     preview_samples: 384,
     sensors,
+    environment: { ...state.environment },
     hardware: { ...state.hardware },
     software: { ...state.software },
     connections: state.connections.map((connection) => ({ ...connection })),
@@ -900,7 +993,7 @@ function renderResults(result) {
   const probeVoltage = document.querySelector("#probe-voltage");
   if (probeVoltage) probeVoltage.textContent = `${result.hardware.peak_voltage_v.toFixed(3)} Vpk`;
   const probeDetails = document.querySelector("#probe-details");
-  if (probeDetails) probeDetails.textContent = `${result.hardware.filter_gain_db.toFixed(2)} dB filter gain · ${result.hardware.resistor_tolerance_pct.toFixed(1)}% tolerance`;
+  if (probeDetails) probeDetails.textContent = `${result.hardware.filter_gain_db.toFixed(2)} dB filter gain · ${result.hardware.resistor_tolerance_pct.toFixed(1)}% tolerance · ${result.environment.sound_speed_mps.toFixed(1)} m/s water`;
   const pluginStatus = document.querySelector("#plugin-status");
   if (pluginStatus) pluginStatus.textContent = result.software.passed ? "BENCH-V1 CONTRACT PASSED" : "BENCH-V1 CONTRACT FAILED";
   const outputDetail = document.querySelector("#workflow-output-detail");
@@ -1028,6 +1121,7 @@ function wirePalette() {
 
 loadLayout();
 setDeploymentStatus();
+renderEnvironment();
 renderSoftwareEditor();
 renderBoard();
 wirePalette();

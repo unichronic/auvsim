@@ -38,6 +38,14 @@ MAX_TRACE_SAMPLES = 4096
 ALGORITHMS = {"weighted_fusion", "median_vote", "peak_pick", "coherent_mean"}
 BEHAVIORS = {"tone", "chirp_up", "chirp_down", "burst", "dropout"}
 HARDWARE_NODES = ("algorithm", "dds", "r2r", "filter", "probe")
+ENVIRONMENT_DEFAULTS = {
+    "temperature_c": 15.0,
+    "salinity_psu": 35.0,
+    "depth_m": 10.0,
+    "ph": 8.0,
+    "range_m": 100.0,
+    "ambient_noise_db": 48.0,
+}
 
 
 def _clamp(value: float, low: float, high: float) -> float:
@@ -94,16 +102,89 @@ def _trace_wave(sensor: dict[str, Any], sample_count: int) -> list[float] | None
     ]
 
 
-def _sensor_wave(sensor: dict[str, Any], sample_count: int, seed: int, sample_rate: float = FS) -> list[float]:
+def _environment_config(raw: Any) -> dict[str, float]:
+    if raw is None:
+        raw = {}
+    if not isinstance(raw, dict):
+        raise ValueError("environment must be an object")
+    return {
+        "temperature_c": _clamp(_number(raw.get("temperature_c"), ENVIRONMENT_DEFAULTS["temperature_c"]), -2.0, 40.0),
+        "salinity_psu": _clamp(_number(raw.get("salinity_psu"), ENVIRONMENT_DEFAULTS["salinity_psu"]), 0.0, 45.0),
+        "depth_m": _clamp(_number(raw.get("depth_m"), ENVIRONMENT_DEFAULTS["depth_m"]), 0.0, 11_000.0),
+        "ph": _clamp(_number(raw.get("ph"), ENVIRONMENT_DEFAULTS["ph"]), 6.0, 10.0),
+        "range_m": _clamp(_number(raw.get("range_m"), ENVIRONMENT_DEFAULTS["range_m"]), 1.0, 20_000.0),
+        "ambient_noise_db": _clamp(_number(raw.get("ambient_noise_db"), ENVIRONMENT_DEFAULTS["ambient_noise_db"]), 0.0, 90.0),
+    }
+
+
+def _sound_speed(environment: dict[str, float]) -> float:
+    """Mackenzie-style sound speed fit used by the propagation model."""
+    return (
+        1412.0
+        + 3.21 * environment["temperature_c"]
+        + 1.19 * environment["salinity_psu"]
+        + 0.0167 * environment["depth_m"]
+    )
+
+
+def _absorption_db_per_km(frequency_hz: float, environment: dict[str, float]) -> float:
+    """Scalar Ainslie-McColl absorption preview, matching sim5_propagation.py."""
+    frequency_khz = max(frequency_hz / 1000.0, 0.001)
+    temperature = environment["temperature_c"]
+    salinity = environment["salinity_psu"]
+    depth_km = environment["depth_m"] / 1000.0
+    f1 = 0.78 * math.sqrt(max(salinity, 0.0) / 35.0) * math.exp(temperature / 26.0)
+    f2 = 42.0 * math.exp(temperature / 17.0)
+    boric = 0.106 * (f1 * frequency_khz**2) / (f1**2 + frequency_khz**2) * math.exp((environment["ph"] - 8.0) / 0.56)
+    magnesium = (
+        0.52
+        * (1.0 + temperature / 43.0)
+        * (salinity / 35.0)
+        * (f2 * frequency_khz**2) / (f2**2 + frequency_khz**2)
+        * math.exp(-depth_km / 6.0)
+    )
+    water = 0.00049 * frequency_khz**2 * math.exp(-(temperature / 27.0 + depth_km / 17.0))
+    return max(0.0, boric + magnesium + water)
+
+
+def _environment_effects(frequency_hz: float, environment: dict[str, float]) -> dict[str, float]:
+    speed = _sound_speed(environment)
+    delay_s = environment["range_m"] / max(speed, 1.0)
+    absorption = _absorption_db_per_km(frequency_hz, environment)
+    attenuation_db = absorption * environment["range_m"] / 1000.0
+    gain = 10.0 ** (-attenuation_db / 20.0)
+    return {
+        "sound_speed_mps": speed,
+        "propagation_delay_s": delay_s,
+        "absorption_db_per_km": absorption,
+        "attenuation_db": attenuation_db,
+        "gain": gain,
+    }
+
+
+def _sensor_wave(
+    sensor: dict[str, Any],
+    sample_count: int,
+    seed: int,
+    sample_rate: float = FS,
+    environment: dict[str, float] | None = None,
+) -> list[float]:
     """Generate one reproducible modeled or recorded sensor stream."""
     recorded = _trace_wave(sensor, sample_count)
     if recorded is not None:
         return recorded
 
+    environment = environment or _environment_config(None)
+
     frequency = _clamp(_number(sensor.get("frequency_hz"), 250_000.0), F_LO, F_HI)
-    amplitude = _clamp(_number(sensor.get("amplitude"), 0.8), 0.05, 1.0)
+    effects = _environment_effects(frequency, environment)
+    amplitude = _clamp(_number(sensor.get("amplitude"), 0.8), 0.05, 1.0) * effects["gain"]
     phase = math.radians(_clamp(_number(sensor.get("phase_deg"), 0.0), -180.0, 180.0))
-    noise_below_carrier_db = _clamp(_number(sensor.get("noise_db"), 48.0), 0.0, 90.0)
+    phase += 2.0 * math.pi * frequency * effects["propagation_delay_s"]
+    noise_below_carrier_db = min(
+        _clamp(_number(sensor.get("noise_db"), 48.0), 0.0, 90.0),
+        environment["ambient_noise_db"],
+    )
     noise_rms = amplitude * (10.0 ** (-noise_below_carrier_db / 20.0))
     behavior = _sensor_behavior(sensor)
     sweep_hz = _clamp(_number(sensor.get("sweep_hz"), 50_000.0), 0.0, 400_000.0)
@@ -136,7 +217,10 @@ def _sensor_wave(sensor: dict[str, Any], sample_count: int, seed: int, sample_ra
 
 def _estimate_frequency(samples: list[float], sample_rate: float = FS) -> float:
     """Estimate a clean synthetic sensor's frequency from upward crossings."""
-    crossing_floor = max((max(abs(sample) for sample in samples) if samples else 0.0) * 0.08, 0.0)
+    # A crossing itself is close to zero; a high threshold makes the estimate
+    # depend on propagation phase and can discard every valid crossing when a
+    # wave happens to cross between two nearby samples.
+    crossing_floor = max((max(abs(sample) for sample in samples) if samples else 0.0) * 0.01, 0.0)
     crossings: list[float] = []
     for index in range(1, len(samples)):
         before, after = samples[index - 1], samples[index]
@@ -381,6 +465,7 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(f"Unknown algorithm: {requested_algorithm}")
 
     hardware_config = _hardware_config(payload.get("hardware"))
+    environment = _environment_config(payload.get("environment"))
     software = _software_contract(payload.get("software"), requested_algorithm)
     algorithm = software["algorithm"]
     connections = _connections(payload.get("connections"), len(sensors))
@@ -398,9 +483,13 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
     for index, sensor in enumerate(sensors):
         enabled = _enabled(sensor.get("enabled", True))
         name = str(sensor.get("name") or f"Sensor {index + 1}")[:32]
-        waveform = _sensor_wave(sensor, analysis_count, 0x5EED + index * 97, clock_hz)
+        waveform = _sensor_wave(sensor, analysis_count, 0x5EED + index * 97, clock_hz, environment)
         estimated_hz = _estimate_frequency(waveform, clock_hz) if enabled else 0.0
         trace_active = len(_trace_samples(sensor)) >= 2
+        effects = _environment_effects(
+            _clamp(_number(sensor.get("frequency_hz"), 250_000.0), F_LO, F_HI),
+            environment,
+        )
         row = {
             "index": index,
             "name": name,
@@ -412,6 +501,8 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
             "behavior": _sensor_behavior(sensor),
             "source": "trace" if trace_active else "model",
             "source_file": str(sensor.get("source_file") or "")[:128] if trace_active else "",
+            "environment_applied": not trace_active,
+            "propagation_gain_db": round(-effects["attenuation_db"], 5) if not trace_active else 0.0,
         }
         rows.append(row)
         series[f"sensor_{index + 1}"] = [round(value, 5) for value in waveform[:preview_count]]
@@ -443,10 +534,18 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
     filter_gain = (1.0 / math.sqrt(1.0 + filter_ratio * filter_ratio)) ** filter_order
     filter_gain_db = 20.0 * math.log10(max(filter_gain, 1e-12))
     ladder_gain = 1.0 - resistor_tolerance_pct / 100.0
+    output_environment = _environment_effects(estimate_hz, environment)
     return {
         "sample_rate_hz": clock_hz,
         "sensor_rows": rows,
         "active_sensor_names": active_names,
+        "environment": {
+            **environment,
+            "sound_speed_mps": round(_sound_speed(environment), 4),
+            "absorption_db_per_km": round(output_environment["absorption_db_per_km"], 6),
+            "one_way_attenuation_db": round(output_environment["attenuation_db"], 6),
+            "propagation_delay_ms": round(output_environment["propagation_delay_s"] * 1000.0, 6),
+        },
         "algorithm": algorithm,
         "algorithm_estimate_hz": round(estimate_hz, 2),
         "selected_sensor_index": selected_index,
@@ -494,6 +593,22 @@ def self_check() -> None:
     assert 190_000 < result["algorithm_estimate_hz"] < 210_000
     assert len(result["series"]["output"]) == 128
     assert 0 <= result["hardware"]["ftw"] <= MASK32
+    assert result["environment"]["temperature_c"] == ENVIRONMENT_DEFAULTS["temperature_c"]
+    warmer_deeper = run_simulation(
+        {
+            "sensors": [{"frequency_hz": 200_000, "enabled": True}],
+            "environment": {"temperature_c": 30, "salinity_psu": 30, "depth_m": 500, "ph": 7.5, "range_m": 1000, "ambient_noise_db": 48},
+        }
+    )
+    assert warmer_deeper["environment"]["sound_speed_mps"] != result["environment"]["sound_speed_mps"]
+    assert warmer_deeper["sensor_rows"][0]["environment_applied"] is True
+    recorded_environment = run_simulation(
+        {
+            "sensors": [{"enabled": True, "source": "trace", "samples": [-1.0, 1.0, -1.0, 1.0, -1.0, 1.0]}],
+            "environment": {"temperature_c": -2, "salinity_psu": 0, "depth_m": 11000, "ph": 10, "range_m": 20000, "ambient_noise_db": 0},
+        }
+    )
+    assert recorded_environment["sensor_rows"][0]["environment_applied"] is False
     for behavior in BEHAVIORS:
         alternate = run_simulation({"algorithm": "weighted_fusion", "sensors": [{"frequency_hz": 220000, "enabled": True, "behavior": behavior}]})
         assert F_LO <= alternate["hardware"]["actual_frequency_hz"] <= F_HI
@@ -518,6 +633,7 @@ def self_check() -> None:
                 {"from": "filter", "to": "probe"},
             ],
         },
+        {"sensors": [{"enabled": True}], "environment": "not an object"},
     ):
         try:
             run_simulation(invalid)  # type: ignore[arg-type]

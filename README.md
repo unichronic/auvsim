@@ -37,11 +37,11 @@ ForgeFPGA resource report or prove that the LUT array mapped to dedicated BRAM.
 ## Use the interactive signal lab
 
 The original bench validates one fixed transmitter chain. The local GUI adds
-the experiment loop: four configurable sensor inputs with distinct default
-behaviors (tone, up-chirp, burst, and dropout), recorded CSV/TXT trace import,
-a selectable frequency algorithm, an explicit software-plugin handoff, and a
-separate hardware circuit model. The patch bay keeps the simulated netlist
-visible:
+the experiment loop: up to four configurable sensor channels with distinct
+default behaviors (tone, up-chirp, burst, and dropout), recorded CSV/TXT trace
+import, explicit water/environment controls, a selectable frequency algorithm,
+an explicit software-plugin handoff, and a separate hardware circuit model.
+The patch bay keeps the simulated netlist visible:
 
 ```text
 sensor inputs → algorithm → 32-bit DDS → 8-bit R-2R → reconstruction filter → output probe
@@ -53,6 +53,19 @@ and resistor-tolerance specs. The software plane lets you open the source file
 you want to check, edit it in the browser, select a test scenario, and report
 whether the adapter contract passed alongside the output frequency, voltage,
 FTW, coherence, and waveforms.
+
+The environment plane exposes temperature, salinity, depth, pH, source range,
+and ambient noise. For modeled channels, those values affect sound speed,
+frequency-dependent Ainslie-McColl absorption, propagation phase delay, and the
+noise floor before estimation. Uploaded traces are not re-shaped: they are
+treated as measurements that already include the conditions of their capture.
+These are propagation-level preview controls, not calibrated transfer
+functions for the project's final sensor hardware.
+
+The four defaults are deliberately generic fixtures, not a claim that the
+repository already contains the exact three project sensor models. To make the
+bench project-accurate, map each real sensor's model number/datasheet to a
+channel-specific response, sensitivity, bandwidth, and calibration file.
 
 ```bash
 python3 launch_gui.py
