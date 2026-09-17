@@ -15,6 +15,7 @@ BENCH_ROOT = ROOT.parent
 sys.path.insert(0, str(BENCH_ROOT))
 
 from gui.simulation import run_simulation  # noqa: E402
+from gui.realtime import run_realtime  # noqa: E402
 
 
 MIME_TYPES = {
@@ -66,10 +67,14 @@ class Handler(BaseHTTPRequestHandler):
                 },
             )
             return
+        if route == "/api/realtime":
+            self._json(405, {"error": "POST a realtime frame stream"})
+            return
         self._file({"/": "index.html", "/index.html": "index.html", "/app.js": "app.js", "/styles.css": "styles.css"}.get(route, ""))
 
     def do_POST(self) -> None:  # noqa: N802
-        if urlparse(self.path).path != "/api/simulate":
+        route = urlparse(self.path).path
+        if route not in {"/api/simulate", "/api/realtime"}:
             self._json(404, {"error": "not found"})
             return
         try:
@@ -77,7 +82,8 @@ class Handler(BaseHTTPRequestHandler):
             if length > 1_000_000:
                 raise ValueError("request is too large")
             payload = json.loads(self.rfile.read(length) or b"{}")
-            self._json(200, run_simulation(payload))
+            result = run_realtime(payload) if route == "/api/realtime" else run_simulation(payload)
+            self._json(200, result)
         except (ValueError, TypeError, json.JSONDecodeError) as error:
             self._json(400, {"error": str(error)})
         except Exception as error:  # keep the local UI useful while exposing the failure

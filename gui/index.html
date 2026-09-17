@@ -132,6 +132,26 @@
               <div><span>one-way delay</span><strong id="environment-delay">—</strong></div>
             </div>
             <p class="field-hint">Modeled channels use these values at run time. A recorded trace is treated as already captured under its original conditions and is not modified.</p>
+            <div class="transmit-control">
+              <div>
+                <div class="section-label">Waveform and output policy</div>
+                <p class="helper">The PS-required waveform family and digital window are part of the same run. Phase-coded pulses automatically keep a rectangular envelope.</p>
+              </div>
+              <div class="field-grid transmit-fields">
+                <div class="field"><label for="transmit-modulation">modulation</label><select id="transmit-modulation"><option value="lfm">LFM chirp</option><option value="geom">Geometric sweep</option><option value="bpsk">Phase-coded BPSK</option></select></div>
+                <div class="field"><label for="transmit-window">digital window</label><select id="transmit-window"><option value="rect">Rectangular</option><option value="hamming">Hamming</option><option value="hann">Hann</option><option value="blackman">Blackman</option></select></div>
+                <div class="field"><label for="output-mode">output mode</label><select id="output-mode"><option value="adaptive_pulse">Adaptive pulse</option><option value="continuous_tone">Continuous DDS tone</option></select></div>
+              </div>
+              <p class="field-hint" id="transmit-note">The selected modulation and window are sent through the software → DDS → DAC path.</p>
+            </div>
+            <div class="realtime-control">
+              <div>
+                <div class="section-label">Deployment coverage stream</div>
+                <p class="helper">Runs the full environment catalog across waveform/window combinations, then injects malformed configuration, sensor dropout, and recovery through the realtime frame API.</p>
+              </div>
+              <button class="secondary-button" id="realtime-run" type="button">Run realtime coverage</button>
+              <p class="realtime-readout" id="realtime-readout">No frame stream run yet.</p>
+            </div>
           </section>
 
           <section class="software-panel" id="program-panel" aria-labelledby="software-title">

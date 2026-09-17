@@ -1,11 +1,8 @@
 """Small, dependency-free adaptive sonar and water-channel model.
 
-The PS names two demonstration conditions but gives no numeric sensor limits.
-The presets below are explicit demo assumptions, not calibration data. The
-controller is intentionally implementable on the Shrike-Lite RP2040: a
-filtered/median environmental reading selects one of two fixed-point waveform
-profiles, with hysteresis at the boundary, while the FPGA only synthesizes the
-selected pulse.
+The PS gives two named examples, not an exhaustive ocean model.  The catalog
+below therefore covers the useful equivalence classes and input boundaries for
+the bench; its values are test fixtures, not calibration data.
 """
 
 from __future__ import annotations
@@ -41,10 +38,143 @@ SCENARIO_PRESETS: dict[str, dict[str, Any]] = {
             "turbidity_ntu": 2.0,
         },
     },
+    "brackish_transition": {
+        "label": "Brackish transition zone",
+        "description": "A moderate turbidity and salinity transition exercises the controller boundary between the two profiles.",
+        "environment": {
+            "temperature_c": 22.0,
+            "salinity_psu": 15.0,
+            "depth_m": 35.0,
+            "ph": 7.8,
+            "range_m": 180.0,
+            "ambient_noise_db": 45.0,
+            "turbidity_ntu": 60.0,
+        },
+    },
+    "deep_clear_water": {
+        "label": "Deep clear water",
+        "description": "Low turbidity with long propagation distance checks depth-driven attenuation even when the water is optically clear.",
+        "environment": {
+            "temperature_c": 4.0,
+            "salinity_psu": 35.0,
+            "depth_m": 300.0,
+            "ph": 8.0,
+            "range_m": 700.0,
+            "ambient_noise_db": 45.0,
+            "turbidity_ntu": 1.0,
+        },
+    },
+    "deep_muddy_water": {
+        "label": "Deep muddy water",
+        "description": "High turbidity plus depth is the worst-case environmental class for high-frequency scattering and range margin.",
+        "environment": {
+            "temperature_c": 10.0,
+            "salinity_psu": 30.0,
+            "depth_m": 1000.0,
+            "ph": 7.7,
+            "range_m": 1200.0,
+            "ambient_noise_db": 38.0,
+            "turbidity_ntu": 450.0,
+        },
+    },
+    "high_noise_harbor": {
+        "label": "High-noise harbor",
+        "description": "Shallow, turbid water with strong ambient noise checks the detection floor and conservative power response.",
+        "environment": {
+            "temperature_c": 20.0,
+            "salinity_psu": 28.0,
+            "depth_m": 18.0,
+            "ph": 7.9,
+            "range_m": 150.0,
+            "ambient_noise_db": 18.0,
+            "turbidity_ntu": 120.0,
+        },
+    },
+    "cold_freshwater": {
+        "label": "Cold fresh water",
+        "description": "Freshwater and low temperature exercise the lower environmental input limits with a clear channel.",
+        "environment": {
+            "temperature_c": 2.0,
+            "salinity_psu": 0.0,
+            "depth_m": 20.0,
+            "ph": 7.0,
+            "range_m": 100.0,
+            "ambient_noise_db": 50.0,
+            "turbidity_ntu": 5.0,
+        },
+    },
+    "warm_hypersaline": {
+        "label": "Warm hypersaline water",
+        "description": "Warm, high-salinity water exercises the upper temperature/salinity region without relying on a named demo.",
+        "environment": {
+            "temperature_c": 38.0,
+            "salinity_psu": 45.0,
+            "depth_m": 50.0,
+            "ph": 8.4,
+            "range_m": 300.0,
+            "ambient_noise_db": 46.0,
+            "turbidity_ntu": 15.0,
+        },
+    },
+    "boundary_clear": {
+        "label": "Adaptation boundary · clear side",
+        "description": "A mud score just below the hysteresis boundary verifies that the clear profile is retained.",
+        "environment": {
+            "temperature_c": 15.0,
+            "salinity_psu": 35.0,
+            "depth_m": 10.0,
+            "ph": 8.0,
+            "range_m": 100.0,
+            "ambient_noise_db": 48.0,
+            "turbidity_ntu": 99.0,
+        },
+    },
+    "boundary_muddy": {
+        "label": "Adaptation boundary · muddy side",
+        "description": "A mud score just above the switching boundary verifies that the muddy profile is selected.",
+        "environment": {
+            "temperature_c": 15.0,
+            "salinity_psu": 35.0,
+            "depth_m": 10.0,
+            "ph": 8.0,
+            "range_m": 100.0,
+            "ambient_noise_db": 48.0,
+            "turbidity_ntu": 101.0,
+        },
+    },
+    "input_limits_minimum": {
+        "label": "Input limits · minimum",
+        "description": "Lower legal temperature, salinity, depth, pH, range, noise, and turbidity values.",
+        "environment": {
+            "temperature_c": -2.0,
+            "salinity_psu": 0.0,
+            "depth_m": 0.0,
+            "ph": 6.0,
+            "range_m": 1.0,
+            "ambient_noise_db": 0.0,
+            "turbidity_ntu": 0.0,
+        },
+    },
+    "input_limits_maximum": {
+        "label": "Input limits · maximum",
+        "description": "Upper legal temperature, salinity, depth, pH, range, noise, and turbidity values.",
+        "environment": {
+            "temperature_c": 40.0,
+            "salinity_psu": 45.0,
+            "depth_m": 11000.0,
+            "ph": 10.0,
+            "range_m": 20000.0,
+            "ambient_noise_db": 90.0,
+            "turbidity_ntu": 1000.0,
+        },
+    },
 }
 
 SUPPORTED_MODULATIONS = ("lfm", "geom", "bpsk")
 SUPPORTED_WINDOWS = ("rect", "hamming", "hann", "blackman")
+BARKER13 = (1, 1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1)
+F_LO = 100_000.0
+F_HI = 500_000.0
 
 # Existing SIM-5 calibration anchor: two-way loss of the 100 kHz reference at
 # 500 m in temperate coastal water. It is a relative detection budget, not a
@@ -136,7 +266,25 @@ def _q15(value: float) -> int:
     return int(math.floor(_clamp(value, 0.0, 1.0) * Q15_SCALE + 0.5))
 
 
-def adapt_transmit_plan(environment: dict[str, float], previous_class: str | None = None) -> dict[str, Any]:
+def _waveform_settings(modulation: Any, window: Any) -> tuple[str, str, str, str]:
+    mode = str(modulation or "lfm").strip().lower()
+    if mode not in SUPPORTED_MODULATIONS:
+        raise ValueError(f"unsupported modulation: {mode}")
+    requested_window = str(window or ("rect" if mode == "bpsk" else "hann")).strip().lower()
+    if requested_window not in SUPPORTED_WINDOWS:
+        raise ValueError(f"unsupported window: {requested_window}")
+    if mode == "bpsk" and requested_window != "rect":
+        return mode, requested_window, "rect", "phase-coded pulses keep a rectangular envelope to preserve chip correlation"
+    return mode, requested_window, requested_window, "window applied to pulse envelope"
+
+
+def adapt_transmit_plan(
+    environment: dict[str, float],
+    previous_class: str | None = None,
+    modulation: str = "lfm",
+    window: str | None = None,
+    overrides: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Choose the small waveform profile the RP2040 can select in real time."""
     score_q15 = _q15(_mud_score(environment))
     if previous_class == "muddy_estuary":
@@ -155,18 +303,44 @@ def adapt_transmit_plan(environment: dict[str, float], previous_class: str | Non
         classification = "clear_shallow_reef"
         rationale = "wider high-frequency band improves range resolution while margin remains available"
 
+    mode, requested_window, effective_window, windowing_note = _waveform_settings(modulation, window)
+    requested = overrides if isinstance(overrides, dict) else {}
+    base_center = (start_hz + end_hz) / 2.0
+    if "center_frequency_hz" in requested or "bandwidth_hz" in requested:
+        center_hz = _clamp(_number(requested.get("center_frequency_hz"), base_center), F_LO, F_HI)
+        bandwidth_hz = _clamp(_number(requested.get("bandwidth_hz"), end_hz - start_hz), 1_000.0, F_HI - F_LO)
+        start_hz = center_hz - bandwidth_hz / 2.0
+        end_hz = center_hz + bandwidth_hz / 2.0
+        if start_hz < F_LO:
+            end_hz += F_LO - start_hz
+            start_hz = F_LO
+        if end_hz > F_HI:
+            start_hz -= end_hz - F_HI
+            end_hz = F_HI
+            start_hz = max(start_hz, F_LO)
+    else:
+        start_hz = _clamp(_number(requested.get("start_frequency_hz"), start_hz), F_LO, F_HI)
+        end_hz = _clamp(_number(requested.get("end_frequency_hz"), end_hz), F_LO, F_HI)
+    if mode != "bpsk" and end_hz <= start_hz:
+        start_hz, end_hz = max(F_LO, start_hz - 500.0), min(F_HI, end_hz + 500.0)
+    duration_ms = _clamp(_number(requested.get("pulse_duration_ms"), duration_ms), 0.1, 20.0)
+    amplitude = _clamp(_number(requested.get("amplitude"), amplitude), 0.05, 1.0)
+    bandwidth_hz = max(end_hz - start_hz, 1_000.0 if mode != "bpsk" else 1.0)
+
     return {
         "controller": "median-of-three ADC filter → fixed-point lookup → hysteresis",
         "policy": "shrike_lite_environment_lookup",
         "classification": classification,
         "mud_score": round(score_q15 / Q15_SCALE, 4),
         "mud_score_q15": score_q15,
-        "modulation": "lfm",
-        "window": "hann",
+        "modulation": mode,
+        "window": effective_window,
+        "window_requested": requested_window,
+        "windowing_note": windowing_note,
         "start_frequency_hz": start_hz,
         "end_frequency_hz": end_hz,
         "center_frequency_hz": (start_hz + end_hz) / 2.0,
-        "bandwidth_hz": end_hz - start_hz,
+        "bandwidth_hz": bandwidth_hz,
         "pulse_duration_ms": duration_ms,
         "amplitude": amplitude,
         "rationale": rationale,
@@ -225,17 +399,33 @@ def _window_value(kind: str, fraction: float) -> float:
 def pulse_preview(plan: dict[str, Any], count: int = 256) -> list[float]:
     """Return a compact normalized preview of the selected transmitted pulse."""
     count = max(2, min(int(count), 512))
+    modulation = str(plan.get("modulation") or "lfm").strip().lower()
+    if modulation not in SUPPORTED_MODULATIONS:
+        raise ValueError(f"unsupported modulation: {modulation}")
     start_hz = float(plan["start_frequency_hz"])
     end_hz = float(plan["end_frequency_hz"])
+    center_hz = float(plan.get("center_frequency_hz", (start_hz + end_hz) / 2.0))
     duration_s = max(float(plan["pulse_duration_ms"]) / 1000.0, 1e-9)
     sweep_rate = (end_hz - start_hz) / duration_s
+    log_ratio = math.log(max(end_hz, 1.0) / max(start_hz, 1.0)) if modulation == "geom" else 0.0
     values: list[float] = []
     for index in range(count):
         fraction = index / (count - 1)
         time_s = fraction * duration_s
-        cycles = start_hz * time_s + 0.5 * sweep_rate * time_s**2
-        envelope = _window_value(str(plan["window"]), fraction)
-        values.append(round(float(plan["amplitude"]) * envelope * math.sin(2.0 * math.pi * cycles), 6))
+        if modulation == "bpsk":
+            cycles = center_hz * time_s
+            chip = min(len(BARKER13) - 1, int(fraction * len(BARKER13)))
+            phase_code = BARKER13[chip]
+            envelope = 1.0
+        elif modulation == "geom" and abs(log_ratio) > 1e-12:
+            cycles = start_hz * duration_s * math.expm1(log_ratio * fraction) / log_ratio
+            phase_code = 1
+            envelope = _window_value(str(plan["window"]), fraction)
+        else:
+            cycles = start_hz * time_s + 0.5 * sweep_rate * time_s**2
+            phase_code = 1
+            envelope = _window_value(str(plan["window"]), fraction)
+        values.append(round(float(plan["amplitude"]) * envelope * phase_code * math.sin(2.0 * math.pi * cycles), 6))
     return values
 
 

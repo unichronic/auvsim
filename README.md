@@ -41,7 +41,8 @@ The original bench validates one fixed transmitter chain. The local GUI adds
 the experiment loop: up to four configurable sensor channels with distinct
 default behaviors (tone, up-chirp, burst, and dropout), recorded CSV/TXT trace
 import, explicit water/environment controls, a selectable frequency algorithm,
-an explicit software-plugin handoff, and a separate hardware circuit model.
+all three PS waveform families (LFM, geometric, and phase-coded BPSK), an
+explicit software-plugin handoff, and a separate hardware circuit model.
 The patch bay keeps the simulated netlist visible:
 
 ```text
@@ -91,7 +92,10 @@ replace the contract check with an actual compiler/runtime adapter.
 
 `sim6_scenarios.py` is the scenario-level experiment for SIH26058. It runs the
 two conditions named by the PS—**Entering Muddy Estuary** and **Entering Clear
-Shallow Reef**—through three coherent modeled acoustic input channels, the
+Shallow Reef**—plus the interpretable deployment classes: brackish transition,
+deep clear, deep muddy, high-noise harbor, cold freshwater, warm hypersaline,
+both hysteresis-boundary sides, and legal minimum/maximum input limits. Each
+class runs through three coherent modeled acoustic input channels, the
 existing fusion/DDS path, and an adaptive water-channel preview. The three
 channels are a test harness for redundant input fusion, not a claim that the PS
 requires three physical sensors.
@@ -100,12 +104,21 @@ The Shrike-Lite policy is intentionally small and deterministic: condition the
 environment readings, select a fixed-point lookup profile with hysteresis on the
 RP2040, and leave deterministic DDS/window/pulse synthesis to the FPGA. The
 current profiles are LFM + Hann: 100–200 kHz for muddy water and 300–500 kHz
-for clear shallow water. The script also generates the selected integer DAC
-pulse through the SIM-0 waveform path and writes
+for clear shallow water. The coverage matrix also exercises all 12 environment
+classes × 3 waveform families × 4 requested windows, sensor behaviors,
+algorithm choices, hardware limits, invalid inputs, and frame-by-frame
+clear→boundary→muddy→boundary→fault→dropout→recovery transitions. The exact integer DAC
+path is used for LFM, geometric, and BPSK pulse checks. Phase-coded pulses use
+a rectangular envelope even when another window is requested, because tapering
+would change the Barker-chip correlation. The script writes
 `out/sim6_scenario_report.json` plus `out/sim6_scenario_comparison.png`.
-In the GUI, loading either named scenario routes that adaptive pulse through
-the modeled DDS → R-2R → filter → probe chain; Custom water conditions keep the
-continuous DDS exploration mode and show the sonar result as a preview.
+In the GUI, the scenario selector exposes the full catalog and the waveform
+controls select the active modulation/window. Loading any catalog entry routes
+the selected adaptive pulse through the modeled DDS → R-2R → filter → probe
+chain. The **Run realtime coverage** action sends the complete environment
+catalog through all waveform/window combinations in a bounded frame API, then
+injects malformed configuration, sensor dropout, and recovery. Custom water
+conditions can use either continuous DDS exploration or adaptive pulse output.
 
 The sonar result is a relative link-budget preview, not a physical detection
 claim. It currently omits target strength, beam pattern, multipath, transducer
@@ -127,6 +140,14 @@ sensor, hardware, connection, and plugin-contract payload for each run. Add
 authentication and persistent storage before putting sensitive code or shared
 project state behind a public URL. Netlify can serve the static GUI, but the
 current Python API needs a separate service or a JavaScript/TypeScript port.
+
+`POST /api/realtime` accepts a bounded `{base, frames, frame_period_ms}` payload.
+Each frame may update the environment, waveform mode, and sensor state; malformed
+frame data is reported as a recoverable fault; the
+response reports selected profiles, hysteresis transitions, recoverable faults,
+and host-side deadline measurements. It is a stateless deployment preview, not
+a WebSocket or a substitute for measuring the RP2040 timer/DMA loop on the
+target board.
 
 It does not replace ForgeFPGA synthesis, the existing RTL/SPICE stages, or a
 physical sensor/analog test. Those remain separate verification steps, while

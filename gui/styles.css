@@ -195,6 +195,13 @@ textarea:focus-visible,
 .environment-readout span, .environment-readout strong { display: block; overflow-wrap: anywhere; }
 .environment-readout span { color: var(--quiet); font: 8px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
 .environment-readout strong { margin-top: 6px; color: var(--aqua); font: 600 11px/1.25 var(--mono); }
+.transmit-control, .realtime-control { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 1fr); gap: 10px 15px; margin-top: 14px; padding: 13px; border: 1px solid rgba(242, 185, 93, .15); border-radius: 7px; background: rgba(5, 14, 25, .32); }
+.transmit-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.transmit-control > .field-hint, .realtime-readout { grid-column: 1 / -1; margin-top: 0; }
+.realtime-control { border-color: rgba(239, 130, 108, .16); }
+.realtime-control .secondary-button { width: auto; justify-self: end; margin-top: 0; }
+.realtime-readout { display: flex; flex-wrap: wrap; gap: 7px 13px; color: var(--quiet); font: 9px/1.45 var(--mono); }
+.realtime-readout strong { color: var(--aqua); font-weight: 600; }
 
 #nodes { position: absolute; z-index: 2; inset: 0; }
 .node { position: absolute; width: 190px; min-height: 156px; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 12px; background: rgba(12, 28, 45, 0.96); box-shadow: 0 17px 28px rgba(0, 0, 0, 0.22); transition: box-shadow 150ms ease, border-color 150ms ease; }
@@ -369,6 +376,9 @@ textarea:focus-visible,
   .scenario-button { width: 100%; }
   .environment-fields { grid-template-columns: 1fr 1fr; }
   .environment-readout { grid-template-columns: 1fr; }
+  .transmit-control, .realtime-control { grid-template-columns: 1fr; }
+  .transmit-fields { grid-template-columns: 1fr 1fr; }
+  .realtime-control .secondary-button { width: 100%; justify-self: stretch; }
   .program-toolbar { align-items: flex-start; }
   .program-fields { grid-template-columns: 1fr 1fr; }
   .results-header { display: block; }
@@ -383,7 +393,7 @@ textarea:focus-visible,
 }
 
 @media (max-width: 430px) {
-  .workflow-steps, .program-fields, .environment-fields { grid-template-columns: 1fr; }
+  .workflow-steps, .program-fields, .environment-fields, .transmit-fields { grid-template-columns: 1fr; }
   .program-toolbar { display: block; }
   .program-toolbar .file-button { width: 100%; margin-top: 10px; }
 }

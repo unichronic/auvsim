@@ -67,6 +67,33 @@ def main() -> None:
         assert page.locator("#environment-sound-speed").inner_text().endswith("m/s")
         assert page.locator("#mission-scenario").input_value() == "custom"
         assert page.locator("#environment-turbidity").input_value() == "0"
+        assert page.locator("#mission-scenario option").count() == 13
+        assert page.locator("#transmit-modulation option").count() == 3
+        assert page.locator("#transmit-window option").count() == 4
+
+        # Every PS waveform family reaches the full output path. Phase-coded
+        # mode reports the safe rectangular-envelope normalization.
+        page.locator("#transmit-modulation").select_option("geom")
+        page.locator("#transmit-window").select_option("hamming")
+        page.locator("#run-button").click()
+        wait_complete(page)
+        assert "adaptive GEOM pulse" in page.locator("#hardware-checks").inner_text()
+        page.locator("#transmit-modulation").select_option("bpsk")
+        page.locator("#transmit-window").select_option("blackman")
+        page.locator("#run-button").click()
+        wait_complete(page)
+        assert "adaptive BPSK pulse" in page.locator("#hardware-checks").inner_text()
+        assert "BPSK" in page.locator("#sonar-details").inner_text()
+        page.locator("#transmit-modulation").select_option("lfm")
+        page.locator("#transmit-window").select_option("hann")
+
+        # The hosted-equivalent frame stream covers all environment classes,
+        # waveform transitions, and a recoverable dropout.
+        page.locator("#realtime-run").click()
+        page.wait_for_function("document.querySelector('#realtime-readout').textContent.includes('frames processed')")
+        assert "Realtime coverage complete" in page.locator("#run-status").inner_text()
+        assert "2 recoverable fault(s)" in page.locator("#realtime-readout").inner_text()
+        assert "4 windows" in page.locator("#realtime-readout").inner_text()
 
         # The two PS scenarios load real environment inputs and select different
         # adaptive transmit profiles. The selected scenario must reach the API.
@@ -339,6 +366,40 @@ void on_measurement(struct bench_frame *frame) {
             data=json.dumps({"scenario": "not-a-scenario", "sensors": [{"enabled": True}]}),
             headers=headers,
         ).status == 400
+        realtime_response = page.request.post(
+            f"{BASE_URL}/api/realtime",
+            data=json.dumps({
+                "frame_period_ms": 100,
+                "base": {
+                    "sensors": [{"frequency_hz": 200000, "enabled": True}],
+                    "environment": {
+                        "temperature_c": 24,
+                        "salinity_psu": 35,
+                        "depth_m": 8,
+                        "ph": 8.1,
+                        "range_m": 120,
+                        "ambient_noise_db": 48,
+                        "turbidity_ntu": 2,
+                    },
+                    "transmit": {"modulation": "bpsk", "window": "hann"},
+                },
+                "frames": [
+                    {"label": "clear", "environment": {"turbidity_ntu": 2}},
+                    {"label": "muddy", "environment": {"turbidity_ntu": 250}},
+                    {"label": "dropout", "dropout_indices": [0]},
+                    {"label": "recovery", "environment": {"turbidity_ntu": 2}},
+                ],
+            }),
+            headers=headers,
+        )
+        assert realtime_response.status == 200
+        realtime_result = realtime_response.json()
+        assert realtime_result["mode"] == "realtime_frame_stream"
+        assert realtime_result["transitions"]
+        assert realtime_result["faults"]
+        assert realtime_result["frames"][0]["modulation"] == "bpsk"
+        assert realtime_result["frames"][0]["window"] == "rect"
+        assert page.request.get(f"{BASE_URL}/api/realtime").status == 405
         unsupported = {"sensors": [{"enabled": True}], "connections": [{"from": "sensor-1", "to": "r2r"}, {"from": "algorithm", "to": "dds"}, {"from": "dds", "to": "r2r"}, {"from": "r2r", "to": "filter"}, {"from": "filter", "to": "probe"}]}
         assert page.request.post(f"{BASE_URL}/api/simulate", data=json.dumps(unsupported), headers=headers).status == 400
         missing_input = {"sensors": [{"enabled": True}], "connections": [{"from": "algorithm", "to": "dds"}, {"from": "dds", "to": "r2r"}, {"from": "r2r", "to": "filter"}, {"from": "filter", "to": "probe"}]}

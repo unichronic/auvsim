@@ -38,6 +38,75 @@ const SCENARIO_PRESETS = {
     description: "Low suspended sediment and shallow water: spend margin on a wider, higher-frequency pulse for resolution.",
     environment: { temperature_c: 24, salinity_psu: 35, depth_m: 8, ph: 8.1, range_m: 120, ambient_noise_db: 48, turbidity_ntu: 2 },
   },
+  brackish_transition: {
+    label: "Brackish transition zone",
+    description: "A moderate turbidity and salinity transition exercises the controller boundary between the two profiles.",
+    environment: { temperature_c: 22, salinity_psu: 15, depth_m: 35, ph: 7.8, range_m: 180, ambient_noise_db: 45, turbidity_ntu: 60 },
+  },
+  deep_clear_water: {
+    label: "Deep clear water",
+    description: "Low turbidity with long propagation distance checks depth-driven attenuation even when the water is optically clear.",
+    environment: { temperature_c: 4, salinity_psu: 35, depth_m: 300, ph: 8, range_m: 700, ambient_noise_db: 45, turbidity_ntu: 1 },
+  },
+  deep_muddy_water: {
+    label: "Deep muddy water",
+    description: "High turbidity plus depth is the worst-case environmental class for high-frequency scattering and range margin.",
+    environment: { temperature_c: 10, salinity_psu: 30, depth_m: 1000, ph: 7.7, range_m: 1200, ambient_noise_db: 38, turbidity_ntu: 450 },
+  },
+  high_noise_harbor: {
+    label: "High-noise harbor",
+    description: "Shallow, turbid water with strong ambient noise checks the detection floor and conservative power response.",
+    environment: { temperature_c: 20, salinity_psu: 28, depth_m: 18, ph: 7.9, range_m: 150, ambient_noise_db: 18, turbidity_ntu: 120 },
+  },
+  cold_freshwater: {
+    label: "Cold fresh water",
+    description: "Freshwater and low temperature exercise the lower environmental input limits with a clear channel.",
+    environment: { temperature_c: 2, salinity_psu: 0, depth_m: 20, ph: 7, range_m: 100, ambient_noise_db: 50, turbidity_ntu: 5 },
+  },
+  warm_hypersaline: {
+    label: "Warm hypersaline water",
+    description: "Warm, high-salinity water exercises the upper temperature/salinity region without relying on a named demo.",
+    environment: { temperature_c: 38, salinity_psu: 45, depth_m: 50, ph: 8.4, range_m: 300, ambient_noise_db: 46, turbidity_ntu: 15 },
+  },
+  boundary_clear: {
+    label: "Adaptation boundary · clear side",
+    description: "A mud score just below the switching boundary verifies that the clear profile is retained.",
+    environment: { temperature_c: 15, salinity_psu: 35, depth_m: 10, ph: 8, range_m: 100, ambient_noise_db: 48, turbidity_ntu: 99 },
+  },
+  boundary_muddy: {
+    label: "Adaptation boundary · muddy side",
+    description: "A mud score just above the switching boundary verifies that the muddy profile is selected.",
+    environment: { temperature_c: 15, salinity_psu: 35, depth_m: 10, ph: 8, range_m: 100, ambient_noise_db: 48, turbidity_ntu: 101 },
+  },
+  input_limits_minimum: {
+    label: "Input limits · minimum",
+    description: "Lower legal environmental input limits.",
+    environment: { temperature_c: -2, salinity_psu: 0, depth_m: 0, ph: 6, range_m: 1, ambient_noise_db: 0, turbidity_ntu: 0 },
+  },
+  input_limits_maximum: {
+    label: "Input limits · maximum",
+    description: "Upper legal environmental input limits.",
+    environment: { temperature_c: 40, salinity_psu: 45, depth_m: 11000, ph: 10, range_m: 20000, ambient_noise_db: 90, turbidity_ntu: 1000 },
+  },
+};
+
+const MODULATION_LABELS = {
+  lfm: "LFM chirp",
+  geom: "Geometric sweep",
+  bpsk: "Phase-coded BPSK",
+};
+
+const WINDOW_LABELS = {
+  rect: "Rectangular",
+  hamming: "Hamming",
+  hann: "Hann",
+  blackman: "Blackman",
+};
+
+const DEFAULT_TRANSMIT = {
+  modulation: "lfm",
+  window: "hann",
+  output_mode: "adaptive_pulse",
 };
 
 const DEFAULT_POSITIONS = {
@@ -105,6 +174,7 @@ const state = {
   hardware: { ...DEFAULT_HARDWARE },
   environment: { ...DEFAULT_ENVIRONMENT },
   scenario: "custom",
+  transmit: { ...DEFAULT_TRANSMIT },
   software: { ...DEFAULT_SOFTWARE },
   connections: DEFAULT_CONNECTIONS.map((connection) => ({ ...connection })),
 };
@@ -128,6 +198,8 @@ const circuitChain = document.querySelector("#circuit-chain");
 const connectionFrom = document.querySelector("#connection-from");
 const connectionTo = document.querySelector("#connection-to");
 const connectionList = document.querySelector("#connection-list");
+const realtimeButton = document.querySelector("#realtime-run");
+const realtimeReadout = document.querySelector("#realtime-readout");
 
 function setDeploymentStatus() {
   if (!deploymentChip) return;
@@ -218,6 +290,13 @@ function normalizeState() {
 
   state.scenario = ["custom", ...Object.keys(SCENARIO_PRESETS)].includes(state.scenario) ? state.scenario : "custom";
 
+  const transmit = state.transmit && typeof state.transmit === "object" ? state.transmit : {};
+  state.transmit = {
+    modulation: Object.hasOwn(MODULATION_LABELS, transmit.modulation) ? transmit.modulation : DEFAULT_TRANSMIT.modulation,
+    window: Object.hasOwn(WINDOW_LABELS, transmit.window) ? transmit.window : DEFAULT_TRANSMIT.window,
+    output_mode: ["continuous_tone", "adaptive_pulse"].includes(transmit.output_mode) ? transmit.output_mode : DEFAULT_TRANSMIT.output_mode,
+  };
+
   const hardware = state.hardware && typeof state.hardware === "object" ? state.hardware : {};
   state.hardware = {
     clock_hz: Math.max(1000000, Math.min(100000000, finiteNumber(hardware.clock_hz, DEFAULT_HARDWARE.clock_hz))),
@@ -260,6 +339,7 @@ function loadLayout() {
     if (saved.hardware && typeof saved.hardware === "object") state.hardware = { ...state.hardware, ...saved.hardware };
     if (saved.environment && typeof saved.environment === "object") state.environment = { ...state.environment, ...saved.environment };
     if (typeof saved.scenario === "string") state.scenario = saved.scenario;
+    if (saved.transmit && typeof saved.transmit === "object") state.transmit = { ...state.transmit, ...saved.transmit };
     if (saved.software && typeof saved.software === "object") state.software = { ...state.software, ...saved.software };
     if (Array.isArray(saved.connections)) state.connections = saved.connections;
     if (Array.isArray(saved.nodes)) {
@@ -293,6 +373,7 @@ function saveLayout() {
       hardware: state.hardware,
       environment: state.environment,
       scenario: state.scenario,
+      transmit: state.transmit,
       software: state.software,
       connections: state.connections,
     }));
@@ -364,8 +445,26 @@ function renderEnvironmentSummary() {
 function renderScenario() {
   const select = document.querySelector("#mission-scenario");
   const description = document.querySelector("#scenario-description");
-  if (select) select.value = state.scenario;
+  if (select) {
+    const options = ['<option value="custom">Custom water conditions</option>']
+      .concat(Object.entries(SCENARIO_PRESETS).map(([value, preset]) => `<option value="${value}">${escapeHtml(preset.label)}</option>`));
+    if (select.options.length !== options.length) select.innerHTML = options.join("");
+    select.value = state.scenario;
+  }
   if (description) description.textContent = SCENARIO_PRESETS[state.scenario]?.description || "Edit the water controls directly, then run the custom condition.";
+}
+
+function renderTransmit() {
+  const modulation = document.querySelector("#transmit-modulation");
+  const window = document.querySelector("#transmit-window");
+  const mode = document.querySelector("#output-mode");
+  if (modulation) modulation.value = state.transmit.modulation;
+  if (window) window.value = state.transmit.window;
+  if (mode) mode.value = state.transmit.output_mode;
+  const note = document.querySelector("#transmit-note");
+  if (note) note.textContent = state.transmit.modulation === "bpsk" && state.transmit.window !== "rect"
+    ? "Phase-coded mode will use a rectangular envelope to preserve Barker-chip correlation."
+    : "The selected modulation and window are sent through the software → DDS → DAC path.";
 }
 
 function applyScenario(scenario) {
@@ -387,6 +486,7 @@ function applyScenario(scenario) {
     input.removeAttribute("aria-describedby");
   });
   renderScenario();
+  renderTransmit();
   renderEnvironmentSummary();
   renderWorkflow();
   saveLayout();
@@ -416,6 +516,7 @@ function renderEnvironment() {
   });
   renderEnvironmentSummary();
   renderScenario();
+  renderTransmit();
 }
 
 function readEnvironmentState() {
@@ -432,6 +533,19 @@ function readEnvironmentState() {
     state.environment[input.dataset.environmentField] = Number(input.value);
   });
   return valid;
+}
+
+function readTransmitState() {
+  const modulation = document.querySelector("#transmit-modulation");
+  const window = document.querySelector("#transmit-window");
+  const mode = document.querySelector("#output-mode");
+  if (!modulation || !window || !mode) return true;
+  if (!Object.hasOwn(MODULATION_LABELS, modulation.value) || !Object.hasOwn(WINDOW_LABELS, window.value)) return false;
+  state.transmit.modulation = modulation.value;
+  state.transmit.window = window.value;
+  state.transmit.output_mode = mode.value === "adaptive_pulse" ? "adaptive_pulse" : "continuous_tone";
+  renderTransmit();
+  return true;
 }
 
 function inferLanguage(fileName) {
@@ -938,9 +1052,10 @@ function updateWires() {
 function readPayload() {
   const sensorValid = readEditorState();
   const environmentValid = readEnvironmentState();
+  const transmitValid = readTransmitState();
   const hardwareValid = readHardwareState();
   const softwareValid = readSoftwareState();
-  if (!sensorValid || !environmentValid || !hardwareValid || !softwareValid) return null;
+  if (!sensorValid || !environmentValid || !transmitValid || !hardwareValid || !softwareValid) return null;
   const sensors = state.sensors.slice(0, 4).map((sensor) => ({ ...sensor }));
   if (state.software.test_scenario === "sensor_dropout" && sensors.length > 1) sensors[sensors.length - 1].enabled = false;
   if (state.software.test_scenario === "low_coherence" && sensors.length > 1) sensors[sensors.length - 1].frequency_hz = 490000;
@@ -948,6 +1063,8 @@ function readPayload() {
     algorithm: state.algorithm,
     preview_samples: 384,
     scenario: state.scenario,
+    output_mode: state.transmit.output_mode,
+    transmit: { modulation: state.transmit.modulation, window: state.transmit.window },
     sensors,
     environment: { ...state.environment },
     hardware: { ...state.hardware },
@@ -1024,7 +1141,7 @@ function drawWaveform(result) {
     .filter((row) => row.enabled)
     .map((row) => `${row.name} (${row.source === "trace" ? "recorded" : (BEHAVIOR_LABELS[row.behavior] || "modeled")})`)
     .join(", ");
-  const outputSummary = result.hardware.waveform === "adaptive LFM pulse"
+  const outputSummary = result.hardware.waveform.startsWith("adaptive ")
     ? `${result.hardware.waveform} · ${formatKHz(result.hardware.actual_frequency_hz)} centre`
     : `${formatKHz(result.hardware.actual_frequency_hz)} output probe`;
   document.querySelector("#waveform-caption").textContent = `${sourceSummary} → ${ALGORITHM_LABELS[result.algorithm]} → ${outputSummary}.`;
@@ -1070,7 +1187,7 @@ function renderResults(result) {
   const probeDetails = document.querySelector("#probe-details");
   if (probeDetails) probeDetails.textContent = `${result.hardware.filter_gain_db.toFixed(2)} dB filter gain · ${result.hardware.resistor_tolerance_pct.toFixed(1)}% tolerance · ${result.environment.sound_speed_mps.toFixed(1)} m/s water`;
   const sonarVerdict = document.querySelector("#sonar-verdict");
-  const sonarIsTransmitted = result.hardware.waveform === "adaptive LFM pulse";
+  const sonarIsTransmitted = result.hardware.waveform.startsWith("adaptive ");
   if (sonarVerdict) sonarVerdict.textContent = sonarIsTransmitted
     ? (sonar.detected_at_range ? `PASS · ${formatMeters(sonar.predicted_max_range_m)}` : "NO MARGIN")
     : "PREVIEW ONLY";
@@ -1109,6 +1226,65 @@ function clearResults(message) {
   const outputDetail = document.querySelector("#workflow-output-detail");
   if (outputDetail) outputDetail.textContent = "Run to inspect the probe";
   renderWorkflow();
+}
+
+function realtimeCoverageFrames() {
+  const frames = [];
+  const windows = Object.keys(WINDOW_LABELS);
+  const selectedWindow = Math.max(0, windows.indexOf(state.transmit.window));
+  Object.entries(SCENARIO_PRESETS).forEach(([scenario, preset], scenarioIndex) => {
+    Object.keys(MODULATION_LABELS).forEach((modulation, modulationIndex) => {
+      const window = windows[(selectedWindow + scenarioIndex + modulationIndex) % windows.length];
+      frames.push({
+        label: `${preset.label} · ${MODULATION_LABELS[modulation]}`,
+        environment: { ...preset.environment },
+        transmit: { modulation, window },
+      });
+    });
+  });
+  frames.push({ label: "malformed waveform configuration", transmit: { modulation: "unsupported" } });
+  frames.push({ label: "all sensor inputs dropped", dropout_indices: state.sensors.map((_, index) => index) });
+  frames.push({ label: "sensor recovery", environment: { ...SCENARIO_PRESETS.clear_shallow_reef.environment } });
+  return frames;
+}
+
+function renderRealtime(result) {
+  if (!realtimeReadout) return;
+  const ok = result.frames.filter((frame) => frame.status === "ok").length;
+  const faultCount = result.faults.length;
+  const deadline = result.all_deadlines_met ? "deadline met" : "deadline exceeded";
+  realtimeReadout.innerHTML = `<strong>${ok}/${result.frame_count} frames processed</strong><span>${Object.keys(MODULATION_LABELS).length} waveform modes · ${Object.keys(WINDOW_LABELS).length} windows · ${result.transitions.length} profile transitions · ${faultCount} recoverable fault(s) · ${deadline}</span>`;
+}
+
+async function runRealtimeCoverage() {
+  if (!realtimeButton) return;
+  realtimeButton.disabled = true;
+  status.textContent = "Running the environment, waveform, transition, and fault frame stream…";
+  try {
+    const base = readPayload();
+    if (!base) {
+      status.textContent = "Fix the highlighted field before running the realtime coverage stream.";
+      return;
+    }
+    const response = await fetch("/api/realtime", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        frame_period_ms: 100,
+        base,
+        frames: realtimeCoverageFrames(),
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "The realtime stream returned an error.");
+    renderRealtime(result);
+    status.textContent = `Realtime coverage complete: ${result.frames.filter((frame) => frame.status === "ok").length}/${result.frame_count} frames processed.`;
+  } catch (error) {
+    if (realtimeReadout) realtimeReadout.textContent = `Realtime coverage failed: ${error.message}`;
+    status.textContent = `Realtime coverage error: ${error.message}`;
+  } finally {
+    realtimeButton.disabled = false;
+  }
 }
 
 async function runPipeline() {
@@ -1193,6 +1369,14 @@ function wirePalette() {
     if (description) description.textContent = SCENARIO_PRESETS[scenarioSelect.value]?.description || "Edit the water controls directly, then run the custom condition.";
   });
   if (scenarioButton) scenarioButton.addEventListener("click", () => applyScenario(scenarioSelect?.value || "custom"));
+  document.querySelectorAll("#transmit-modulation, #transmit-window, #output-mode").forEach((input) => {
+    input.addEventListener("change", () => {
+      readTransmitState();
+      saveLayout();
+      status.textContent = `${MODULATION_LABELS[state.transmit.modulation]} selected. Run the pipeline to inspect the output.`;
+    });
+  });
+  if (realtimeButton) realtimeButton.addEventListener("click", runRealtimeCoverage);
   document.querySelectorAll("#plugin-name, #plugin-language, #plugin-entrypoint, #test-scenario, #software-code").forEach((input) => {
     const eventName = input.tagName === "SELECT" ? "change" : "input";
     input.addEventListener(eventName, () => {

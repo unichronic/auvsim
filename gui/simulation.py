@@ -496,7 +496,19 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
     if raw_environment is None and scenario_id in SCENARIO_PRESETS:
         raw_environment = scenario_environment(scenario_id)
     environment = _environment_config(raw_environment)
-    transmit_plan = adapt_transmit_plan(environment)
+    transmit_config = payload.get("transmit")
+    if transmit_config is not None and not isinstance(transmit_config, dict):
+        raise ValueError("transmit must be an object")
+    previous_class = payload.get("previous_class")
+    if previous_class not in (None, "muddy_estuary", "clear_shallow_reef"):
+        raise ValueError("previous_class must be muddy_estuary, clear_shallow_reef, or null")
+    transmit_plan = adapt_transmit_plan(
+        environment,
+        previous_class=previous_class,
+        modulation=(transmit_config or {}).get("modulation", "lfm"),
+        window=(transmit_config or {}).get("window"),
+        overrides=transmit_config,
+    )
     sonar = evaluate_sonar(transmit_plan, environment)
     software = _software_contract(payload.get("software"), requested_algorithm)
     algorithm = software["algorithm"]
@@ -548,7 +560,10 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
 
     estimate_hz, selected_index = _algorithm(rows, algorithm)
     estimate_hz = _clamp(estimate_hz, F_LO, F_HI)
-    adaptive_output = scenario_id in SCENARIO_PRESETS
+    output_mode = str(payload.get("output_mode") or ("adaptive_pulse" if scenario_id in SCENARIO_PRESETS else "continuous_tone"))
+    if output_mode not in {"continuous_tone", "adaptive_pulse"}:
+        raise ValueError("output_mode must be continuous_tone or adaptive_pulse")
+    adaptive_output = output_mode == "adaptive_pulse"
     output_request_hz = float(transmit_plan["center_frequency_hz"]) if adaptive_output else estimate_hz
     if adaptive_output:
         raw_output, dac_codes = _adaptive_pulse_preview(transmit_plan, preview_count, dac_bits)
@@ -593,7 +608,11 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
         "coherence": round(_coherence(rows), 4),
         "hardware": {
             "stage": "DDS → R-2R DAC → reconstruction filter → output probe",
-            "waveform": "adaptive LFM pulse" if adaptive_output else "continuous DDS tone",
+            "waveform": (
+                f"adaptive {transmit_plan['modulation'].upper()} pulse"
+                if adaptive_output
+                else "continuous DDS tone"
+            ),
             "pulse_duration_ms": transmit_plan["pulse_duration_ms"] if adaptive_output else None,
             "clock_hz": clock_hz,
             "phase_bits": phase_bits,
