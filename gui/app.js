@@ -1,10 +1,20 @@
 const STORAGE_KEY = "presilicon-bench-gui-v1";
+const MAX_SOURCE_CHARS = 100000;
+const MAX_TRACE_SAMPLES = 4096;
+
+const BEHAVIOR_LABELS = {
+  tone: "Steady tone",
+  chirp_up: "Up-chirp sweep",
+  chirp_down: "Down-chirp sweep",
+  burst: "Burst / gated tone",
+  dropout: "Intermittent dropout",
+};
 
 const DEFAULT_SENSORS = [
-  { name: "Sensor 1", frequency_hz: 180000, amplitude: 0.92, phase_deg: 0, noise_db: 48, enabled: true, color: "#67d7ce" },
-  { name: "Sensor 2", frequency_hz: 205000, amplitude: 0.76, phase_deg: 28, noise_db: 48, enabled: true, color: "#6d9fff" },
-  { name: "Sensor 3", frequency_hz: 198000, amplitude: 0.64, phase_deg: -18, noise_db: 48, enabled: true, color: "#b98ff7" },
-  { name: "Sensor 4", frequency_hz: 350000, amplitude: 0.28, phase_deg: 55, noise_db: 42, enabled: true, color: "#ef826c" },
+  { name: "Sensor 1", frequency_hz: 180000, amplitude: 0.92, phase_deg: 0, noise_db: 48, behavior: "tone", sweep_hz: 50000, source: "model", source_file: "", samples: [], enabled: true, color: "#67d7ce" },
+  { name: "Sensor 2", frequency_hz: 205000, amplitude: 0.76, phase_deg: 28, noise_db: 48, behavior: "chirp_up", sweep_hz: 50000, source: "model", source_file: "", samples: [], enabled: true, color: "#6d9fff" },
+  { name: "Sensor 3", frequency_hz: 198000, amplitude: 0.64, phase_deg: -18, noise_db: 48, behavior: "burst", sweep_hz: 50000, source: "model", source_file: "", samples: [], enabled: true, color: "#b98ff7" },
+  { name: "Sensor 4", frequency_hz: 350000, amplitude: 0.28, phase_deg: 55, noise_db: 42, behavior: "dropout", sweep_hz: 50000, source: "model", source_file: "", samples: [], enabled: true, color: "#ef826c" },
 ];
 
 const DEFAULT_POSITIONS = {
@@ -38,6 +48,7 @@ const DEFAULT_SOFTWARE = {
   language: "c",
   entrypoint: "on_measurement",
   test_scenario: "nominal",
+  source_file: "signal_adapter.c",
   code: `// bench-v1 software adapter
 void on_measurement(struct bench_frame *frame) {
     bench_set_algorithm_from_config(frame);
@@ -106,6 +117,14 @@ function finiteNumber(value, fallback) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+function boundedTraceSamples(value) {
+  if (!Array.isArray(value)) return [];
+  return value.slice(0, MAX_TRACE_SAMPLES)
+    .map((sample) => finiteNumber(sample, Number.NaN))
+    .filter((sample) => Number.isFinite(sample))
+    .map((sample) => Math.max(-1.5, Math.min(1.5, sample)));
+}
+
 function booleanValue(value, fallback) {
   if (typeof value === "boolean") return value;
   if (typeof value === "string") {
@@ -129,6 +148,8 @@ function normalizeState() {
   state.sensors = sensors.slice(0, 4).map((sensor, index) => {
     const base = DEFAULT_SENSORS[index];
     const source = sensor && typeof sensor === "object" ? sensor : {};
+    const traceSamples = boundedTraceSamples(source.samples);
+    const hasTrace = source.source === "trace" && traceSamples.length >= 2;
     return {
       ...base,
       ...source,
@@ -137,6 +158,13 @@ function normalizeState() {
       amplitude: Math.max(0.05, Math.min(1, finiteNumber(source.amplitude, base.amplitude))),
       phase_deg: Math.max(-180, Math.min(180, finiteNumber(source.phase_deg, base.phase_deg))),
       noise_db: Math.max(0, Math.min(90, finiteNumber(source.noise_db, base.noise_db))),
+      behavior: Object.hasOwn(BEHAVIOR_LABELS, source.behavior) ? source.behavior : base.behavior,
+      sweep_hz: Math.max(0, Math.min(400000, finiteNumber(source.sweep_hz, base.sweep_hz))),
+      source: hasTrace ? "trace" : "model",
+      source_file: hasTrace && typeof source.source_file === "string"
+        ? source.source_file.trim().slice(0, 128)
+        : "",
+      samples: hasTrace ? traceSamples : [],
       enabled: booleanValue(source.enabled, base.enabled),
       color: base.color,
     };
@@ -169,7 +197,8 @@ function normalizeState() {
     language: ["c", "cpp", "python"].includes(software.language) ? software.language : DEFAULT_SOFTWARE.language,
     entrypoint: typeof software.entrypoint === "string" && software.entrypoint.trim() ? software.entrypoint.trim().slice(0, 64) : DEFAULT_SOFTWARE.entrypoint,
     test_scenario: ["nominal", "sensor_dropout", "low_coherence"].includes(software.test_scenario) ? software.test_scenario : DEFAULT_SOFTWARE.test_scenario,
-    code: typeof software.code === "string" && software.code.trim() ? software.code.slice(0, 100000) : DEFAULT_SOFTWARE.code,
+    source_file: typeof software.source_file === "string" && software.source_file.trim() ? software.source_file.trim().slice(0, 128) : DEFAULT_SOFTWARE.source_file,
+    code: typeof software.code === "string" && software.code.trim() ? software.code.slice(0, MAX_SOURCE_CHARS) : DEFAULT_SOFTWARE.code,
   };
 
   const validConnectionIds = new Set([...sensorIds, "algorithm", "dds", "r2r", "filter", "probe"]);
@@ -234,12 +263,117 @@ function escapeHtml(value) {
   return String(value).replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
 }
 
+function sensorSourceLabel(sensor) {
+  if (sensor.source === "trace" && sensor.samples.length >= 2) {
+    return `RECORDED · ${sensor.source_file || "trace"} · ${sensor.samples.length} samples`;
+  }
+  return `MODELED · ${BEHAVIOR_LABELS[sensor.behavior] || BEHAVIOR_LABELS.tone}`;
+}
+
+function renderWorkflow() {
+  const recorded = state.sensors.filter((sensor) => sensor.source === "trace" && sensor.samples.length >= 2).length;
+  const modeled = state.sensors.length - recorded;
+  const enabled = state.sensors.filter((sensor) => sensor.enabled).length;
+  const inputDetail = document.querySelector("#workflow-input-detail");
+  if (inputDetail) inputDetail.textContent = `${state.sensors.length} channel${state.sensors.length === 1 ? "" : "s"} · ${enabled} enabled · ${modeled} modeled${recorded ? ` · ${recorded} recorded` : ""}`;
+  const programDetail = document.querySelector("#workflow-program-detail");
+  if (programDetail) programDetail.textContent = `${state.software.source_file || "inline program"} · ready to check`;
+  const hardwareDetail = document.querySelector("#workflow-hardware-detail");
+  if (hardwareDetail) hardwareDetail.textContent = `${HARDWARE_STAGES.map((stage) => stage.label.replace(/^\d+-bit /, "")).join(" → ")}`;
+}
+
+function inferLanguage(fileName) {
+  const extension = String(fileName).toLowerCase().split(".").pop();
+  if (extension === "py") return "python";
+  if (["cc", "cpp", "cxx"].includes(extension)) return "cpp";
+  return "c";
+}
+
+function parseTrace(text) {
+  const samples = [];
+  const lines = String(text).split(/\r?\n/);
+  const dataLineCount = lines.filter((rawLine) => {
+    const line = rawLine.trim();
+    return line && !line.startsWith("#") && line.split(/[,;\t ]+/).some((token) => Number.isFinite(Number(token)));
+  }).length;
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) continue;
+    const tokens = line.split(/[,;\t ]+/).filter(Boolean);
+    const numeric = tokens.map((token) => Number(token)).filter((value) => Number.isFinite(value));
+    if (!numeric.length) continue;
+    const values = dataLineCount > 1 && numeric.length > 1 ? [numeric[numeric.length - 1]] : numeric;
+    for (const value of values) {
+      samples.push(Math.max(-1.5, Math.min(1.5, value)));
+      if (samples.length >= MAX_TRACE_SAMPLES) return samples;
+    }
+  }
+  return samples;
+}
+
+async function loadProgramFile(input) {
+  const file = input.files?.[0];
+  if (!file) return;
+  try {
+    const code = await file.text();
+    if (code.length > MAX_SOURCE_CHARS) throw new Error("that program is larger than 100,000 characters");
+    state.software.code = code;
+    state.software.source_file = file.name.trim().slice(0, 128) || DEFAULT_SOFTWARE.source_file;
+    state.software.language = inferLanguage(file.name);
+    renderSoftwareEditor();
+    renderBoard();
+    renderWorkflow();
+    saveLayout();
+    status.textContent = `Loaded ${state.software.source_file}. The source is ready for a contract check.`;
+  } catch (error) {
+    status.textContent = `Program file not loaded: ${error.message}`;
+  } finally {
+    input.value = "";
+  }
+}
+
+async function loadSensorTrace(input) {
+  const file = input.files?.[0];
+  const index = Number(input.dataset.sensorFile);
+  if (!file || !state.sensors[index]) return;
+  try {
+    if (file.size > 512000) throw new Error("the trace file must be smaller than 512 KB");
+    const samples = parseTrace(await file.text());
+    if (samples.length < 2) throw new Error("the file needs at least two numeric samples");
+    state.sensors[index].source = "trace";
+    state.sensors[index].source_file = file.name.trim().slice(0, 128) || "recorded-trace.csv";
+    state.sensors[index].samples = samples;
+    renderBoard();
+    renderWorkflow();
+    saveLayout();
+    status.textContent = `Loaded ${state.sensors[index].source_file} into ${state.sensors[index].name}. Run the bench to use the recorded samples.`;
+  } catch (error) {
+    status.textContent = `Sensor trace not loaded: ${error.message}`;
+  } finally {
+    input.value = "";
+  }
+}
+
+function useModeledSensor(index) {
+  const sensor = state.sensors[index];
+  if (!sensor) return;
+  sensor.source = "model";
+  sensor.source_file = "";
+  sensor.samples = [];
+  renderBoard();
+  renderWorkflow();
+  saveLayout();
+  status.textContent = `${sensor.name} is using the ${BEHAVIOR_LABELS[sensor.behavior]} model.`;
+}
+
 function dragGrip() {
   return '<span class="drag-grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>';
 }
 
 function sensorMarkup(sensor, index) {
   const sensorId = `sensor-${index + 1}`;
+  const traceLoaded = sensor.source === "trace" && sensor.samples.length >= 2;
+  const sourceLabel = sensorSourceLabel(sensor);
   return `
     <article class="node sensor" data-node-id="${sensorId}" data-kind="sensor" aria-label="${escapeHtml(sensor.name)} sensor input">
       <div class="node-top">
@@ -253,53 +387,62 @@ function sensorMarkup(sensor, index) {
           <div class="field"><label for="sensor-${index}-amplitude">amplitude</label><input id="sensor-${index}-amplitude" data-sensor-index="${index}" data-sensor-field="amplitude" type="number" min="0.05" max="1" step="0.01" value="${sensor.amplitude}" required></div>
           <div class="field"><label for="sensor-${index}-phase">phase / deg</label><input id="sensor-${index}-phase" data-sensor-index="${index}" data-sensor-field="phase_deg" type="number" min="-180" max="180" step="1" value="${sensor.phase_deg}" required></div>
           <div class="field"><label for="sensor-${index}-noise">noise / dBc</label><input id="sensor-${index}-noise" data-sensor-index="${index}" data-sensor-field="noise_db" type="number" min="0" max="90" step="1" value="${sensor.noise_db}" required></div>
+          <div class="field field-wide"><label for="sensor-${index}-behavior">behavior model</label><select id="sensor-${index}-behavior" data-sensor-index="${index}" data-sensor-field="behavior">
+            ${Object.entries(BEHAVIOR_LABELS).map(([value, label]) => `<option value="${value}" ${sensor.behavior === value ? "selected" : ""}>${label}</option>`).join("")}
+          </select></div>
+          <div class="field field-wide"><label for="sensor-${index}-sweep">sweep span / Hz <span class="inline-hint">(chirp only)</span></label><input id="sensor-${index}-sweep" data-sensor-index="${index}" data-sensor-field="sweep_hz" type="number" min="0" max="400000" step="1000" value="${sensor.sweep_hz}" required></div>
         </div>
         <label class="toggle-field"><input data-sensor-index="${index}" data-sensor-field="enabled" type="checkbox" ${sensor.enabled ? "checked" : ""}> include this channel</label>
-        <div class="node-foot"><i></i> deterministic input stream</div>
+        <div class="trace-control">
+          <label class="file-button compact-file-button" for="sensor-${index}-file">Load trace<input id="sensor-${index}-file" type="file" accept=".csv,.txt" data-sensor-file="${index}" aria-describedby="sensor-${index}-source"></label>
+          <button class="text-button" type="button" data-clear-sensor-file="${index}" ${traceLoaded ? "" : "disabled"}>Use model</button>
+        </div>
+        <small class="source-readout" id="sensor-${index}-source">${escapeHtml(sourceLabel)}</small>
+        <div class="node-foot"><i></i> ${traceLoaded ? "recorded input stream" : "behavior model input"}</div>
       </div>
     </article>`;
 }
 
 function algorithmMarkup() {
   return `
-    <article class="node algorithm" data-node-id="algorithm" data-kind="algorithm" aria-label="Algorithm stage">
+    <article class="node algorithm" data-node-id="algorithm" data-kind="algorithm" aria-label="Programmable algorithm module">
       <div class="node-top">
-        <span class="drag-handle" draggable="true" tabindex="0" role="button" aria-label="Move algorithm stage">${dragGrip()} drag to move</span>
-        <button class="node-remove" type="button" disabled aria-label="Algorithm stage is required">×</button>
+        <span class="drag-handle" draggable="true" tabindex="0" role="button" aria-label="Move program module">${dragGrip()} drag to move</span>
+        <button class="node-remove" type="button" disabled aria-label="Program module is required">×</button>
       </div>
-      <div class="node-heading"><strong>Algorithm</strong><span>DECIDE</span></div>
+      <div class="node-heading"><strong>Program module</strong><span>RUN</span></div>
       <div class="node-body">
         <div class="field field-wide"><label for="algorithm-select">selection rule</label><select id="algorithm-select">
           ${Object.entries(ALGORITHM_LABELS).map(([value, label]) => `<option value="${value}" ${state.algorithm === value ? "selected" : ""}>${label}</option>`).join("")}
         </select></div>
-        <p class="algorithm-copy"><strong>Input:</strong> estimated frequency + RMS from each enabled sensor.</p>
-        <div class="node-foot"><i></i> active decision stage</div>
+        <p class="algorithm-copy"><strong>Source:</strong> ${escapeHtml(state.software.source_file || "inline program")}<br><strong>Uses:</strong> estimated frequency + RMS from enabled inputs.</p>
+        <div class="node-foot"><i></i> program contract stage</div>
       </div>
     </article>`;
 }
 
 function hardwareMarkup() {
   return `
-    <article class="node hardware" data-node-id="hardware" data-kind="hardware" aria-label="Hardware output stage">
+    <article class="node hardware" data-node-id="hardware" data-kind="hardware" aria-label="Hardware chain after the program">
       <div class="node-top">
-        <span class="drag-handle" draggable="true" tabindex="0" role="button" aria-label="Move hardware output stage">${dragGrip()} drag to move</span>
-        <button class="node-remove" type="button" disabled aria-label="Hardware output stage is required">×</button>
+        <span class="drag-handle" draggable="true" tabindex="0" role="button" aria-label="Move hardware chain">${dragGrip()} drag to move</span>
+        <button class="node-remove" type="button" disabled aria-label="Hardware chain is required">×</button>
       </div>
-      <div class="node-heading"><strong>Hardware output</strong><span>EMIT</span></div>
+      <div class="node-heading"><strong>Hardware chain</strong><span>AFTER PROGRAM</span></div>
       <div class="node-body">
-        <p class="hardware-copy"><strong>32-bit DDS</strong> phase accumulator feeding an <strong>8-bit R-2R</strong> output preview.</p>
+        <p class="hardware-copy"><strong>DDS</strong> → <strong>R-2R</strong> → <strong>filter</strong> → <strong>probe</strong>. The configurable cards below expose each stage.</p>
         <div class="field-grid">
-          <div class="field"><span>clock / Hz</span><input type="text" value="10,000,000" readonly aria-label="Hardware clock frequency, 10 million hertz"></div>
-          <div class="field"><span>DAC / bits</span><input type="text" value="8" readonly aria-label="DAC resolution, 8 bits"></div>
+          <div class="field"><span>clock / Hz</span><input id="board-hardware-clock" type="text" value="${Number(state.hardware.clock_hz).toLocaleString("en-US")}" readonly aria-label="Hardware clock frequency summary"></div>
+          <div class="field"><span>DAC / bits</span><input id="board-hardware-dac" type="text" value="${state.hardware.dac_bits}" readonly aria-label="DAC resolution summary"></div>
         </div>
-        <div class="node-foot"><i></i> output frequency probe</div>
+        <div class="node-foot"><i></i> output probe follows filter</div>
       </div>
     </article>`;
 }
 
 function componentLabel(id) {
   if (id.startsWith("sensor-")) return `Sensor ${id.split("-")[1]}`;
-  if (id === "algorithm") return "Algorithm stage";
+  if (id === "algorithm") return "Program module";
   return HARDWARE_STAGES.find((stage) => stage.id === id)?.label || id;
 }
 
@@ -346,11 +489,19 @@ function renderCircuit() {
       input.removeAttribute("aria-invalid");
       input.removeAttribute("aria-describedby");
       state.hardware[field] = Number(input.value);
+      syncHardwareSummary();
       saveLayout();
       status.textContent = "Hardware specification changed. Run the co-simulation to apply it.";
     });
   });
   renderConnectionControls();
+}
+
+function syncHardwareSummary() {
+  const clock = document.querySelector("#board-hardware-clock");
+  const dac = document.querySelector("#board-hardware-dac");
+  if (clock) clock.value = Number(state.hardware.clock_hz).toLocaleString("en-US");
+  if (dac) dac.value = state.hardware.dac_bits;
 }
 
 function renderConnectionControls() {
@@ -388,6 +539,9 @@ function renderSoftwareEditor() {
     const element = document.querySelector(`#${id}`);
     if (element) element.value = value;
   });
+  const fileName = document.querySelector("#program-file-name");
+  if (fileName) fileName.textContent = state.software.source_file || "inline program";
+  renderWorkflow();
 }
 
 function readHardwareState() {
@@ -413,6 +567,7 @@ function readSoftwareState() {
   state.software.entrypoint = document.querySelector("#plugin-entrypoint")?.value.trim() || DEFAULT_SOFTWARE.entrypoint;
   state.software.test_scenario = document.querySelector("#test-scenario")?.value || DEFAULT_SOFTWARE.test_scenario;
   state.software.code = code?.value || "";
+  state.software.source_file = state.software.source_file || DEFAULT_SOFTWARE.source_file;
   if (code && !code.checkValidity()) {
     code.setAttribute("aria-invalid", "true");
     code.setAttribute("aria-describedby", "run-status");
@@ -443,7 +598,7 @@ function readEditorState() {
     }
     input.removeAttribute("aria-invalid");
     input.removeAttribute("aria-describedby");
-    state.sensors[index][field] = Number(input.value);
+    state.sensors[index][field] = field === "behavior" ? input.value : Number(input.value);
   });
   const select = document.querySelector("#algorithm-select");
   if (select) state.algorithm = select.value;
@@ -485,6 +640,11 @@ function renderBoard() {
   nodes.innerHTML = "";
   const sensorCount = state.nodes.filter((id) => id.startsWith("sensor-")).length;
   dropHint.hidden = sensorCount >= 4;
+  const sensorPalette = document.querySelector('[data-add-kind="sensor"]');
+  if (sensorPalette) {
+    sensorPalette.disabled = sensorCount >= 4;
+    sensorPalette.title = sensorCount >= 4 ? "The bench supports up to four sensor inputs" : "Add a sensor input";
+  }
   for (const nodeId of state.nodes) {
     if (nodeId.startsWith("sensor-")) {
       const index = Number(nodeId.split("-")[1]) - 1;
@@ -503,15 +663,24 @@ function renderBoard() {
   });
   document.querySelectorAll(".drag-handle").forEach(makeNodeDraggable);
   document.querySelectorAll("[data-remove-node]").forEach((button) => button.addEventListener("click", () => removeNode(button.dataset.removeNode)));
-  document.querySelectorAll("[data-sensor-field]").forEach((input) => input.addEventListener("input", () => {
-    const valid = readEditorState();
-    if (valid) {
-      saveLayout();
-      status.textContent = "Input changed. Run the pipeline to apply it.";
-    } else {
-      status.textContent = "Fix the highlighted sensor field before running the pipeline.";
-    }
-  }));
+  document.querySelectorAll("[data-sensor-field]").forEach((input) => {
+    const eventName = input.tagName === "SELECT" ? "change" : "input";
+    input.addEventListener(eventName, () => {
+      const valid = readEditorState();
+      if (valid) {
+        const index = Number(input.dataset.sensorIndex);
+        const sourceReadout = document.querySelector(`#sensor-${index}-source`);
+        if (sourceReadout) sourceReadout.textContent = sensorSourceLabel(state.sensors[index]);
+        renderWorkflow();
+        saveLayout();
+        status.textContent = "Input changed. Run the pipeline to apply it.";
+      } else {
+        status.textContent = "Fix the highlighted sensor field before running the pipeline.";
+      }
+    });
+  });
+  document.querySelectorAll("[data-sensor-file]").forEach((input) => input.addEventListener("change", () => loadSensorTrace(input)));
+  document.querySelectorAll("[data-clear-sensor-file]").forEach((button) => button.addEventListener("click", () => useModeledSensor(Number(button.dataset.clearSensorFile))));
   const select = document.querySelector("#algorithm-select");
   if (select) select.addEventListener("change", () => {
     state.algorithm = select.value;
@@ -520,6 +689,7 @@ function renderBoard() {
   });
   requestAnimationFrame(updateWires);
   renderCircuit();
+  renderWorkflow();
   saveLayout();
 }
 
@@ -688,7 +858,11 @@ function drawWaveform(result) {
     context.stroke();
   }
   context.globalAlpha = 1;
-  document.querySelector("#waveform-caption").textContent = `${result.active_sensor_names.join(", ")} → ${ALGORITHM_LABELS[result.algorithm]} → ${formatKHz(result.hardware.actual_frequency_hz)} output probe.`;
+  const sourceSummary = result.sensor_rows
+    .filter((row) => row.enabled)
+    .map((row) => `${row.name} (${row.source === "trace" ? "recorded" : (BEHAVIOR_LABELS[row.behavior] || "modeled")})`)
+    .join(", ");
+  document.querySelector("#waveform-caption").textContent = `${sourceSummary} → ${ALGORITHM_LABELS[result.algorithm]} → ${formatKHz(result.hardware.actual_frequency_hz)} output probe.`;
 }
 
 function renderFrequencyBars(result) {
@@ -718,7 +892,7 @@ function renderResults(result) {
   const softwareVerdict = document.querySelector("#software-verdict");
   if (softwareVerdict) softwareVerdict.textContent = result.software.passed ? "Contract passed" : "Contract failed";
   const softwareChecks = document.querySelector("#software-checks");
-  if (softwareChecks) softwareChecks.textContent = `${result.software.plugin_name} · ${result.software.checks.join(" · ")}`;
+  if (softwareChecks) softwareChecks.textContent = `${result.software.source_file || result.software.plugin_name} · ${result.software.checks.join(" · ")}`;
   const hardwareVerdict = document.querySelector("#hardware-verdict");
   if (hardwareVerdict) hardwareVerdict.textContent = `${result.connections.length} connections valid`;
   const hardwareChecks = document.querySelector("#hardware-checks");
@@ -729,6 +903,9 @@ function renderResults(result) {
   if (probeDetails) probeDetails.textContent = `${result.hardware.filter_gain_db.toFixed(2)} dB filter gain · ${result.hardware.resistor_tolerance_pct.toFixed(1)}% tolerance`;
   const pluginStatus = document.querySelector("#plugin-status");
   if (pluginStatus) pluginStatus.textContent = result.software.passed ? "BENCH-V1 CONTRACT PASSED" : "BENCH-V1 CONTRACT FAILED";
+  const outputDetail = document.querySelector("#workflow-output-detail");
+  if (outputDetail) outputDetail.textContent = `${formatKHz(result.hardware.actual_frequency_hz)} · ${result.hardware.peak_voltage_v.toFixed(3)} Vpk at probe`;
+  renderWorkflow();
   renderFrequencyBars(result);
   drawWaveform(result);
 }
@@ -752,6 +929,9 @@ function clearResults(message) {
   if (hardwareChecks) hardwareChecks.textContent = "Resolve the circuit error and run again.";
   const probeDetails = document.querySelector("#probe-details");
   if (probeDetails) probeDetails.textContent = "No current output probe result";
+  const outputDetail = document.querySelector("#workflow-output-detail");
+  if (outputDetail) outputDetail.textContent = "Run to inspect the probe";
+  renderWorkflow();
 }
 
 async function runPipeline() {
@@ -827,11 +1007,17 @@ function wirePalette() {
     renderConnectionControls();
     status.textContent = `${componentLabel(from)} connected to ${componentLabel(to)}. Run the co-simulation to validate it.`;
   });
-  document.querySelectorAll("#plugin-name, #plugin-language, #plugin-entrypoint, #test-scenario, #software-code").forEach((input) => input.addEventListener("input", () => {
-    readSoftwareState();
-    saveLayout();
-    document.querySelector("#plugin-status").textContent = "BENCH-V1 CONTRACT NOT RUN";
-  }));
+  const programFile = document.querySelector("#program-file");
+  if (programFile) programFile.addEventListener("change", () => loadProgramFile(programFile));
+  document.querySelectorAll("#plugin-name, #plugin-language, #plugin-entrypoint, #test-scenario, #software-code").forEach((input) => {
+    const eventName = input.tagName === "SELECT" ? "change" : "input";
+    input.addEventListener(eventName, () => {
+      readSoftwareState();
+      renderWorkflow();
+      saveLayout();
+      document.querySelector("#plugin-status").textContent = "BENCH-V1 CONTRACT NOT RUN";
+    });
+  });
   document.querySelector("#reset-layout").addEventListener("click", () => {
     state.positions = structuredClone(DEFAULT_POSITIONS);
     renderBoard();

@@ -22,74 +22,47 @@
 
       <main class="dashboard">
         <aside class="toolbox" aria-labelledby="toolbox-title">
-          <div class="section-kicker">01 / build the chain</div>
-          <h1 id="toolbox-title">Signal bench</h1>
-          <p class="intro">Build the signal path, tune the physical model, and run your software handoff against the circuit.</p>
+          <div class="section-kicker">01 / configure inputs</div>
+          <h1 id="toolbox-title">Start here</h1>
+          <p class="intro">Choose the sensor inputs, attach your program, tune the hardware chain, then run one complete bench pass.</p>
 
           <section class="palette-section" aria-labelledby="palette-title">
-            <div class="section-label" id="palette-title">Component palette</div>
-            <p class="helper">Click to add, or drag onto the board.</p>
-            <div class="palette" role="list">
-              <button class="palette-item sensor-palette" type="button" draggable="true" data-add-kind="sensor" role="listitem">
+            <div class="section-label" id="palette-title">Add a sensor input</div>
+            <p class="helper">Add up to four inputs. The algorithm and hardware stages are fixed below so the complete signal path stays visible.</p>
+            <ul class="palette">
+              <li><button class="palette-item sensor-palette" type="button" draggable="true" data-add-kind="sensor">
                 <span class="palette-icon" aria-hidden="true">∿</span>
                 <span><strong>Sensor input</strong><small>frequency · phase · noise</small></span>
                 <span class="add-glyph" aria-hidden="true">＋</span>
-              </button>
-              <button class="palette-item algorithm-palette" type="button" draggable="true" data-add-kind="algorithm" role="listitem">
-                <span class="palette-icon" aria-hidden="true">∑</span>
-                <span><strong>Algorithm stage</strong><small>fusion / vote / pick</small></span>
-                <span class="add-glyph" aria-hidden="true">＋</span>
-              </button>
-              <button class="palette-item hardware-palette" type="button" draggable="true" data-add-kind="hardware" role="listitem">
-                <span class="palette-icon" aria-hidden="true">⌁</span>
-                <span><strong>Hardware output</strong><small>DDS → R-2R → tag</small></span>
-                <span class="add-glyph" aria-hidden="true">＋</span>
-              </button>
-            </div>
+              </button></li>
+            </ul>
           </section>
 
           <section class="bench-actions" aria-labelledby="actions-title">
-            <div class="section-label" id="actions-title">Bench controls</div>
+            <div class="section-label" id="actions-title">Run this bench</div>
+            <p class="helper">Your first run uses the example program and modeled sensor inputs. Change anything first if you want to test a different case.</p>
             <button class="run-button" id="run-button" type="button">
               <span class="run-dot" aria-hidden="true"></span>
               Run co-simulation
               <span class="button-arrow" aria-hidden="true">↗</span>
             </button>
             <button class="secondary-button" id="reset-layout" type="button">Reset board layout</button>
-            <p class="run-status" id="run-status" role="status" aria-live="polite">Ready. Four channels are loaded.</p>
-          </section>
-
-          <section class="software-panel" aria-labelledby="software-title">
-            <div class="section-label" id="software-title">Software plugin</div>
-            <p class="helper">Paste the adapter that turns measured frames into hardware commands.</p>
-            <div class="plugin-state"><i aria-hidden="true"></i><span id="plugin-status">BENCH-V1 CONTRACT READY</span></div>
-            <div class="field-grid sidebar-fields">
-              <div class="field"><label for="plugin-name">plugin name</label><input id="plugin-name" type="text" maxlength="64" value="Signal fusion adapter"></div>
-              <div class="field"><label for="plugin-language">language</label><select id="plugin-language"><option value="c">C / firmware</option><option value="cpp">C++ / firmware</option><option value="python">Python / host</option></select></div>
-              <div class="field field-wide"><label for="plugin-entrypoint">entrypoint</label><input id="plugin-entrypoint" type="text" maxlength="64" value="on_measurement"></div>
-              <div class="field field-wide"><label for="test-scenario">test scenario</label><select id="test-scenario"><option value="nominal">Nominal frame stream</option><option value="sensor_dropout">Sensor 4 dropout</option><option value="low_coherence">Low-coherence inputs</option></select></div>
-            </div>
-            <label class="code-label" for="software-code">adapter code</label>
-            <textarea id="software-code" rows="9" spellcheck="false" required aria-describedby="software-hint">// bench-v1 software adapter
-void on_measurement(struct bench_frame *frame) {
-    bench_set_algorithm_from_config(frame);
-    bench_write_frequency(frame-&gt;estimated_hz);
-}</textarea>
-            <p class="field-hint" id="software-hint">The bench-v1 contract checks the entrypoint and hardware handoff. Arbitrary code is never executed.</p>
+            <p class="run-status" id="run-status" role="status" aria-live="polite">Ready. Four modeled channels are loaded.</p>
           </section>
 
           <details class="model-note">
             <summary>What is simulated here?</summary>
-            <p>The sensor stage generates deterministic noisy sine streams. Your software adapter is contract-checked, then the selected algorithm drives a configurable DDS → R-2R → reconstruction filter → output probe model.</p>
-            <p class="muted">Compiler, FPGA synthesis, SPICE, and physical sensor behaviour remain separate verification steps.</p>
+            <p>Each sensor can use a deterministic behavior model or a recorded CSV/TXT trace. Your program source is shown and contract-checked, then the selected algorithm drives a configurable DDS → R-2R → reconstruction filter → output probe model.</p>
+            <p>Recorded traces accept one normalised value per line or a <code>time,value</code> CSV. Values are resampled at the hardware clock and limited to ±1.5.</p>
+            <p class="muted">Compiler, FPGA synthesis, SPICE, and physical sensor calibration remain separate verification steps.</p>
           </details>
         </aside>
 
         <section class="work-area" aria-labelledby="workspace-title">
           <div class="work-header">
             <div>
-              <div class="section-kicker">02 / wire the thought</div>
-              <h2 id="workspace-title">Live signal flow</h2>
+              <div class="section-kicker">02 / connect and run</div>
+              <h2 id="workspace-title">Simulation workflow</h2>
             </div>
             <div class="flow-legend" aria-label="Signal flow legend">
               <span><i class="legend-dot sensor-dot"></i> input</span>
@@ -98,7 +71,21 @@ void on_measurement(struct bench_frame *frame) {
             </div>
           </div>
 
-          <p class="board-help" id="board-help">Drag a block by its top handle. Use the arrow keys after focusing a handle for precise moves. Connections follow the active chain automatically.</p>
+          <section class="workflow" aria-labelledby="workflow-title">
+            <div class="workflow-intro">
+              <div class="section-label">The run path</div>
+              <h3 id="workflow-title">Inputs → program → hardware → output</h3>
+              <p>Configure each stage in order. The result readout at the bottom reflects the whole path.</p>
+            </div>
+            <ol class="workflow-steps">
+              <li><a class="workflow-step input-step" href="#board"><span class="workflow-index">01</span><strong>Inputs</strong><small id="workflow-input-detail">4 modeled channels</small></a></li>
+              <li><a class="workflow-step program-step" href="#program-panel"><span class="workflow-index">02</span><strong>Your program</strong><small id="workflow-program-detail">signal_adapter.c · ready to check</small></a></li>
+              <li><a class="workflow-step hardware-step" href="#hardware-circuit"><span class="workflow-index">03</span><strong>Hardware chain</strong><small id="workflow-hardware-detail">DDS → R-2R → filter → probe</small></a></li>
+              <li><a class="workflow-step output-step" href="#results-panel"><span class="workflow-index">04</span><strong>Output</strong><small id="workflow-output-detail">Run to inspect the probe</small></a></li>
+            </ol>
+          </section>
+
+          <p class="board-help" id="board-help">The board shows the live topology. Drag a block by its top handle, or use the patch bay below to repair a connection. The algorithm and hardware stages are required parts of this bench.</p>
           <div class="board-wrap">
             <div class="board" id="board" tabindex="0" aria-describedby="board-help" aria-label="Draggable sensor, algorithm, and hardware simulation board">
               <svg class="wires" id="wires" aria-hidden="true" focusable="false" preserveAspectRatio="none">
@@ -116,15 +103,44 @@ void on_measurement(struct bench_frame *frame) {
             </div>
           </div>
 
-          <section class="hardware-circuit" aria-labelledby="hardware-title">
+          <section class="software-panel" id="program-panel" aria-labelledby="software-title">
+            <div class="section-kicker">03 / attach your program</div>
+            <div class="software-heading">
+              <div>
+                <div class="section-label" id="software-title">Program input</div>
+                <p class="helper">Open the source file you want this bench to check, or edit the example directly.</p>
+              </div>
+              <div class="plugin-state"><i aria-hidden="true"></i><span id="plugin-status">BENCH-V1 CONTRACT READY</span></div>
+            </div>
+            <div class="program-toolbar">
+              <div class="program-file"><span>source file</span><strong id="program-file-name">signal_adapter.c</strong></div>
+              <label class="file-button" for="program-file">Open program<input id="program-file" type="file" accept=".c,.h,.cc,.cpp,.cxx,.py,.txt" aria-describedby="program-file-hint"></label>
+            </div>
+            <p class="field-hint" id="program-file-hint">Files are read in this browser and sent only with the run request. Source is limited to 100,000 characters.</p>
+            <div class="field-grid program-fields">
+              <div class="field"><label for="plugin-name">plugin name</label><input id="plugin-name" type="text" maxlength="64" value="Signal fusion adapter"></div>
+              <div class="field"><label for="plugin-language">language</label><select id="plugin-language"><option value="c">C / firmware</option><option value="cpp">C++ / firmware</option><option value="python">Python / host</option></select></div>
+              <div class="field"><label for="plugin-entrypoint">entrypoint</label><input id="plugin-entrypoint" type="text" maxlength="64" value="on_measurement"></div>
+              <div class="field"><label for="test-scenario">test scenario</label><select id="test-scenario"><option value="nominal">Nominal frame stream</option><option value="sensor_dropout">Sensor 4 dropout</option><option value="low_coherence">Low-coherence inputs</option></select></div>
+            </div>
+            <label class="code-label" for="software-code">program source</label>
+            <textarea id="software-code" rows="11" spellcheck="false" required aria-describedby="software-hint">// bench-v1 software adapter
+void on_measurement(struct bench_frame *frame) {
+    bench_set_algorithm_from_config(frame);
+    bench_write_frequency(frame-&gt;estimated_hz);
+}</textarea>
+            <p class="field-hint" id="software-hint">Contract mode checks the entrypoint and hardware handoff; it does not compile or execute arbitrary source code yet.</p>
+          </section>
+
+          <section class="hardware-circuit" id="hardware-circuit" aria-labelledby="hardware-title">
             <div class="circuit-header">
               <div>
-                <div class="section-kicker">03 / model the physical plane</div>
+                <div class="section-kicker">04 / model the physical plane</div>
                 <h2 id="hardware-title">Hardware circuit</h2>
               </div>
               <span class="circuit-chip"><i aria-hidden="true"></i> independent from software</span>
             </div>
-            <p class="circuit-help">Tune the operational limits of each hardware stage. The patch bay below is the source of truth for the simulated netlist.</p>
+            <p class="circuit-help">This is the signal path after your program. Tune every stage below; the patch bay is the source of truth for the simulated netlist.</p>
             <div class="circuit-chain" id="circuit-chain" aria-label="Hardware circuit stages"></div>
             <div class="patch-bay">
               <div>
@@ -141,10 +157,10 @@ void on_measurement(struct bench_frame *frame) {
             </div>
           </section>
 
-          <section class="results-panel" aria-labelledby="results-title">
+          <section class="results-panel" id="results-panel" aria-labelledby="results-title">
             <div class="results-header">
               <div>
-                <div class="section-kicker">04 / inspect the output</div>
+                <div class="section-kicker">05 / inspect the output</div>
                 <h2 id="results-title">Run readout</h2>
               </div>
               <p id="result-summary" class="result-summary">Run the pipeline to populate the readout.</p>

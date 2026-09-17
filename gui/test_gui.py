@@ -1,6 +1,7 @@
 """Browser and HTTP edge-case coverage for the local signal-lab GUI."""
 
 import json
+import math
 
 from playwright.sync_api import Page, sync_playwright
 
@@ -50,11 +51,53 @@ def main() -> None:
         assert page.locator(".node.sensor").count() == 4
         assert page.locator(".circuit-stage").count() == 4
         assert page.locator(".connection-row").count() == 8
+        assert page.locator(".workflow-step").count() == 4
+        assert page.locator(".work-area .software-panel").count() == 1
+        assert page.locator(".workflow-step").evaluate_all("els => els.map(el => el.getAttribute('href'))") == ["#board", "#program-panel", "#hardware-circuit", "#results-panel"]
+        assert page.locator('[data-sensor-field="behavior"]').evaluate_all("els => els.map(el => el.value)") == ["tone", "chirp_up", "burst", "dropout"]
         assert "kHz" in page.locator("#metric-frequency").inner_text()
         assert page.locator("#software-verdict").inner_text() == "Contract passed"
         assert page.locator("#hardware-verdict").inner_text() == "8 connections valid"
         assert page.locator("#probe-voltage").inner_text().endswith("Vpk")
         assert page.locator("#deployment-chip").inner_text() == "LOCAL / NO EXTERNAL UPLOAD"
+
+        # The source file is visible in the main workflow and can replace the example program.
+        program = b'''// loaded from the team firmware workspace
+void on_measurement(struct bench_frame *frame) {
+    bench_set_algorithm("weighted_fusion");
+    bench_write_frequency(frame->estimated_hz);
+}
+'''
+        page.locator("#program-file").set_input_files({"name": "fusion_controller.cpp", "mimeType": "text/plain", "buffer": program})
+        page.wait_for_function("document.querySelector('#program-file-name').textContent === 'fusion_controller.cpp'")
+        assert page.locator("#plugin-language").input_value() == "cpp"
+        assert "loaded from the team firmware workspace" in page.locator("#software-code").input_value()
+        assert "fusion_controller.cpp" in page.locator("#workflow-program-detail").inner_text()
+        page.locator("#run-button").click()
+        wait_complete(page)
+        assert "fusion_controller.cpp" in page.locator("#software-checks").inner_text()
+        page.locator("#program-file").set_input_files({"name": "too-large.c", "mimeType": "text/plain", "buffer": b"x" * 100001})
+        page.wait_for_function("document.querySelector('#run-status').textContent.includes('Program file not loaded')")
+        assert page.locator("#program-file-name").inner_text() == "fusion_controller.cpp"
+
+        # A modeled behavior can be changed, a recorded trace can be loaded, and the trace can be removed.
+        page.locator("#sensor-0-behavior").select_option("chirp_down")
+        assert "down-chirp" in page.locator("#sensor-0-source").inner_text().lower()
+        page.locator('[data-sensor-file="0"]').set_input_files({"name": "invalid.csv", "mimeType": "text/csv", "buffer": b"time,value\nno data here\n"})
+        page.wait_for_function("document.querySelector('#run-status').textContent.includes('Sensor trace not loaded')")
+        assert "MODELED" in page.locator("#sensor-0-source").inner_text()
+        trace = "time,value\n" + "\n".join(
+            f"{index},{math.sin(2 * math.pi * 200000 * index / 10000000):.6f}" for index in range(256)
+        )
+        page.locator('[data-sensor-file="0"]').set_input_files({"name": "hydrophone_01.csv", "mimeType": "text/csv", "buffer": trace.encode()})
+        page.wait_for_function("document.querySelector('#sensor-0-source').textContent.includes('RECORDED')")
+        assert "hydrophone_01.csv" in page.locator("#sensor-0-source").inner_text()
+        assert "1 recorded" in page.locator("#workflow-input-detail").inner_text()
+        page.locator("#run-button").click()
+        wait_complete(page)
+        assert "recorded" in page.locator("#waveform-caption").inner_text()
+        page.locator('[data-clear-sensor-file="0"]').click()
+        assert "MODELED" in page.locator("#sensor-0-source").inner_text()
 
         controls = page.locator("input, select, textarea")
         assert controls.evaluate_all("els => els.every(el => el.labels?.length || el.getAttribute('aria-label'))")
@@ -194,6 +237,20 @@ def main() -> None:
         assert page.request.post(f"{BASE_URL}/api/simulate", data=json.dumps({"sensors": list(range(5))}), headers=headers).status == 400
         assert page.request.post(f"{BASE_URL}/api/simulate", data=json.dumps({"sensors": [{"enabled": False}]}), headers=headers).status == 400
         assert page.request.post(f"{BASE_URL}/api/simulate", data=json.dumps({"sensors": [{"enabled": True}], "software": {"code": ""}}), headers=headers).status == 400
+        recorded_response = page.request.post(
+            f"{BASE_URL}/api/simulate",
+            data=json.dumps({
+                "sensors": [{
+                    "enabled": True,
+                    "source": "trace",
+                    "source_file": "api_capture.csv",
+                    "samples": [math.sin(2 * math.pi * 200000 * index / 10000000) for index in range(256)],
+                }]
+            }),
+            headers=headers,
+        )
+        assert recorded_response.status == 200
+        assert recorded_response.json()["sensor_rows"][0]["source"] == "trace"
         unsupported = {"sensors": [{"enabled": True}], "connections": [{"from": "sensor-1", "to": "r2r"}, {"from": "algorithm", "to": "dds"}, {"from": "dds", "to": "r2r"}, {"from": "r2r", "to": "filter"}, {"from": "filter", "to": "probe"}]}
         assert page.request.post(f"{BASE_URL}/api/simulate", data=json.dumps(unsupported), headers=headers).status == 400
         missing_input = {"sensors": [{"enabled": True}], "connections": [{"from": "algorithm", "to": "dds"}, {"from": "dds", "to": "r2r"}, {"from": "r2r", "to": "filter"}, {"from": "filter", "to": "probe"}]}

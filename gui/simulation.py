@@ -2,9 +2,10 @@
 
 The existing bench proves one fixed transmitter chain. This module adds the
 interactive boundary without hiding the hardware model: sensor streams are
-generated at the configured clock, the software adapter is contract-checked,
-the selected algorithm estimates a frequency, and the output passes through a
-configurable DDS, R-2R, and reconstruction-filter preview.
+generated at the configured clock or resampled from a recorded trace, the
+software adapter is contract-checked, the selected algorithm estimates a
+frequency, and the output passes through a configurable DDS, R-2R, and
+reconstruction-filter preview.
 """
 
 from __future__ import annotations
@@ -33,7 +34,9 @@ MASK32 = PHASE_SCALE - 1
 
 MAX_ANALYSIS_SAMPLES = 2048
 MAX_PREVIEW_SAMPLES = 512
+MAX_TRACE_SAMPLES = 4096
 ALGORITHMS = {"weighted_fusion", "median_vote", "peak_pick", "coherent_mean"}
+BEHAVIORS = {"tone", "chirp_up", "chirp_down", "burst", "dropout"}
 HARDWARE_NODES = ("algorithm", "dds", "r2r", "filter", "probe")
 
 
@@ -60,28 +63,84 @@ def _enabled(value: Any, default: bool = True) -> bool:
     return bool(value) if value is not None else default
 
 
+def _sensor_behavior(sensor: dict[str, Any]) -> str:
+    behavior = str(sensor.get("behavior") or "tone").strip().lower()
+    return behavior if behavior in BEHAVIORS else "tone"
+
+
+def _trace_samples(sensor: dict[str, Any]) -> list[float]:
+    if sensor.get("source") != "trace" or not isinstance(sensor.get("samples"), list):
+        return []
+    samples: list[float] = []
+    for raw_sample in sensor["samples"][:MAX_TRACE_SAMPLES]:
+        sample = _number(raw_sample, math.nan)
+        if math.isfinite(sample):
+            samples.append(_clamp(sample, -1.5, 1.5))
+    return samples
+
+
+def _trace_wave(sensor: dict[str, Any], sample_count: int) -> list[float] | None:
+    samples = _trace_samples(sensor)
+    if len(samples) < 2:
+        return None
+    return [
+        samples[
+            min(
+                int(round(index * (len(samples) - 1) / max(sample_count - 1, 1))),
+                len(samples) - 1,
+            )
+        ]
+        for index in range(sample_count)
+    ]
+
+
 def _sensor_wave(sensor: dict[str, Any], sample_count: int, seed: int, sample_rate: float = FS) -> list[float]:
-    """Generate one reproducible sensor stream in normalized units."""
+    """Generate one reproducible modeled or recorded sensor stream."""
+    recorded = _trace_wave(sensor, sample_count)
+    if recorded is not None:
+        return recorded
+
     frequency = _clamp(_number(sensor.get("frequency_hz"), 250_000.0), F_LO, F_HI)
     amplitude = _clamp(_number(sensor.get("amplitude"), 0.8), 0.05, 1.0)
-    phase = math.radians(_number(sensor.get("phase_deg"), 0.0))
+    phase = math.radians(_clamp(_number(sensor.get("phase_deg"), 0.0), -180.0, 180.0))
     noise_below_carrier_db = _clamp(_number(sensor.get("noise_db"), 48.0), 0.0, 90.0)
     noise_rms = amplitude * (10.0 ** (-noise_below_carrier_db / 20.0))
-    rng = random.Random(seed)
+    behavior = _sensor_behavior(sensor)
+    sweep_hz = _clamp(_number(sensor.get("sweep_hz"), 50_000.0), 0.0, 400_000.0)
+    duration = max(sample_count / max(sample_rate, 1.0), 1.0 / max(sample_rate, 1.0))
+    start_frequency = frequency
+    end_frequency = frequency
+    if behavior in {"chirp_up", "chirp_down"}:
+        direction = 1.0 if behavior == "chirp_up" else -1.0
+        start_frequency = _clamp(frequency - direction * sweep_hz / 2.0, F_LO, F_HI)
+        end_frequency = _clamp(frequency + direction * sweep_hz / 2.0, F_LO, F_HI)
+    sweep_rate = (end_frequency - start_frequency) / duration
 
-    return [
-        amplitude * math.sin(2.0 * math.pi * frequency * i / sample_rate + phase)
-        + rng.gauss(0.0, noise_rms)
-        for i in range(sample_count)
-    ]
+    def envelope(index: int) -> float:
+        if behavior == "burst":
+            period = max(64, min(2048, int(sample_rate / max(frequency, F_LO) * 16.0)))
+            return 1.0 if index % period < int(period * 0.62) else 0.0
+        if behavior == "dropout":
+            period = max(256, min(2048, int(sample_rate / max(frequency, F_LO) * 24.0)))
+            return 1.0 if index % period < int(period * 0.76) else 0.0
+        return 1.0
+
+    rng = random.Random(seed)
+    waveform: list[float] = []
+    for index in range(sample_count):
+        time = index / max(sample_rate, 1.0)
+        cycles = start_frequency * time + 0.5 * sweep_rate * time * time
+        waveform.append(amplitude * envelope(index) * math.sin(2.0 * math.pi * cycles + phase) + rng.gauss(0.0, noise_rms))
+    return waveform
 
 
 def _estimate_frequency(samples: list[float], sample_rate: float = FS) -> float:
     """Estimate a clean synthetic sensor's frequency from upward crossings."""
+    crossing_floor = max((max(abs(sample) for sample in samples) if samples else 0.0) * 0.08, 0.0)
     crossings: list[float] = []
     for index in range(1, len(samples)):
         before, after = samples[index - 1], samples[index]
-        if before <= 0.0 < after:
+        if before <= 0.0 < after and max(abs(before), abs(after)) >= crossing_floor:
             delta = after - before
             fraction = (-before / delta) if delta else 0.0
             crossings.append(index - 1 + fraction)
@@ -89,7 +148,13 @@ def _estimate_frequency(samples: list[float], sample_rate: float = FS) -> float:
     if len(crossings) < 2:
         return 0.0
     periods = [b - a for a, b in zip(crossings, crossings[1:]) if b > a]
-    return sample_rate / statistics.median(periods) if periods else 0.0
+    if not periods:
+        return 0.0
+    # Gated inputs skip complete carrier cycles while they are off. Keep the
+    # tightest cluster of periods so a dropout does not look like a slower tone.
+    shortest = min(periods)
+    stable_periods = [period for period in periods if period <= shortest * 1.35]
+    return sample_rate / statistics.median(stable_periods or periods)
 
 
 def _rms(samples: list[float]) -> float:
@@ -239,6 +304,7 @@ def _software_contract(raw: Any, requested_algorithm: str) -> dict[str, Any]:
             "plugin_name": "No software plugin",
             "language": "none",
             "entrypoint": "",
+            "source_file": "",
             "contract": "bench-v1",
             "passed": True,
             "checks": ["hardware-only run"],
@@ -263,6 +329,7 @@ def _software_contract(raw: Any, requested_algorithm: str) -> dict[str, Any]:
         "plugin_name": str(raw.get("plugin_name") or "Local bench plugin")[:64],
         "language": str(raw.get("language") or "c")[:16],
         "entrypoint": entrypoint,
+        "source_file": str(raw.get("source_file") or "")[:128],
         "contract": "bench-v1",
         "passed": True,
         "checks": ["entrypoint found", "algorithm handoff found", "hardware frame accepted"],
@@ -333,6 +400,7 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
         name = str(sensor.get("name") or f"Sensor {index + 1}")[:32]
         waveform = _sensor_wave(sensor, analysis_count, 0x5EED + index * 97, clock_hz)
         estimated_hz = _estimate_frequency(waveform, clock_hz) if enabled else 0.0
+        trace_active = len(_trace_samples(sensor)) >= 2
         row = {
             "index": index,
             "name": name,
@@ -341,6 +409,9 @@ def run_simulation(payload: dict[str, Any]) -> dict[str, Any]:
             "estimated_hz": round(estimated_hz, 2),
             "rms": round(_rms(waveform), 5),
             "phase_deg": round(_number(sensor.get("phase_deg"), 0.0), 2),
+            "behavior": _sensor_behavior(sensor),
+            "source": "trace" if trace_active else "model",
+            "source_file": str(sensor.get("source_file") or "")[:128] if trace_active else "",
         }
         rows.append(row)
         series[f"sensor_{index + 1}"] = [round(value, 5) for value in waveform[:preview_count]]
@@ -423,6 +494,14 @@ def self_check() -> None:
     assert 190_000 < result["algorithm_estimate_hz"] < 210_000
     assert len(result["series"]["output"]) == 128
     assert 0 <= result["hardware"]["ftw"] <= MASK32
+    for behavior in BEHAVIORS:
+        alternate = run_simulation({"algorithm": "weighted_fusion", "sensors": [{"frequency_hz": 220000, "enabled": True, "behavior": behavior}]})
+        assert F_LO <= alternate["hardware"]["actual_frequency_hz"] <= F_HI
+        assert alternate["sensor_rows"][0]["behavior"] == behavior
+    trace = [math.sin(2.0 * math.pi * 200_000 * index / FS) for index in range(256)]
+    recorded = run_simulation({"sensors": [{"enabled": True, "source": "trace", "source_file": "captured.csv", "samples": trace}]})
+    assert recorded["sensor_rows"][0]["source"] == "trace"
+    assert recorded["sensor_rows"][0]["source_file"] == "captured.csv"
     for algorithm in ("weighted_fusion", "median_vote", "peak_pick", "coherent_mean"):
         alternate = run_simulation({"algorithm": algorithm, "sensors": [{"frequency_hz": 220000, "enabled": True}]})
         assert F_LO <= alternate["hardware"]["actual_frequency_hz"] <= F_HI

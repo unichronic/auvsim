@@ -37,9 +37,11 @@ ForgeFPGA resource report or prove that the LUT array mapped to dedicated BRAM.
 ## Use the interactive signal lab
 
 The original bench validates one fixed transmitter chain. The local GUI adds
-the experiment loop: four configurable sensor streams, a selectable frequency
-algorithm, an explicit software-plugin handoff, and a separate hardware
-circuit model. The patch bay keeps the simulated netlist visible:
+the experiment loop: four configurable sensor inputs with distinct default
+behaviors (tone, up-chirp, burst, and dropout), recorded CSV/TXT trace import,
+a selectable frequency algorithm, an explicit software-plugin handoff, and a
+separate hardware circuit model. The patch bay keeps the simulated netlist
+visible:
 
 ```text
 sensor inputs → algorithm → 32-bit DDS → 8-bit R-2R → reconstruction filter → output probe
@@ -47,9 +49,10 @@ sensor inputs → algorithm → 32-bit DDS → 8-bit R-2R → reconstruction fil
 
 The board is draggable; sensor blocks can be moved with a mouse or keyboard.
 The hardware plane exposes clock, phase-accumulator, DAC, reference, filter,
-and resistor-tolerance specs. The software plane accepts a bench-v1 adapter,
-selects a test scenario, and reports whether the adapter contract passed
-alongside the output frequency, voltage, FTW, coherence, and waveforms.
+and resistor-tolerance specs. The software plane lets you open the source file
+you want to check, edit it in the browser, select a test scenario, and report
+whether the adapter contract passed alongside the output frequency, voltage,
+FTW, coherence, and waveforms.
 
 ```bash
 python3 launch_gui.py
@@ -58,7 +61,9 @@ python3 launch_gui.py
 
 The GUI is dependency-free. `launch_gui.py` serves it locally; the same static
 frontend and simulation are Vercel-ready through `vercel.json` and `api/`.
-The software editor is a safe contract check: it does not execute arbitrary pasted code. A plugin must
+The sensor models are deterministic and reproducible; a recorded trace is
+resampled at the configured simulation clock. The software editor is a safe
+contract check: it does not execute arbitrary pasted code. A plugin must
 contain the configured entrypoint (normally `on_measurement`) and call
 `bench_set_algorithm(...)` or `bench_set_algorithm_from_config(...)`. The
 selected algorithm then drives the hardware model. This is the integration
