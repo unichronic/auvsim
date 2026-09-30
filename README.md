@@ -1,13 +1,120 @@
-# Pre-Silicon Bench — SIH26058 transmitter chain
+# Adaptive Sonar Transmitter Payload — SIH26058
 
-AUV project simulator and pre-silicon verification bench.
+A low-power, real-time adaptive software-defined sonar transmitter for autonomous underwater
+vehicles (AUVs) — built for Smart India Hackathon problem statement **SIH26058** (Ministry of
+Earth Sciences / National Institute of Ocean Technology).
+
+## The problem
+
+AUV side-scan sonar performance is set by the physical characteristics of the transmitted
+"ping." A high-frequency chirp (~500 kHz) gives sharp images but scatters instantly in muddy
+or deep water; a low-frequency chirp (~100 kHz) penetrates murky water and travels far but
+yields a blurry image. Sound also behaves differently with depth, turbidity, temperature and
+salinity. For an AUV to map effectively without draining its battery, the transmitter needs to
+behave like a software-defined radio — reshaping its analog pulse waveform in real time based
+on what the water is actually doing.
+
+## What's in this repository
+
+- **[`sonar-transmitter/`](sonar-transmitter/)** — the physical hardware payload: pin-labelled
+  pictorial wiring diagrams for all 9 build stages, full component specs and pin map, the
+  golden-reference modulation/windowing simulator with its result set, and completed firmware.
+  Start here for the hardware side.
+- **Everything else at this repo's root** — the pre-silicon simulation bench: eight
+  independent verification stages (integer-exact firmware reference, R-2R Monte Carlo, an
+  independent SPICE cross-check, FPGA RTL simulation, an absorption/propagation model, and
+  full scenario coverage against the problem statement), an interactive signal-lab GUI, and a
+  hosted API. Laptop-verifies the whole transmitter chain before hardware measurement.
+  Documented in full below.
+
+## Architecture
+
+```
+Sensors → Adaptation logic (RP2040) → sample buffer (SRAM) → PIO + DMA
+   → 74HC574 latch → 8-bit R-2R ladder DAC → 3rd-order active filter
+   → analog amplitude control (digital pot, ahead of the output stage)
+   → op-amp output → BNC → oscilloscope / spectrum analyser
+```
+
+Samples stream through the RP2040's PIO and DMA hardware at roughly **10 megasamples per
+second with zero CPU cycles spent per sample** — the CPU is free to run the adaptation loop
+and telemetry concurrently. The DAC is a hand-built 8-bit R-2R resistor ladder, not a DAC chip:
+at 10 MS/s it reaches the real transmit band the problem statement describes, and it upgrades
+cleanly on the same parallel-bus interface if a faster DAC is swapped in later. Amplitude is
+controlled **in the analog domain** (a digital potentiometer ahead of the output op-amp), not
+by scaling digital sample values — digital scaling costs DAC resolution exactly when the
+signal is smallest. Four real sensors (temperature, turbidity, salinity, battery/power state)
+plus one potentiometer standing in for depth (a bench cannot reproduce real hydrostatic
+pressure, and the problem statement explicitly permits a dial for that one variable) drive an
+adaptation loop that picks centre frequency, bandwidth, pulse duration, amplitude, and one of
+three modulation types (LFM chirp, geometric sweep, Barker-13 phase code) every pulse.
+
+Full component specs, pin map and rationale: [`sonar-transmitter/COMPONENTS.md`](sonar-transmitter/COMPONENTS.md).
+Full stage-by-stage wiring diagrams: [`sonar-transmitter/diagrams/`](sonar-transmitter/diagrams/).
+
+## Chosen algorithm and results
+
+The modulation engine (LFM chirp, geometric sweep, Barker-13 phase code, all four required
+windows) is verified by two independent simulation paths before any hardware measurement:
+an integer-exact golden reference matched against a byte-for-byte RTL simulation of the actual
+FPGA DDS, and a from-scratch Monte Carlo / SPICE cross-check of the analog chain. Highlights:
+
+| Finding | Result |
+|---|---|
+| Quantisation SQNR, windowed LFM chirp (Hann / Blackman) | 45.7 / 44.9 dB |
+| Reconstruction filter image rejection at the first DAC image (9.5 MHz) | 93.0 dB combined (analytic), 69.0 dB confirmed through the full time-domain chain |
+| **Barker-13 phase code must use a rectangular window** | Confirmed independently in both simulators: tapering collapses the matched-filter sidelobe from ≈−22 dB to as little as −3.8 to −4.8 dB — windowing helps the chirps and destroys the phase code |
+| **1% resistors are not good enough for the R-2R ladder** | 13.4% of Monte Carlo draws are non-monotonic, SFDR degrades to −49 dBc against a −48 dBc target. 0.1% gives 0% non-monotonic and 1.8 dB margin |
+| Quarter-wave sine LUT sizing on the target FPGA | Exactly 100% of the SLG47910's block RAM (32,768 of 32,768 bits) — not "ample" as first assumed; quarter-wave symmetry is required, not optional |
+| Digitally-scaled amplitude at 25%, SQNR cost | 37.7 dB (≈6 bits) — confirms analog amplitude control is the right call |
+| Cross-check: nodal R-2R solve vs. an independent SPICE simulator | Agree to 6.9×10⁻¹⁴ LSB across all 256 codes |
+| Cross-check: Verilog DDS vs. the Python golden reference | Byte-for-byte match over all 8,192 samples |
+
+Full methodology and the complete numbers: [`sonar-transmitter/sim/README.md`](sonar-transmitter/sim/README.md)
+(the hardware-facing simulator) and the [stage map](#stage-map) and
+[cross-validation](#cross-validation) sections below (the full pre-silicon bench).
+
+## Status
+
+**Gates:** 7 of 8 pre-silicon verification gates pass (see [Status](#status) below) — the
+remaining gate needs a synthesis run through the FPGA vendor's own GUI toolchain, which can't
+be scripted.
+
+**Hardware build:** the signal-chain architecture, component selection and modulation
+algorithm are finalised and simulation-verified. Hardware bring-up follows a nine-stage,
+test-gated build so a fault is caught at the smallest possible stage rather than debugged
+blind in a fully assembled system:
+
+- **Stage 1** — toolchain and first blink: passed
+- **Stage 2** — DAC bus wiring proof (all 8 bus lines verified, correct identity, no bridges): passed
+- Stages 3–9 (sensors, the R-2R ladder build, first waveform, filter/amplifier, full
+  modulation set, closing the adaptation loop, power optimisation) — in progress
+
+This covers the waveform engine, validated electrically per this round's requirements — no
+transducer, water, or acoustic transmission is required or claimed this round. The acoustic
+chain attaches at the BNC output, a deliberate module boundary, without requiring any change
+upstream of it.
+
+## What we looked at before deciding this
+
+We researched a broad range of publicly documented approaches to this class of problem before
+settling on this architecture. The patterns found, summarised without naming specific
+projects: [`sonar-transmitter/research/DESIGN_RESEARCH.md`](sonar-transmitter/research/DESIGN_RESEARCH.md).
+
+## License
+
+MIT — see [`LICENSE`](LICENSE).
+
+---
+
+# Pre-silicon simulation bench
 
 Laptop verification of the whole transmitter chain before any part is ordered.
-Companion to the **Pre-Silicon Bench** artifact.
 
-**Not the deliverable.** SIH26058 requires a physical hardware unit; this is
-preparation, and the predicted-vs-measured overlay is evidence you understood
-your system, never a substitute for building it.
+**Not the deliverable.** SIH26058 requires a physical hardware unit — the build lives in
+[`sonar-transmitter/`](sonar-transmitter/). This bench is preparation, and the
+predicted-vs-measured overlay is evidence the system is understood, never a substitute for
+building it.
 
 ## Run it
 
