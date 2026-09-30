@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="700" viewBox="0 0 1180 700">
+<style>text{font-family:'DejaVu Sans',Arial,sans-serif}.m{font-family:'DejaVu Sans Mono',Menlo,monospace}.b{font-weight:700}.sb{font-weight:600}.i{font-style:italic}.w{stroke-linecap:round;stroke-linejoin:round}</style><defs><g id="pa"><circle r="5.6" fill="#e0c060" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g><g id="pd"><circle r="5.6" fill="#d8d3c0" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g></defs>
+<rect width="1180" height="700" fill="#fbfbf9"/>
+<text x="24" y="34" font-size="21" fill="#1a1a18" class="b">Stage 5 — first waveform on the scope</text>
+<text x="24" y="58" font-size="13" fill="#546e7a">No new circuitry: firmware streams a sine into the ladder. Add the scope trigger resistor.</text>
+<rect x="40" y="110" width="190" height="478" rx="10" fill="#1b7a3a" stroke="#0d4d22" stroke-width="2" />
+<rect x="109" y="98" width="52" height="26" rx="6" fill="#cfd8dc" stroke="#78909c" stroke-width="1.5" />
+<text x="135" y="140" font-size="10" fill="#e8f5e9" text-anchor="middle">USB-C</text>
+<rect x="110" y="280" width="52" height="52" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="136" y="310" font-size="9" fill="#bdbdbd" text-anchor="middle">RP2040</text>
+<rect x="116" y="410" width="40" height="40" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="136" y="434" font-size="9" fill="#bdbdbd" text-anchor="middle">FPGA</text>
+<rect x="50" y="148" width="11" height="11" fill="#d8d3c0" stroke="#6b5b1e" stroke-width="1" />
+<text x="68" y="158" font-size="10.5" fill="#a5d6a7" class="m">5V</text>
+<use href="#pd" x="56" y="176"/>
+<text x="68" y="180" font-size="10.5" fill="#a5d6a7" class="m">3.3V</text>
+<use href="#pd" x="56" y="198"/>
+<text x="68" y="202" font-size="10.5" fill="#a5d6a7" class="m">IO5</text>
+<use href="#pd" x="56" y="220"/>
+<text x="68" y="224" font-size="10.5" fill="#a5d6a7" class="m">IO6</text>
+<use href="#pd" x="56" y="242"/>
+<text x="68" y="246" font-size="10.5" fill="#a5d6a7" class="m">IO7</text>
+<use href="#pd" x="56" y="264"/>
+<text x="68" y="268" font-size="10.5" fill="#a5d6a7" class="m">IO8</text>
+<use href="#pd" x="56" y="286"/>
+<text x="68" y="290" font-size="10.5" fill="#a5d6a7" class="m">IO9</text>
+<use href="#pd" x="56" y="308"/>
+<text x="68" y="312" font-size="10.5" fill="#a5d6a7" class="m">GND</text>
+<use href="#pd" x="56" y="330"/>
+<text x="68" y="334" font-size="10.5" fill="#a5d6a7" class="m">IO10</text>
+<use href="#pd" x="56" y="352"/>
+<text x="68" y="356" font-size="10.5" fill="#a5d6a7" class="m">IO11</text>
+<use href="#pd" x="56" y="374"/>
+<text x="68" y="378" font-size="10.5" fill="#a5d6a7" class="m">IO14</text>
+<use href="#pd" x="56" y="396"/>
+<text x="68" y="400" font-size="10.5" fill="#a5d6a7" class="m">IO15</text>
+<use href="#pd" x="56" y="418"/>
+<text x="68" y="422" font-size="10.5" fill="#a5d6a7" class="m">GND</text>
+<use href="#pd" x="56" y="440"/>
+<text x="68" y="444" font-size="10.5" fill="#a5d6a7" class="m">F17</text>
+<use href="#pd" x="56" y="462"/>
+<text x="68" y="466" font-size="10.5" fill="#a5d6a7" class="m">F18</text>
+<use href="#pd" x="56" y="484"/>
+<text x="68" y="488" font-size="10.5" fill="#a5d6a7" class="m">F0</text>
+<use href="#pd" x="56" y="506"/>
+<text x="68" y="510" font-size="10.5" fill="#a5d6a7" class="m">F1</text>
+<use href="#pd" x="56" y="528"/>
+<text x="68" y="532" font-size="10.5" fill="#a5d6a7" class="m">F2</text>
+<use href="#pd" x="56" y="550"/>
+<text x="68" y="554" font-size="10.5" fill="#a5d6a7" class="m">F7</text>
+<rect x="208" y="148" width="11" height="11" fill="#d8d3c0" stroke="#6b5b1e" stroke-width="1" />
+<text x="202" y="158" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">5V</text>
+<use href="#pd" x="214" y="176"/>
+<text x="202" y="180" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">3.3V</text>
+<use href="#pd" x="214" y="198"/>
+<text x="202" y="202" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO29</text>
+<use href="#pd" x="214" y="220"/>
+<text x="202" y="224" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO28</text>
+<use href="#pd" x="214" y="242"/>
+<text x="202" y="246" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO27</text>
+<use href="#pd" x="214" y="264"/>
+<text x="202" y="268" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO26</text>
+<use href="#pd" x="214" y="286"/>
+<text x="202" y="290" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<use href="#pa" x="214" y="308"/>
+<text x="202" y="312" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO25</text>
+<use href="#pd" x="214" y="330"/>
+<text x="202" y="334" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO24</text>
+<use href="#pd" x="214" y="352"/>
+<text x="202" y="356" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO23</text>
+<use href="#pd" x="214" y="374"/>
+<text x="202" y="378" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO22</text>
+<use href="#pd" x="214" y="396"/>
+<text x="202" y="400" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO21</text>
+<use href="#pa" x="214" y="418"/>
+<text x="202" y="422" font-size="10.5" fill="#fff" text-anchor="end" class="m b">GND</text>
+<use href="#pd" x="214" y="440"/>
+<text x="202" y="444" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO20</text>
+<use href="#pd" x="214" y="462"/>
+<text x="202" y="466" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO19</text>
+<use href="#pd" x="214" y="484"/>
+<text x="202" y="488" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO18</text>
+<use href="#pd" x="214" y="506"/>
+<text x="202" y="510" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO17</text>
+<use href="#pd" x="214" y="528"/>
+<text x="202" y="532" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO16</text>
+<use href="#pd" x="214" y="550"/>
+<text x="202" y="554" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<text x="135" y="608" font-size="11" fill="#1a1a18" text-anchor="middle" class="sb">Shrike Lite (top view, USB-C at top)</text>
+<rect x="420" y="120" width="250" height="150" rx="10" fill="#ede7f6" stroke="#5e35b1" stroke-width="2" />
+<text x="545" y="155" font-size="13" fill="#311b92" text-anchor="middle" class="b">Stage 4 board</text>
+<text x="545" y="175" font-size="11" fill="#4527a0" text-anchor="middle">74HC574 + R-2R ladder</text>
+<circle cx="670" cy="220" r="6" fill="#fff" stroke="#5e35b1" stroke-width="2.4"/>
+<text x="658" y="224" font-size="11" fill="#5e35b1" text-anchor="end" class="b"></text>
+<text x="660" y="215" font-size="10.5" fill="#311b92" text-anchor="end" class="b">LADDER OUT</text>
+<circle cx="670" cy="255" r="6" fill="#fff" stroke="#263238" stroke-width="2.4"/>
+<text x="658" y="259" font-size="11" fill="#263238" text-anchor="end" class="b"></text>
+<text x="660" y="259" font-size="10.5" fill="#311b92" text-anchor="end" class="b">GND</text>
+<text x="545" y="200" font-size="10" fill="#5e35b1" text-anchor="middle" class="i">(GPIO16–24 wiring</text>
+<text x="545" y="214" font-size="10" fill="#5e35b1" text-anchor="middle" class="i"> as in Stage 4)</text>
+<rect x="840" y="140" width="300" height="200" rx="10" fill="#eceff1" stroke="#455a64" stroke-width="2" />
+<rect x="856" y="156" width="180" height="140" rx="4" fill="#102027" stroke="#000" stroke-width="1.2" />
+<path d="M864,226 L868,205 L872,192 L877,178 L881,171 L885,171 L889,178 L893,185 L898,198 L902,212 L906,233 L910,247 L914,260 L919,274 L923,281 L927,281 L931,274 L936,267 L940,254 L944,233 L948,219 L952,198 L956,185 L961,178 L965,171 L969,171 L973,178 L978,192 L982,205 L986,219 L990,240 L994,254 L999,267 L1003,274 L1007,281 L1011,281 L1015,274 L1020,260 L1024,247 L1028,226" fill="none" stroke="#ffeb3b" stroke-width="1.6" class="w"/>
+<text x="990" y="326" font-size="12" fill="#263238" text-anchor="middle" class="b">Oscilloscope</text>
+<circle cx="1074" cy="210" r="11" fill="#cfd8dc" stroke="#607d8b" stroke-width="2"/>
+<circle cx="1074" cy="210" r="3" fill="#c9a227" stroke="#6b5b1e" stroke-width="1"/>
+<text x="1092" y="214" font-size="11" fill="#263238" class="b">CH1</text>
+<circle cx="1074" cy="264" r="11" fill="#cfd8dc" stroke="#607d8b" stroke-width="2"/>
+<circle cx="1074" cy="264" r="3" fill="#c9a227" stroke="#6b5b1e" stroke-width="1"/>
+<text x="1092" y="268" font-size="11" fill="#263238" class="b">CH2</text>
+<path d="M670,220 L755,220 Q760,220 760,215 L760,215 Q760,210 765,210 L1074,210" fill="none" stroke="#ffffff" stroke-width="6.4" class="w"/>
+<path d="M670,220 L755,220 Q760,220 760,215 L760,215 Q760,210 765,210 L1074,210" fill="none" stroke="#0288d1" stroke-width="4" class="w"/>
+<rect x="713" y="196" width="93" height="17" rx="8" fill="#ffffff" stroke="#0288d1" stroke-width="1.1" />
+<text x="760" y="209" font-size="10.5" fill="#0288d1" text-anchor="middle" class="sb">CH1 probe tip</text>
+<path d="M670,255 L724,255 Q730,255 730,261 L730,330" fill="none" stroke="#ffffff" stroke-width="4.4" class="w"/>
+<path d="M670,255 L724,255 Q730,255 730,261 L730,330" fill="none" stroke="#263238" stroke-width="2" class="w"/>
+<line x1="730" y1="330" x2="730" y2="342" stroke="#263238" stroke-width="2"/>
+<line x1="721" y1="342" x2="739" y2="342" stroke="#263238" stroke-width="2"/>
+<line x1="724" y1="346" x2="736" y2="346" stroke="#263238" stroke-width="2"/>
+<line x1="727" y1="350" x2="733" y2="350" stroke="#263238" stroke-width="2"/>
+<text x="742" y="352" font-size="10" fill="#263238" class="i">CH1 ground clip</text>
+<path d="M214,308 L300,308" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M214,308 L300,308" fill="none" stroke="#f9a825" stroke-width="2.6" class="w"/>
+<line x1="300" y1="308" x2="390" y2="308" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="328" y="302" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="345" y="297" font-size="10" fill="#0d47a1" text-anchor="middle" class="b">100 Ω</text>
+<circle cx="440" cy="308" r="6" fill="#fff" stroke="#f9a825" stroke-width="2.4"/>
+<text x="428" y="312" font-size="11" fill="#f9a825" text-anchor="end" class="b"></text>
+<path d="M390,308 L440,308" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M390,308 L440,308" fill="none" stroke="#f9a825" stroke-width="2.6" class="w"/>
+<text x="452" y="328" font-size="10.5" fill="#f57f17" class="b">TRIG header pin</text>
+<path d="M440,308 L794,308 Q800,308 800,302 L800,270 Q800,264 806,264 L1074,264" fill="none" stroke="#ffffff" stroke-width="6.4" class="w"/>
+<path d="M440,308 L794,308 Q800,308 800,302 L800,270 Q800,264 806,264 L1074,264" fill="none" stroke="#0288d1" stroke-width="4" class="w"/>
+<rect x="753" y="259" width="93" height="17" rx="8" fill="#ffffff" stroke="#0288d1" stroke-width="1.1" />
+<text x="800" y="272" font-size="10.5" fill="#0288d1" text-anchor="middle" class="sb">CH2 probe tip</text>
+<path d="M214,418 L294,418 Q300,418 300,424 L300,458" fill="none" stroke="#ffffff" stroke-width="4.4" class="w"/>
+<path d="M214,418 L294,418 Q300,418 300,424 L300,458" fill="none" stroke="#263238" stroke-width="2" class="w"/>
+<line x1="300" y1="458" x2="300" y2="470" stroke="#263238" stroke-width="2"/>
+<line x1="291" y1="470" x2="309" y2="470" stroke="#263238" stroke-width="2"/>
+<line x1="294" y1="474" x2="306" y2="474" stroke="#263238" stroke-width="2"/>
+<line x1="297" y1="478" x2="303" y2="478" stroke="#263238" stroke-width="2"/>
+<text x="312" y="480" font-size="10" fill="#263238" class="i">CH2 ground clip</text>
+<text x="420" y="560" font-size="12" fill="#1a1a18" class="b">Notes</text>
+<text x="420" y="578" font-size="11" fill="#37474f">• The 100 Ω in series protects IO25 if a scope lead ever shorts it.</text>
+<text x="420" y="595" font-size="11" fill="#37474f">• Both probe ground clips go to GND: never to 3.3 V or 5 V.</text>
+<text x="420" y="612" font-size="11" fill="#37474f">• Trigger the scope on CH2 (rising edge); firmware raises IO25 just before each burst.</text>
+<text x="420" y="629" font-size="11" fill="#37474f">• Start by bit-banging ~100 kS/s; then move to PIO+DMA at 1 → 5 → 10 MS/s.</text>
+<text x="420" y="646" font-size="11" fill="#37474f">Gate: a recognisable stepped sine at the expected frequency (count steps per cycle).</text>
+</svg>

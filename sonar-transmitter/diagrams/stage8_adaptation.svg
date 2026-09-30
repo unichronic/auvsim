@@ -1,0 +1,191 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="780" viewBox="0 0 1400 780">
+<style>text{font-family:'DejaVu Sans',Arial,sans-serif}.m{font-family:'DejaVu Sans Mono',Menlo,monospace}.b{font-weight:700}.sb{font-weight:600}.i{font-style:italic}.w{stroke-linecap:round;stroke-linejoin:round}</style><defs><g id="pa"><circle r="5.6" fill="#e0c060" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g><g id="pd"><circle r="5.6" fill="#d8d3c0" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g></defs>
+<rect width="1400" height="780" fill="#fbfbf9"/>
+<text x="24" y="34" font-size="21" fill="#1a1a18" class="b">Stage 8 — close the adaptation loop</text>
+<text x="24" y="58" font-size="13" fill="#546e7a">Only new hardware: the optional TDS (salinity) sensor on ADS1115 A2. Everything else is firmware.</text>
+<rect x="1120" y="96" width="190" height="478" rx="10" fill="#1b7a3a" stroke="#0d4d22" stroke-width="2" />
+<rect x="1189" y="84" width="52" height="26" rx="6" fill="#cfd8dc" stroke="#78909c" stroke-width="1.5" />
+<text x="1215" y="126" font-size="10" fill="#e8f5e9" text-anchor="middle">USB-C</text>
+<rect x="1190" y="266" width="52" height="52" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="1216" y="296" font-size="9" fill="#bdbdbd" text-anchor="middle">RP2040</text>
+<rect x="1196" y="396" width="40" height="40" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="1216" y="420" font-size="9" fill="#bdbdbd" text-anchor="middle">FPGA</text>
+<rect x="1130" y="134" width="11" height="11" fill="#d8d3c0" stroke="#6b5b1e" stroke-width="1" />
+<text x="1148" y="144" font-size="10.5" fill="#a5d6a7" class="m">5V</text>
+<use href="#pa" x="1136" y="162"/>
+<text x="1148" y="166" font-size="10.5" fill="#fff" class="m b">3.3V</text>
+<use href="#pd" x="1136" y="184"/>
+<text x="1148" y="188" font-size="10.5" fill="#a5d6a7" class="m">IO5</text>
+<use href="#pa" x="1136" y="206"/>
+<text x="1148" y="210" font-size="10.5" fill="#fff" class="m b">IO6</text>
+<use href="#pa" x="1136" y="228"/>
+<text x="1148" y="232" font-size="10.5" fill="#fff" class="m b">IO7</text>
+<use href="#pd" x="1136" y="250"/>
+<text x="1148" y="254" font-size="10.5" fill="#a5d6a7" class="m">IO8</text>
+<use href="#pd" x="1136" y="272"/>
+<text x="1148" y="276" font-size="10.5" fill="#a5d6a7" class="m">IO9</text>
+<use href="#pa" x="1136" y="294"/>
+<text x="1148" y="298" font-size="10.5" fill="#fff" class="m b">GND</text>
+<use href="#pd" x="1136" y="316"/>
+<text x="1148" y="320" font-size="10.5" fill="#a5d6a7" class="m">IO10</text>
+<use href="#pd" x="1136" y="338"/>
+<text x="1148" y="342" font-size="10.5" fill="#a5d6a7" class="m">IO11</text>
+<use href="#pd" x="1136" y="360"/>
+<text x="1148" y="364" font-size="10.5" fill="#a5d6a7" class="m">IO14</text>
+<use href="#pd" x="1136" y="382"/>
+<text x="1148" y="386" font-size="10.5" fill="#a5d6a7" class="m">IO15</text>
+<use href="#pd" x="1136" y="404"/>
+<text x="1148" y="408" font-size="10.5" fill="#a5d6a7" class="m">GND</text>
+<use href="#pd" x="1136" y="426"/>
+<text x="1148" y="430" font-size="10.5" fill="#a5d6a7" class="m">F17</text>
+<use href="#pd" x="1136" y="448"/>
+<text x="1148" y="452" font-size="10.5" fill="#a5d6a7" class="m">F18</text>
+<use href="#pd" x="1136" y="470"/>
+<text x="1148" y="474" font-size="10.5" fill="#a5d6a7" class="m">F0</text>
+<use href="#pd" x="1136" y="492"/>
+<text x="1148" y="496" font-size="10.5" fill="#a5d6a7" class="m">F1</text>
+<use href="#pd" x="1136" y="514"/>
+<text x="1148" y="518" font-size="10.5" fill="#a5d6a7" class="m">F2</text>
+<use href="#pd" x="1136" y="536"/>
+<text x="1148" y="540" font-size="10.5" fill="#a5d6a7" class="m">F7</text>
+<rect x="1288" y="134" width="11" height="11" fill="#d8d3c0" stroke="#6b5b1e" stroke-width="1" />
+<text x="1282" y="144" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">5V</text>
+<use href="#pd" x="1294" y="162"/>
+<text x="1282" y="166" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">3.3V</text>
+<use href="#pd" x="1294" y="184"/>
+<text x="1282" y="188" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO29</text>
+<use href="#pd" x="1294" y="206"/>
+<text x="1282" y="210" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO28</text>
+<use href="#pd" x="1294" y="228"/>
+<text x="1282" y="232" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO27</text>
+<use href="#pd" x="1294" y="250"/>
+<text x="1282" y="254" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO26</text>
+<use href="#pd" x="1294" y="272"/>
+<text x="1282" y="276" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<use href="#pd" x="1294" y="294"/>
+<text x="1282" y="298" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO25</text>
+<use href="#pd" x="1294" y="316"/>
+<text x="1282" y="320" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO24</text>
+<use href="#pd" x="1294" y="338"/>
+<text x="1282" y="342" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO23</text>
+<use href="#pd" x="1294" y="360"/>
+<text x="1282" y="364" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO22</text>
+<use href="#pd" x="1294" y="382"/>
+<text x="1282" y="386" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO21</text>
+<use href="#pd" x="1294" y="404"/>
+<text x="1282" y="408" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<use href="#pd" x="1294" y="426"/>
+<text x="1282" y="430" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO20</text>
+<use href="#pd" x="1294" y="448"/>
+<text x="1282" y="452" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO19</text>
+<use href="#pd" x="1294" y="470"/>
+<text x="1282" y="474" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO18</text>
+<use href="#pd" x="1294" y="492"/>
+<text x="1282" y="496" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO17</text>
+<use href="#pd" x="1294" y="514"/>
+<text x="1282" y="518" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO16</text>
+<use href="#pd" x="1294" y="536"/>
+<text x="1282" y="540" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<text x="1215" y="594" font-size="11" fill="#1a1a18" text-anchor="middle" class="sb">Shrike Lite (USB-C at top)</text>
+<path d="M470,162 L1136,162" fill="none" stroke="#ffffff" stroke-width="5.6" class="w"/>
+<path d="M470,162 L1136,162" fill="none" stroke="#d32f2f" stroke-width="3.2" class="w"/>
+<rect x="539" y="153" width="42" height="17" rx="8" fill="#ffffff" stroke="#d32f2f" stroke-width="1.1" />
+<text x="560" y="166" font-size="10.5" fill="#d32f2f" text-anchor="middle" class="sb">3.3 V</text>
+<path d="M470,206 L1136,206" fill="none" stroke="#ffffff" stroke-width="5.6" class="w"/>
+<path d="M470,206 L1136,206" fill="none" stroke="#1e88e5" stroke-width="3.2" class="w"/>
+<rect x="526" y="197" width="68" height="17" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="1.1" />
+<text x="560" y="210" font-size="10.5" fill="#1e88e5" text-anchor="middle" class="sb">SDA → IO6</text>
+<path d="M470,228 L1136,228" fill="none" stroke="#ffffff" stroke-width="5.6" class="w"/>
+<path d="M470,228 L1136,228" fill="none" stroke="#8e24aa" stroke-width="3.2" class="w"/>
+<rect x="526" y="219" width="68" height="17" rx="8" fill="#ffffff" stroke="#8e24aa" stroke-width="1.1" />
+<text x="560" y="232" font-size="10.5" fill="#8e24aa" text-anchor="middle" class="sb">SCL → IO7</text>
+<path d="M470,294 L1136,294" fill="none" stroke="#ffffff" stroke-width="5.6" class="w"/>
+<path d="M470,294 L1136,294" fill="none" stroke="#263238" stroke-width="3.2" class="w"/>
+<rect x="545" y="285" width="29" height="17" rx="8" fill="#ffffff" stroke="#263238" stroke-width="1.1" />
+<text x="560" y="298" font-size="10.5" fill="#263238" text-anchor="middle" class="sb">GND</text>
+<rect x="640" y="380" width="270" height="118" rx="6" fill="#1a237e" stroke="#0b0b2b" stroke-width="1.6" />
+<use href="#pd" x="658" y="393"/>
+<text x="662" y="409" font-size="10" fill="#c5cae9" class="m" transform="rotate(90 662 409)">VDD</text>
+<use href="#pd" x="684" y="393"/>
+<text x="688" y="409" font-size="10" fill="#c5cae9" class="m" transform="rotate(90 688 409)">GND</text>
+<use href="#pd" x="710" y="393"/>
+<text x="714" y="409" font-size="10" fill="#c5cae9" class="m" transform="rotate(90 714 409)">SCL</text>
+<use href="#pd" x="736" y="393"/>
+<text x="740" y="409" font-size="10" fill="#c5cae9" class="m" transform="rotate(90 740 409)">SDA</text>
+<use href="#pd" x="762" y="393"/>
+<text x="766" y="409" font-size="10" fill="#c5cae9" class="m" transform="rotate(90 766 409)">ADDR</text>
+<use href="#pd" x="788" y="393"/>
+<text x="792" y="409" font-size="10" fill="#c5cae9" class="m" transform="rotate(90 792 409)">ALRT</text>
+<use href="#pd" x="814" y="393"/>
+<text x="818" y="409" font-size="10" fill="#c5cae9" class="m" transform="rotate(90 818 409)">A0</text>
+<use href="#pd" x="840" y="393"/>
+<text x="844" y="409" font-size="10" fill="#c5cae9" class="m" transform="rotate(90 844 409)">A1</text>
+<use href="#pa" x="866" y="393"/>
+<text x="870" y="409" font-size="10" fill="#fff" class="m b" transform="rotate(90 870 409)">A2</text>
+<use href="#pd" x="892" y="393"/>
+<text x="896" y="409" font-size="10" fill="#c5cae9" class="m" transform="rotate(90 896 409)">A3</text>
+<text x="775" y="489" font-size="12" fill="#fff" text-anchor="middle" class="b">ADS1115 (as Stage 3)</text>
+<text x="775" y="530" font-size="10" fill="#1a237e" text-anchor="middle" class="i">VDD/GND/SCL/SDA/ADDR/A0/A1 stay as in Stage 3</text>
+<rect x="470" y="380" width="130" height="132" rx="6" fill="#00695c" stroke="#0b0b2b" stroke-width="1.6" />
+<use href="#pa" x="488" y="393"/>
+<text x="492" y="409" font-size="10" fill="#fff" class="m b" transform="rotate(90 492 409)">+ VCC</text>
+<use href="#pa" x="514" y="393"/>
+<text x="518" y="409" font-size="10" fill="#fff" class="m b" transform="rotate(90 518 409)">− GND</text>
+<use href="#pa" x="540" y="393"/>
+<text x="544" y="409" font-size="10" fill="#fff" class="m b" transform="rotate(90 544 409)">A OUT</text>
+<text x="535" y="490" font-size="12" fill="#fff" text-anchor="middle" class="b">TDS SEN0244</text>
+<text x="535" y="505" font-size="9.5" fill="#fff" text-anchor="middle">optional: not yet ordered</text>
+<path d="M488,393 L488,162" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M488,393 L488,162" fill="none" stroke="#d32f2f" stroke-width="2.6" class="w"/>
+<circle cx="488" cy="162" r="4.2" fill="#d32f2f" stroke="#fff" stroke-width="1.2"/>
+<path d="M514,393 L514,294" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M514,393 L514,294" fill="none" stroke="#263238" stroke-width="2.6" class="w"/>
+<circle cx="514" cy="294" r="4.2" fill="#263238" stroke="#fff" stroke-width="1.2"/>
+<path d="M540,393 L540,356 Q540,350 546,350 L860,350 Q866,350 866,356 L866,393" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M540,393 L540,356 Q540,350 546,350 L860,350 Q866,350 866,356 L866,393" fill="none" stroke="#00897b" stroke-width="2.6" class="w"/>
+<rect x="570" y="341" width="266" height="17" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="1.1" />
+<text x="703" y="354" font-size="10.5" fill="#00897b" text-anchor="middle" class="sb">TDS A → ADS1115 A2 (0–2.3 V: no divider)</text>
+<rect x="40" y="110" width="390" height="540" rx="10" fill="#ffffff" stroke="#cfd8dc" stroke-width="1.2" />
+<text x="56" y="136" font-size="13" fill="#1a1a18" class="b">The loop (firmware, every ~100 ms)</text>
+<circle cx="70" cy="174" r="13" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.6"/>
+<text x="70" y="179" font-size="12" fill="#0d47a1" text-anchor="middle" class="b">1</text>
+<text x="94" y="178" font-size="12" fill="#0d47a1" class="b">Read</text>
+<text x="94" y="196" font-size="10.5" fill="#37474f">temp (IO5) · turbidity (A0) · depth pot (A1)</text>
+<text x="94" y="211" font-size="10.5" fill="#37474f">· TDS (A2) · battery (INA219)</text>
+<line x1="70" y1="188" x2="70" y2="236" stroke="#90caf9" stroke-width="2"/>
+<circle cx="70" cy="250" r="13" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.6"/>
+<text x="70" y="255" font-size="12" fill="#0d47a1" text-anchor="middle" class="b">2</text>
+<text x="94" y="254" font-size="12" fill="#0d47a1" class="b">Decide</text>
+<text x="94" y="272" font-size="10.5" fill="#37474f">pick a mode from calibrated thresholds with</text>
+<text x="94" y="287" font-size="10.5" fill="#37474f">hysteresis, so it never flickers between</text>
+<text x="94" y="302" font-size="10.5" fill="#37474f">modes</text>
+<line x1="70" y1="264" x2="70" y2="312" stroke="#90caf9" stroke-width="2"/>
+<circle cx="70" cy="326" r="13" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.6"/>
+<text x="70" y="331" font-size="12" fill="#0d47a1" text-anchor="middle" class="b">3</text>
+<text x="94" y="330" font-size="12" fill="#0d47a1" class="b">Pick</text>
+<text x="94" y="348" font-size="10.5" fill="#37474f">centre frequency · bandwidth · pulse length</text>
+<text x="94" y="363" font-size="10.5" fill="#37474f">· window</text>
+<line x1="70" y1="340" x2="70" y2="388" stroke="#90caf9" stroke-width="2"/>
+<circle cx="70" cy="402" r="13" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.6"/>
+<text x="70" y="407" font-size="12" fill="#0d47a1" text-anchor="middle" class="b">4</text>
+<text x="94" y="406" font-size="12" fill="#0d47a1" class="b">Rebuild</text>
+<text x="94" y="424" font-size="10.5" fill="#37474f">only if the mode changed: build the new</text>
+<text x="94" y="439" font-size="10.5" fill="#37474f">buffer, swap it in at a pulse boundary,</text>
+<text x="94" y="454" font-size="10.5" fill="#37474f">never mid-pulse</text>
+<line x1="70" y1="416" x2="70" y2="464" stroke="#90caf9" stroke-width="2"/>
+<circle cx="70" cy="478" r="13" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.6"/>
+<text x="70" y="483" font-size="12" fill="#0d47a1" text-anchor="middle" class="b">5</text>
+<text x="94" y="482" font-size="12" fill="#0d47a1" class="b">Set amplitude</text>
+<text x="94" y="500" font-size="10.5" fill="#37474f">MCP41010 wiper over SPI: analog, never by</text>
+<text x="94" y="515" font-size="10.5" fill="#37474f">scaling samples</text>
+<line x1="70" y1="492" x2="70" y2="540" stroke="#90caf9" stroke-width="2"/>
+<circle cx="70" cy="554" r="13" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.6"/>
+<text x="70" y="559" font-size="12" fill="#0d47a1" text-anchor="middle" class="b">6</text>
+<text x="94" y="558" font-size="12" fill="#0d47a1" class="b">Report</text>
+<text x="94" y="576" font-size="10.5" fill="#37474f">mode + measured latency over USB serial</text>
+<text x="470" y="600" font-size="12" fill="#1a1a18" class="b">Notes</text>
+<text x="470" y="618" font-size="11" fill="#37474f">• Demo: stir mud into the water and the waveform on the scope changes by itself. Record it on video.</text>
+<text x="470" y="635" font-size="11" fill="#37474f">• Salinity demo (if the TDS sensor arrives): add salt and watch the mode shift.</text>
+<text x="470" y="652" font-size="11" fill="#37474f">• Depth changes absorption by only ~3 % at 200 m: justify "deep → low frequency" by the longer range needed.</text>
+<text x="470" y="700" font-size="12" fill="#37474f">Gate: mud goes in, waveform changes on its own, and the latency is measured and printed.</text>
+</svg>

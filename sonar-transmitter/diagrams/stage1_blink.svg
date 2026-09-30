@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="660" viewBox="0 0 1120 660">
+<style>text{font-family:'DejaVu Sans',Arial,sans-serif}.m{font-family:'DejaVu Sans Mono',Menlo,monospace}.b{font-weight:700}.sb{font-weight:600}.i{font-style:italic}.w{stroke-linecap:round;stroke-linejoin:round}</style><defs><g id="pa"><circle r="5.6" fill="#e0c060" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g><g id="pd"><circle r="5.6" fill="#d8d3c0" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g></defs>
+<rect width="1120" height="660" fill="#fbfbf9"/>
+<text x="24" y="34" font-size="21" fill="#1a1a18" class="b">Stage 1 — toolchain and first blink</text>
+<text x="24" y="58" font-size="13" fill="#546e7a">One cable, no wiring. Status: PASSED 25 Sep 2026.</text>
+<rect x="800" y="120" width="190" height="478" rx="10" fill="#1b7a3a" stroke="#0d4d22" stroke-width="2" />
+<rect x="869" y="108" width="52" height="26" rx="6" fill="#cfd8dc" stroke="#78909c" stroke-width="1.5" />
+<text x="895" y="150" font-size="10" fill="#e8f5e9" text-anchor="middle">USB-C</text>
+<rect x="870" y="290" width="52" height="52" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="896" y="320" font-size="9" fill="#bdbdbd" text-anchor="middle">RP2040</text>
+<rect x="876" y="420" width="40" height="40" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="896" y="444" font-size="9" fill="#bdbdbd" text-anchor="middle">FPGA</text>
+<rect x="810" y="158" width="11" height="11" fill="#d8d3c0" stroke="#6b5b1e" stroke-width="1" />
+<text x="828" y="168" font-size="10.5" fill="#a5d6a7" class="m">5V</text>
+<use href="#pd" x="816" y="186"/>
+<text x="828" y="190" font-size="10.5" fill="#a5d6a7" class="m">3.3V</text>
+<use href="#pd" x="816" y="208"/>
+<text x="828" y="212" font-size="10.5" fill="#a5d6a7" class="m">IO5</text>
+<use href="#pd" x="816" y="230"/>
+<text x="828" y="234" font-size="10.5" fill="#a5d6a7" class="m">IO6</text>
+<use href="#pd" x="816" y="252"/>
+<text x="828" y="256" font-size="10.5" fill="#a5d6a7" class="m">IO7</text>
+<use href="#pd" x="816" y="274"/>
+<text x="828" y="278" font-size="10.5" fill="#a5d6a7" class="m">IO8</text>
+<use href="#pd" x="816" y="296"/>
+<text x="828" y="300" font-size="10.5" fill="#a5d6a7" class="m">IO9</text>
+<use href="#pd" x="816" y="318"/>
+<text x="828" y="322" font-size="10.5" fill="#a5d6a7" class="m">GND</text>
+<use href="#pd" x="816" y="340"/>
+<text x="828" y="344" font-size="10.5" fill="#a5d6a7" class="m">IO10</text>
+<use href="#pd" x="816" y="362"/>
+<text x="828" y="366" font-size="10.5" fill="#a5d6a7" class="m">IO11</text>
+<use href="#pd" x="816" y="384"/>
+<text x="828" y="388" font-size="10.5" fill="#a5d6a7" class="m">IO14</text>
+<use href="#pd" x="816" y="406"/>
+<text x="828" y="410" font-size="10.5" fill="#a5d6a7" class="m">IO15</text>
+<use href="#pd" x="816" y="428"/>
+<text x="828" y="432" font-size="10.5" fill="#a5d6a7" class="m">GND</text>
+<use href="#pd" x="816" y="450"/>
+<text x="828" y="454" font-size="10.5" fill="#a5d6a7" class="m">F17</text>
+<use href="#pd" x="816" y="472"/>
+<text x="828" y="476" font-size="10.5" fill="#a5d6a7" class="m">F18</text>
+<use href="#pd" x="816" y="494"/>
+<text x="828" y="498" font-size="10.5" fill="#a5d6a7" class="m">F0</text>
+<use href="#pd" x="816" y="516"/>
+<text x="828" y="520" font-size="10.5" fill="#a5d6a7" class="m">F1</text>
+<use href="#pd" x="816" y="538"/>
+<text x="828" y="542" font-size="10.5" fill="#a5d6a7" class="m">F2</text>
+<use href="#pd" x="816" y="560"/>
+<text x="828" y="564" font-size="10.5" fill="#a5d6a7" class="m">F7</text>
+<rect x="968" y="158" width="11" height="11" fill="#d8d3c0" stroke="#6b5b1e" stroke-width="1" />
+<text x="962" y="168" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">5V</text>
+<use href="#pd" x="974" y="186"/>
+<text x="962" y="190" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">3.3V</text>
+<use href="#pd" x="974" y="208"/>
+<text x="962" y="212" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO29</text>
+<use href="#pd" x="974" y="230"/>
+<text x="962" y="234" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO28</text>
+<use href="#pd" x="974" y="252"/>
+<text x="962" y="256" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO27</text>
+<use href="#pd" x="974" y="274"/>
+<text x="962" y="278" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO26</text>
+<use href="#pd" x="974" y="296"/>
+<text x="962" y="300" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<use href="#pd" x="974" y="318"/>
+<text x="962" y="322" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO25</text>
+<use href="#pd" x="974" y="340"/>
+<text x="962" y="344" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO24</text>
+<use href="#pd" x="974" y="362"/>
+<text x="962" y="366" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO23</text>
+<use href="#pd" x="974" y="384"/>
+<text x="962" y="388" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO22</text>
+<use href="#pd" x="974" y="406"/>
+<text x="962" y="410" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO21</text>
+<use href="#pd" x="974" y="428"/>
+<text x="962" y="432" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<use href="#pd" x="974" y="450"/>
+<text x="962" y="454" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO20</text>
+<use href="#pd" x="974" y="472"/>
+<text x="962" y="476" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO19</text>
+<use href="#pd" x="974" y="494"/>
+<text x="962" y="498" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO18</text>
+<use href="#pd" x="974" y="516"/>
+<text x="962" y="520" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO17</text>
+<use href="#pd" x="974" y="538"/>
+<text x="962" y="542" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO16</text>
+<use href="#pd" x="974" y="560"/>
+<text x="962" y="564" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<text x="895" y="618" font-size="11" fill="#1a1a18" text-anchor="middle" class="sb">Shrike Lite (top view, USB-C at top)</text>
+<rect x="80" y="250" width="170" height="110" rx="6" fill="#cfd8dc" stroke="#455a64" stroke-width="2" />
+<rect x="90" y="260" width="150" height="90" rx="3" fill="#263238" stroke="#000" stroke-width="1.2" />
+<text x="165" y="300" font-size="11" fill="#a5d6a7" text-anchor="middle" class="m">arduino-cli</text>
+<text x="165" y="318" font-size="11" fill="#a5d6a7" text-anchor="middle" class="m">serial monitor</text>
+<path d="M66,360 L264,360 L276,374 L54,374 Z" fill="#b0bec5" stroke="#455a64" stroke-width="1.5" class="w"/>
+<text x="165" y="394" font-size="12" fill="#1a1a18" text-anchor="middle" class="b">Laptop</text>
+<path d="M276,310 L554,310 Q560,310 560,304 L560,94 Q560,88 566,88 L889,88 Q895,88 895,94 L895,108" fill="none" stroke="#ffffff" stroke-width="8.4" class="w"/>
+<path d="M276,310 L554,310 Q560,310 560,304 L560,94 Q560,88 566,88 L889,88 Q895,88 895,94 L895,108" fill="none" stroke="#607d8b" stroke-width="6" class="w"/>
+<rect x="504" y="161" width="112" height="17" rx="8" fill="#ffffff" stroke="#455a64" stroke-width="1.1" />
+<text x="560" y="174" font-size="10.5" fill="#455a64" text-anchor="middle" class="sb">USB-C data cable</text>
+<circle cx="895" cy="262" r="8" fill="#ffeb3b" stroke="#f57f17" stroke-width="2"/>
+<circle cx="895" cy="262" r="14" fill="none" stroke="#fbc02d" stroke-width="1.5"/>
+<path d="M879,262 L706,262 Q700,262 700,268 L700,330" fill="none" stroke="#ffffff" stroke-width="4" class="w" stroke-dasharray="4 3"/>
+<path d="M879,262 L706,262 Q700,262 700,268 L700,330" fill="none" stroke="#f9a825" stroke-width="1.6" class="w" stroke-dasharray="4 3"/>
+<text x="600" y="350" font-size="11" fill="#37474f">onboard MCU LED = GPIO4</text>
+<text x="600" y="367" font-size="11" fill="#37474f">(on the board, not a header pin)</text>
+<text x="600" y="384" font-size="11" fill="#37474f">Nothing to wire.</text>
+<text x="40" y="480" font-size="12" fill="#1a1a18" class="b">Steps</text>
+<text x="40" y="498" font-size="11" fill="#37474f">1. Plug the Shrike Lite into the laptop. A charge-only cable will not work: use a data cable.</text>
+<text x="40" y="515" font-size="11" fill="#37474f">2. First flash only: if no port appears, hold BOOT while plugging in.</text>
+<text x="40" y="532" font-size="11" fill="#37474f">   After that, uploads reset it automatically.</text>
+<text x="40" y="549" font-size="11" fill="#37474f">3. Board: Vicharak Shrike-Lite  (FQBN rp2040:rp2040:vicharak_shrike-lite).</text>
+<text x="40" y="566" font-size="11" fill="#37474f">4. Upload firmware/stage1_blink. Serial prints "alive" once a second.</text>
+<text x="40" y="620" font-size="12" fill="#37474f">Gate: the onboard LED blinks and the serial heartbeat arrives.</text>
+</svg>

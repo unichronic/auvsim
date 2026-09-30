@@ -1,0 +1,279 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1580" height="830" viewBox="0 0 1580 830">
+<style>text{font-family:'DejaVu Sans',Arial,sans-serif}.m{font-family:'DejaVu Sans Mono',Menlo,monospace}.b{font-weight:700}.sb{font-weight:600}.i{font-style:italic}.w{stroke-linecap:round;stroke-linejoin:round}</style><defs><g id="pa"><circle r="5.6" fill="#e0c060" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g><g id="pd"><circle r="5.6" fill="#d8d3c0" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g></defs>
+<rect width="1580" height="830" fill="#fbfbf9"/>
+<text x="24" y="34" font-size="21" fill="#1a1a18" class="b">Stage 3 — sensors on the breadboard</text>
+<text x="24" y="58" font-size="13" fill="#546e7a">Every sensor hangs off six lines that run straight into the Shrike Lite LEFT header. No soldering except module header pins.</text>
+<rect x="1350" y="96" width="190" height="478" rx="10" fill="#1b7a3a" stroke="#0d4d22" stroke-width="2" />
+<rect x="1419" y="84" width="52" height="26" rx="6" fill="#cfd8dc" stroke="#78909c" stroke-width="1.5" />
+<text x="1445" y="126" font-size="10" fill="#e8f5e9" text-anchor="middle">USB-C</text>
+<rect x="1420" y="266" width="52" height="52" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="1446" y="296" font-size="9" fill="#bdbdbd" text-anchor="middle">RP2040</text>
+<rect x="1426" y="396" width="40" height="40" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="1446" y="420" font-size="9" fill="#bdbdbd" text-anchor="middle">FPGA</text>
+<rect x="1360" y="134" width="11" height="11" fill="#e0c060" stroke="#6b5b1e" stroke-width="1" />
+<text x="1378" y="144" font-size="10.5" fill="#fff" class="m b">5V</text>
+<use href="#pa" x="1366" y="162"/>
+<text x="1378" y="166" font-size="10.5" fill="#fff" class="m b">3.3V</text>
+<use href="#pa" x="1366" y="184"/>
+<text x="1378" y="188" font-size="10.5" fill="#fff" class="m b">IO5</text>
+<use href="#pa" x="1366" y="206"/>
+<text x="1378" y="210" font-size="10.5" fill="#fff" class="m b">IO6</text>
+<use href="#pa" x="1366" y="228"/>
+<text x="1378" y="232" font-size="10.5" fill="#fff" class="m b">IO7</text>
+<use href="#pd" x="1366" y="250"/>
+<text x="1378" y="254" font-size="10.5" fill="#a5d6a7" class="m">IO8</text>
+<use href="#pd" x="1366" y="272"/>
+<text x="1378" y="276" font-size="10.5" fill="#a5d6a7" class="m">IO9</text>
+<use href="#pa" x="1366" y="294"/>
+<text x="1378" y="298" font-size="10.5" fill="#fff" class="m b">GND</text>
+<use href="#pd" x="1366" y="316"/>
+<text x="1378" y="320" font-size="10.5" fill="#a5d6a7" class="m">IO10</text>
+<use href="#pd" x="1366" y="338"/>
+<text x="1378" y="342" font-size="10.5" fill="#a5d6a7" class="m">IO11</text>
+<use href="#pd" x="1366" y="360"/>
+<text x="1378" y="364" font-size="10.5" fill="#a5d6a7" class="m">IO14</text>
+<use href="#pd" x="1366" y="382"/>
+<text x="1378" y="386" font-size="10.5" fill="#a5d6a7" class="m">IO15</text>
+<use href="#pd" x="1366" y="404"/>
+<text x="1378" y="408" font-size="10.5" fill="#a5d6a7" class="m">GND</text>
+<use href="#pd" x="1366" y="426"/>
+<text x="1378" y="430" font-size="10.5" fill="#a5d6a7" class="m">F17</text>
+<use href="#pd" x="1366" y="448"/>
+<text x="1378" y="452" font-size="10.5" fill="#a5d6a7" class="m">F18</text>
+<use href="#pd" x="1366" y="470"/>
+<text x="1378" y="474" font-size="10.5" fill="#a5d6a7" class="m">F0</text>
+<use href="#pd" x="1366" y="492"/>
+<text x="1378" y="496" font-size="10.5" fill="#a5d6a7" class="m">F1</text>
+<use href="#pd" x="1366" y="514"/>
+<text x="1378" y="518" font-size="10.5" fill="#a5d6a7" class="m">F2</text>
+<use href="#pd" x="1366" y="536"/>
+<text x="1378" y="540" font-size="10.5" fill="#a5d6a7" class="m">F7</text>
+<rect x="1518" y="134" width="11" height="11" fill="#d8d3c0" stroke="#6b5b1e" stroke-width="1" />
+<text x="1512" y="144" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">5V</text>
+<use href="#pd" x="1524" y="162"/>
+<text x="1512" y="166" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">3.3V</text>
+<use href="#pd" x="1524" y="184"/>
+<text x="1512" y="188" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO29</text>
+<use href="#pd" x="1524" y="206"/>
+<text x="1512" y="210" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO28</text>
+<use href="#pd" x="1524" y="228"/>
+<text x="1512" y="232" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO27</text>
+<use href="#pd" x="1524" y="250"/>
+<text x="1512" y="254" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO26</text>
+<use href="#pd" x="1524" y="272"/>
+<text x="1512" y="276" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<use href="#pd" x="1524" y="294"/>
+<text x="1512" y="298" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO25</text>
+<use href="#pd" x="1524" y="316"/>
+<text x="1512" y="320" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO24</text>
+<use href="#pd" x="1524" y="338"/>
+<text x="1512" y="342" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO23</text>
+<use href="#pd" x="1524" y="360"/>
+<text x="1512" y="364" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO22</text>
+<use href="#pd" x="1524" y="382"/>
+<text x="1512" y="386" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO21</text>
+<use href="#pd" x="1524" y="404"/>
+<text x="1512" y="408" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<use href="#pd" x="1524" y="426"/>
+<text x="1512" y="430" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO20</text>
+<use href="#pd" x="1524" y="448"/>
+<text x="1512" y="452" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO19</text>
+<use href="#pd" x="1524" y="470"/>
+<text x="1512" y="474" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO18</text>
+<use href="#pd" x="1524" y="492"/>
+<text x="1512" y="496" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO17</text>
+<use href="#pd" x="1524" y="514"/>
+<text x="1512" y="518" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO16</text>
+<use href="#pd" x="1524" y="536"/>
+<text x="1512" y="540" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<text x="1445" y="594" font-size="11" fill="#1a1a18" text-anchor="middle" class="sb">Shrike Lite (top view, USB-C at top)</text>
+<path d="M34,140 L1366,140" fill="none" stroke="#ffffff" stroke-width="5.6" class="w"/>
+<path d="M34,140 L1366,140" fill="none" stroke="#ef6c00" stroke-width="3.2" class="w"/>
+<rect x="51" y="131" width="183" height="17" rx="8" fill="#ffffff" stroke="#ef6c00" stroke-width="1.1" />
+<text x="142" y="144" font-size="10.5" fill="#ef6c00" text-anchor="middle" class="sb">5 V  (header 5V = USB VBUS)</text>
+<path d="M34,162 L1366,162" fill="none" stroke="#ffffff" stroke-width="5.6" class="w"/>
+<path d="M34,162 L1366,162" fill="none" stroke="#d32f2f" stroke-width="3.2" class="w"/>
+<rect x="121" y="153" width="42" height="17" rx="8" fill="#ffffff" stroke="#d32f2f" stroke-width="1.1" />
+<text x="142" y="166" font-size="10.5" fill="#d32f2f" text-anchor="middle" class="sb">3.3 V</text>
+<path d="M34,184 L1366,184" fill="none" stroke="#ffffff" stroke-width="5.6" class="w"/>
+<path d="M34,184 L1366,184" fill="none" stroke="#2e7d32" stroke-width="3.2" class="w"/>
+<rect x="95" y="175" width="93" height="17" rx="8" fill="#ffffff" stroke="#2e7d32" stroke-width="1.1" />
+<text x="142" y="188" font-size="10.5" fill="#2e7d32" text-anchor="middle" class="sb">1-Wire  → IO5</text>
+<path d="M34,206 L1366,206" fill="none" stroke="#ffffff" stroke-width="5.6" class="w"/>
+<path d="M34,206 L1366,206" fill="none" stroke="#1e88e5" stroke-width="3.2" class="w"/>
+<rect x="92" y="197" width="100" height="17" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="1.1" />
+<text x="142" y="210" font-size="10.5" fill="#1e88e5" text-anchor="middle" class="sb">I²C SDA  → IO6</text>
+<path d="M34,228 L1366,228" fill="none" stroke="#ffffff" stroke-width="5.6" class="w"/>
+<path d="M34,228 L1366,228" fill="none" stroke="#8e24aa" stroke-width="3.2" class="w"/>
+<rect x="92" y="219" width="100" height="17" rx="8" fill="#ffffff" stroke="#8e24aa" stroke-width="1.1" />
+<text x="142" y="232" font-size="10.5" fill="#8e24aa" text-anchor="middle" class="sb">I²C SCL  → IO7</text>
+<path d="M34,294 L1366,294" fill="none" stroke="#ffffff" stroke-width="5.6" class="w"/>
+<path d="M34,294 L1366,294" fill="none" stroke="#263238" stroke-width="3.2" class="w"/>
+<rect x="79" y="285" width="125" height="17" rx="8" fill="#ffffff" stroke="#263238" stroke-width="1.1" />
+<text x="142" y="298" font-size="10.5" fill="#263238" text-anchor="middle" class="sb">GND  (any GND pin)</text>
+<text x="1336" y="264" font-size="9.5" fill="#90a4ae" text-anchor="end" class="i">IO8 · IO9 unused</text>
+<rect x="250" y="410" width="150" height="132" rx="6" fill="#37474f" stroke="#0b0b2b" stroke-width="1.6" />
+<rect x="265" y="423" width="6" height="26" fill="#d32f2f" stroke="#111" stroke-width="0.6" />
+<use href="#pa" x="268" y="423"/>
+<text x="272" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 272 439)">RED</text>
+<rect x="291" y="423" width="6" height="26" fill="#111" stroke="#111" stroke-width="0.6" />
+<use href="#pa" x="294" y="423"/>
+<text x="298" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 298 439)">BLACK</text>
+<rect x="317" y="423" width="6" height="26" fill="#fbc02d" stroke="#111" stroke-width="0.6" />
+<use href="#pa" x="320" y="423"/>
+<text x="324" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 324 439)">YELLOW</text>
+<text x="325" y="520" font-size="12" fill="#fff" text-anchor="middle" class="b">DS18B20 probe</text>
+<text x="325" y="535" font-size="9.5" fill="#fff" text-anchor="middle">colours vary: check yours</text>
+<path d="M268,423 L268,162" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M268,423 L268,162" fill="none" stroke="#d32f2f" stroke-width="2.6" class="w"/>
+<circle cx="268" cy="162" r="4.2" fill="#d32f2f" stroke="#fff" stroke-width="1.2"/>
+<path d="M294,423 L294,294" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M294,423 L294,294" fill="none" stroke="#263238" stroke-width="2.6" class="w"/>
+<circle cx="294" cy="294" r="4.2" fill="#263238" stroke="#fff" stroke-width="1.2"/>
+<path d="M320,423 L320,184" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M320,423 L320,184" fill="none" stroke="#2e7d32" stroke-width="2.6" class="w"/>
+<circle cx="320" cy="184" r="4.2" fill="#2e7d32" stroke="#fff" stroke-width="1.2"/>
+<line x1="268" y1="372" x2="320" y2="372" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="277" y="366" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="294" y="393" font-size="10" fill="#0d47a1" text-anchor="middle" class="b">4.7 kΩ</text>
+<circle cx="268" cy="372" r="4.2" fill="#d32f2f" stroke="#fff" stroke-width="1.2"/>
+<circle cx="320" cy="372" r="4.2" fill="#2e7d32" stroke="#fff" stroke-width="1.2"/>
+<text x="334" y="376" font-size="9.5" fill="#b71c1c" class="i">pull-up (mandatory)</text>
+<rect x="450" y="410" width="166" height="132" rx="6" fill="#6a1b9a" stroke="#0b0b2b" stroke-width="1.6" />
+<use href="#pa" x="468" y="423"/>
+<text x="472" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 472 439)">VCC</text>
+<use href="#pa" x="494" y="423"/>
+<text x="498" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 498 439)">GND</text>
+<use href="#pa" x="520" y="423"/>
+<text x="524" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 524 439)">SCL</text>
+<use href="#pa" x="546" y="423"/>
+<text x="550" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 550 439)">SDA</text>
+<use href="#pd" x="572" y="423"/>
+<text x="576" y="439" font-size="10" fill="#9fa8da" class="m" transform="rotate(90 576 439)">VIN-</text>
+<use href="#pd" x="598" y="423"/>
+<text x="602" y="439" font-size="10" fill="#9fa8da" class="m" transform="rotate(90 602 439)">VIN+</text>
+<text x="533" y="520" font-size="12" fill="#fff" text-anchor="middle" class="b">INA219</text>
+<text x="533" y="535" font-size="9.5" fill="#fff" text-anchor="middle">VIN± open until Stage 9</text>
+<path d="M468,423 L468,162" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M468,423 L468,162" fill="none" stroke="#d32f2f" stroke-width="2.6" class="w"/>
+<circle cx="468" cy="162" r="4.2" fill="#d32f2f" stroke="#fff" stroke-width="1.2"/>
+<path d="M494,423 L494,294" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M494,423 L494,294" fill="none" stroke="#263238" stroke-width="2.6" class="w"/>
+<circle cx="494" cy="294" r="4.2" fill="#263238" stroke="#fff" stroke-width="1.2"/>
+<path d="M520,423 L520,228" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M520,423 L520,228" fill="none" stroke="#8e24aa" stroke-width="2.6" class="w"/>
+<circle cx="520" cy="228" r="4.2" fill="#8e24aa" stroke="#fff" stroke-width="1.2"/>
+<path d="M546,423 L546,206" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M546,423 L546,206" fill="none" stroke="#1e88e5" stroke-width="2.6" class="w"/>
+<circle cx="546" cy="206" r="4.2" fill="#1e88e5" stroke="#fff" stroke-width="1.2"/>
+<rect x="650" y="410" width="270" height="118" rx="6" fill="#1a237e" stroke="#0b0b2b" stroke-width="1.6" />
+<use href="#pa" x="668" y="423"/>
+<text x="672" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 672 439)">VDD</text>
+<use href="#pa" x="694" y="423"/>
+<text x="698" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 698 439)">GND</text>
+<use href="#pa" x="720" y="423"/>
+<text x="724" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 724 439)">SCL</text>
+<use href="#pa" x="746" y="423"/>
+<text x="750" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 750 439)">SDA</text>
+<use href="#pa" x="772" y="423"/>
+<text x="776" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 776 439)">ADDR</text>
+<use href="#pd" x="798" y="423"/>
+<text x="802" y="439" font-size="10" fill="#9fa8da" class="m" transform="rotate(90 802 439)">ALRT</text>
+<use href="#pa" x="824" y="423"/>
+<text x="828" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 828 439)">A0</text>
+<use href="#pa" x="850" y="423"/>
+<text x="854" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 854 439)">A1</text>
+<use href="#pd" x="876" y="423"/>
+<text x="880" y="439" font-size="10" fill="#9fa8da" class="m" transform="rotate(90 880 439)">A2</text>
+<use href="#pd" x="902" y="423"/>
+<text x="906" y="439" font-size="10" fill="#9fa8da" class="m" transform="rotate(90 906 439)">A3</text>
+<text x="785" y="519" font-size="12" fill="#fff" text-anchor="middle" class="b">ADS1115  (addr 0x48)</text>
+<path d="M668,423 L668,162" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M668,423 L668,162" fill="none" stroke="#d32f2f" stroke-width="2.6" class="w"/>
+<circle cx="668" cy="162" r="4.2" fill="#d32f2f" stroke="#fff" stroke-width="1.2"/>
+<path d="M694,423 L694,294" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M694,423 L694,294" fill="none" stroke="#263238" stroke-width="2.6" class="w"/>
+<circle cx="694" cy="294" r="4.2" fill="#263238" stroke="#fff" stroke-width="1.2"/>
+<path d="M720,423 L720,228" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M720,423 L720,228" fill="none" stroke="#8e24aa" stroke-width="2.6" class="w"/>
+<circle cx="720" cy="228" r="4.2" fill="#8e24aa" stroke="#fff" stroke-width="1.2"/>
+<path d="M746,423 L746,206" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M746,423 L746,206" fill="none" stroke="#1e88e5" stroke-width="2.6" class="w"/>
+<circle cx="746" cy="206" r="4.2" fill="#1e88e5" stroke="#fff" stroke-width="1.2"/>
+<path d="M772,423 L772,294" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M772,423 L772,294" fill="none" stroke="#263238" stroke-width="2.6" class="w"/>
+<circle cx="772" cy="294" r="4.2" fill="#263238" stroke="#fff" stroke-width="1.2"/>
+<rect x="960" y="410" width="120" height="132" rx="6" fill="#0277bd" stroke="#0b0b2b" stroke-width="1.6" />
+<use href="#pa" x="978" y="423"/>
+<text x="982" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 982 439)">VCC</text>
+<use href="#pa" x="1004" y="423"/>
+<text x="1008" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 1008 439)">OUT</text>
+<use href="#pa" x="1030" y="423"/>
+<text x="1034" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 1034 439)">GND</text>
+<text x="1020" y="520" font-size="12" fill="#fff" text-anchor="middle" class="b">10 kΩ pot</text>
+<text x="1020" y="535" font-size="9.5" fill="#fff" text-anchor="middle">"depth" dial</text>
+<path d="M978,423 L978,162" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M978,423 L978,162" fill="none" stroke="#d32f2f" stroke-width="2.6" class="w"/>
+<circle cx="978" cy="162" r="4.2" fill="#d32f2f" stroke="#fff" stroke-width="1.2"/>
+<path d="M1030,423 L1030,294" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M1030,423 L1030,294" fill="none" stroke="#263238" stroke-width="2.6" class="w"/>
+<circle cx="1030" cy="294" r="4.2" fill="#263238" stroke="#fff" stroke-width="1.2"/>
+<path d="M1004,423 L1004,332 Q1004,326 998,326 L856,326 Q850,326 850,332 L850,423" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M1004,423 L1004,332 Q1004,326 998,326 L856,326 Q850,326 850,332 L850,423" fill="none" stroke="#00897b" stroke-width="2.6" class="w"/>
+<text x="890" y="319" font-size="10.5" fill="#00897b" class="b">pot OUT → A1</text>
+<rect x="1165" y="410" width="150" height="132" rx="6" fill="#4e342e" stroke="#0b0b2b" stroke-width="1.6" />
+<use href="#pa" x="1183" y="423"/>
+<text x="1187" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 1187 439)">VCC</text>
+<use href="#pa" x="1209" y="423"/>
+<text x="1213" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 1213 439)">GND</text>
+<use href="#pa" x="1235" y="423"/>
+<text x="1239" y="439" font-size="10" fill="#fff" class="m b" transform="rotate(90 1239 439)">AOUT</text>
+<text x="1240" y="520" font-size="12" fill="#fff" text-anchor="middle" class="b">Turbidity AZDM01</text>
+<text x="1240" y="535" font-size="9.5" fill="#fff" text-anchor="middle">5 V part · out ≤ 4.75 V</text>
+<path d="M1183,423 L1183,140" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M1183,423 L1183,140" fill="none" stroke="#ef6c00" stroke-width="2.6" class="w"/>
+<circle cx="1183" cy="140" r="4.2" fill="#ef6c00" stroke="#fff" stroke-width="1.2"/>
+<path d="M1209,423 L1209,294" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M1209,423 L1209,294" fill="none" stroke="#263238" stroke-width="2.6" class="w"/>
+<circle cx="1209" cy="294" r="4.2" fill="#263238" stroke="#fff" stroke-width="1.2"/>
+<path d="M1235,423 L1235,360 Q1235,354 1229,354 L1163,354" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M1235,423 L1235,360 Q1235,354 1229,354 L1163,354" fill="none" stroke="#ef6c00" stroke-width="2.6" class="w"/>
+<text x="1243" y="388" font-size="9.5" fill="#ef6c00" class="i">≤ 4.75 V</text>
+<line x1="1163" y1="354" x2="1105" y2="354" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1117" y="348" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1134" y="375" font-size="10" fill="#0d47a1" text-anchor="middle" class="b">10 kΩ</text>
+<path d="M1105,354 L830,354 Q824,354 824,360 L824,423" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M1105,354 L830,354 Q824,354 824,360 L824,423" fill="none" stroke="#00897b" stroke-width="2.6" class="w"/>
+<circle cx="1105" cy="354" r="4.2" fill="#00897b" stroke="#fff" stroke-width="1.2"/>
+<rect x="1050" y="345" width="36" height="17" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="1.1" />
+<text x="1068" y="358" font-size="10.5" fill="#00897b" text-anchor="middle" class="sb">→ A0</text>
+<line x1="1105" y1="354" x2="1105" y2="294" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1098" y="307" width="13" height="34" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1116" y="328" font-size="10" fill="#0d47a1" class="b">10 kΩ</text>
+<circle cx="1105" cy="294" r="4.2" fill="#263238" stroke="#fff" stroke-width="1.2"/>
+<rect x="34" y="600" width="250" height="168" rx="6" fill="#ffffff" stroke="#cfd8dc" stroke-width="1" />
+<text x="44" y="617" font-size="11" fill="#1a1a18" class="b">Wire colours</text>
+<line x1="46" y1="630" x2="74" y2="630" stroke="#ef6c00" stroke-width="3"/>
+<text x="82" y="634" font-size="10.5" fill="#37474f">5 V</text>
+<line x1="46" y1="648" x2="74" y2="648" stroke="#d32f2f" stroke-width="3"/>
+<text x="82" y="652" font-size="10.5" fill="#37474f">3.3 V</text>
+<line x1="46" y1="666" x2="74" y2="666" stroke="#263238" stroke-width="3"/>
+<text x="82" y="670" font-size="10.5" fill="#37474f">GND</text>
+<line x1="46" y1="684" x2="74" y2="684" stroke="#1e88e5" stroke-width="3"/>
+<text x="82" y="688" font-size="10.5" fill="#37474f">I²C SDA</text>
+<line x1="46" y1="702" x2="74" y2="702" stroke="#8e24aa" stroke-width="3"/>
+<text x="82" y="706" font-size="10.5" fill="#37474f">I²C SCL</text>
+<line x1="46" y1="720" x2="74" y2="720" stroke="#2e7d32" stroke-width="3"/>
+<text x="82" y="724" font-size="10.5" fill="#37474f">1-Wire data</text>
+<line x1="46" y1="738" x2="74" y2="738" stroke="#00897b" stroke-width="3"/>
+<text x="82" y="742" font-size="10.5" fill="#37474f">analog signal</text>
+<text x="46" y="760" font-size="10" fill="#546e7a" class="i">● dot = joined · crossing without dot = not joined</text>
+<text x="330" y="620" font-size="12" fill="#1a1a18" class="b">Check before powering</text>
+<text x="330" y="638" font-size="11" fill="#37474f">• Module header order varies between makers: always match the PRINTED LABEL, not the position.</text>
+<text x="330" y="655" font-size="11" fill="#37474f">• ADS1115 and INA219 on 3.3 V, never 5 V: their I²C pull-ups go to their own VDD.</text>
+<text x="330" y="672" font-size="11" fill="#37474f">• Only the turbidity sensor uses 5 V. Its output passes the 10 k/10 k divider before the ADC.</text>
+<text x="330" y="689" font-size="11" fill="#37474f">• Turbidity output is inverted: clearer water = higher voltage.</text>
+<text x="330" y="706" font-size="11" fill="#37474f">• ADDR tied to GND sets ADS1115 address 0x48; INA219 defaults to 0x40.</text>
+<text x="330" y="723" font-size="11" fill="#37474f">• Both breadboard blue (GND) rails must be joined to each other and to a Shrike GND pin.</text>
+<text x="330" y="755" font-size="11.5" fill="#37474f">Gate: I²C scan finds 0x40 + 0x48 · temperature plausible · pot sweeps 0→3.3 V · turbidity drops when muddied.</text>
+</svg>

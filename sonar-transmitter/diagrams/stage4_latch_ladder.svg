@@ -1,0 +1,358 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1480" height="920" viewBox="0 0 1480 920">
+<style>text{font-family:'DejaVu Sans',Arial,sans-serif}.m{font-family:'DejaVu Sans Mono',Menlo,monospace}.b{font-weight:700}.sb{font-weight:600}.i{font-style:italic}.w{stroke-linecap:round;stroke-linejoin:round}</style><defs><g id="pa"><circle r="5.6" fill="#e0c060" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g><g id="pd"><circle r="5.6" fill="#d8d3c0" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g></defs>
+<rect width="1480" height="920" fill="#fbfbf9"/>
+<text x="24" y="34" font-size="21" fill="#1a1a18" class="b">Stage 4 — 74HC574 latch + R-2R ladder (this IS the DAC)</text>
+<text x="24" y="58" font-size="13" fill="#546e7a">Build on a breadboard first. Soldered version adds the 33 Ω resistors. '574 runs on 3.3 V, never 5 V.</text>
+<rect x="40" y="100" width="190" height="478" rx="10" fill="#1b7a3a" stroke="#0d4d22" stroke-width="2" />
+<rect x="109" y="88" width="52" height="26" rx="6" fill="#cfd8dc" stroke="#78909c" stroke-width="1.5" />
+<text x="135" y="130" font-size="10" fill="#e8f5e9" text-anchor="middle">USB-C</text>
+<rect x="110" y="270" width="52" height="52" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="136" y="300" font-size="9" fill="#bdbdbd" text-anchor="middle">RP2040</text>
+<rect x="116" y="400" width="40" height="40" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="136" y="424" font-size="9" fill="#bdbdbd" text-anchor="middle">FPGA</text>
+<rect x="50" y="138" width="11" height="11" fill="#d8d3c0" stroke="#6b5b1e" stroke-width="1" />
+<text x="68" y="148" font-size="10.5" fill="#a5d6a7" class="m">5V</text>
+<use href="#pd" x="56" y="166"/>
+<text x="68" y="170" font-size="10.5" fill="#a5d6a7" class="m">3.3V</text>
+<use href="#pd" x="56" y="188"/>
+<text x="68" y="192" font-size="10.5" fill="#a5d6a7" class="m">IO5</text>
+<use href="#pd" x="56" y="210"/>
+<text x="68" y="214" font-size="10.5" fill="#a5d6a7" class="m">IO6</text>
+<use href="#pd" x="56" y="232"/>
+<text x="68" y="236" font-size="10.5" fill="#a5d6a7" class="m">IO7</text>
+<use href="#pd" x="56" y="254"/>
+<text x="68" y="258" font-size="10.5" fill="#a5d6a7" class="m">IO8</text>
+<use href="#pd" x="56" y="276"/>
+<text x="68" y="280" font-size="10.5" fill="#a5d6a7" class="m">IO9</text>
+<use href="#pd" x="56" y="298"/>
+<text x="68" y="302" font-size="10.5" fill="#a5d6a7" class="m">GND</text>
+<use href="#pd" x="56" y="320"/>
+<text x="68" y="324" font-size="10.5" fill="#a5d6a7" class="m">IO10</text>
+<use href="#pd" x="56" y="342"/>
+<text x="68" y="346" font-size="10.5" fill="#a5d6a7" class="m">IO11</text>
+<use href="#pd" x="56" y="364"/>
+<text x="68" y="368" font-size="10.5" fill="#a5d6a7" class="m">IO14</text>
+<use href="#pd" x="56" y="386"/>
+<text x="68" y="390" font-size="10.5" fill="#a5d6a7" class="m">IO15</text>
+<use href="#pd" x="56" y="408"/>
+<text x="68" y="412" font-size="10.5" fill="#a5d6a7" class="m">GND</text>
+<use href="#pd" x="56" y="430"/>
+<text x="68" y="434" font-size="10.5" fill="#a5d6a7" class="m">F17</text>
+<use href="#pd" x="56" y="452"/>
+<text x="68" y="456" font-size="10.5" fill="#a5d6a7" class="m">F18</text>
+<use href="#pd" x="56" y="474"/>
+<text x="68" y="478" font-size="10.5" fill="#a5d6a7" class="m">F0</text>
+<use href="#pd" x="56" y="496"/>
+<text x="68" y="500" font-size="10.5" fill="#a5d6a7" class="m">F1</text>
+<use href="#pd" x="56" y="518"/>
+<text x="68" y="522" font-size="10.5" fill="#a5d6a7" class="m">F2</text>
+<use href="#pd" x="56" y="540"/>
+<text x="68" y="544" font-size="10.5" fill="#a5d6a7" class="m">F7</text>
+<rect x="208" y="138" width="11" height="11" fill="#d8d3c0" stroke="#6b5b1e" stroke-width="1" />
+<text x="202" y="148" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">5V</text>
+<use href="#pa" x="214" y="166"/>
+<text x="202" y="170" font-size="10.5" fill="#fff" text-anchor="end" class="m b">3.3V</text>
+<use href="#pd" x="214" y="188"/>
+<text x="202" y="192" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO29</text>
+<use href="#pd" x="214" y="210"/>
+<text x="202" y="214" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO28</text>
+<use href="#pd" x="214" y="232"/>
+<text x="202" y="236" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO27</text>
+<use href="#pd" x="214" y="254"/>
+<text x="202" y="258" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO26</text>
+<use href="#pa" x="214" y="276"/>
+<text x="202" y="280" font-size="10.5" fill="#fff" text-anchor="end" class="m b">GND</text>
+<use href="#pd" x="214" y="298"/>
+<text x="202" y="302" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO25</text>
+<use href="#pa" x="214" y="320"/>
+<text x="202" y="324" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO24</text>
+<use href="#pa" x="214" y="342"/>
+<text x="202" y="346" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO23</text>
+<use href="#pa" x="214" y="364"/>
+<text x="202" y="368" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO22</text>
+<use href="#pa" x="214" y="386"/>
+<text x="202" y="390" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO21</text>
+<use href="#pd" x="214" y="408"/>
+<text x="202" y="412" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<use href="#pa" x="214" y="430"/>
+<text x="202" y="434" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO20</text>
+<use href="#pa" x="214" y="452"/>
+<text x="202" y="456" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO19</text>
+<use href="#pa" x="214" y="474"/>
+<text x="202" y="478" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO18</text>
+<use href="#pa" x="214" y="496"/>
+<text x="202" y="500" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO17</text>
+<use href="#pa" x="214" y="518"/>
+<text x="202" y="522" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO16</text>
+<use href="#pd" x="214" y="540"/>
+<text x="202" y="544" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<text x="135" y="598" font-size="11" fill="#1a1a18" text-anchor="middle" class="sb">Shrike Lite (USB-C at top)</text>
+<path d="M214,166 L1440,166" fill="none" stroke="#ffffff" stroke-width="5.6" class="w"/>
+<path d="M214,166 L1440,166" fill="none" stroke="#d32f2f" stroke-width="3.2" class="w"/>
+<rect x="339" y="157" width="42" height="17" rx="8" fill="#ffffff" stroke="#d32f2f" stroke-width="1.1" />
+<text x="360" y="170" font-size="10.5" fill="#d32f2f" text-anchor="middle" class="sb">3.3 V</text>
+<path d="M214,276 L1440,276" fill="none" stroke="#ffffff" stroke-width="5.6" class="w"/>
+<path d="M214,276 L1440,276" fill="none" stroke="#263238" stroke-width="3.2" class="w"/>
+<rect x="345" y="267" width="29" height="17" rx="8" fill="#ffffff" stroke="#263238" stroke-width="1.1" />
+<text x="360" y="280" font-size="10.5" fill="#263238" text-anchor="middle" class="sb">GND</text>
+<rect x="560" y="313" width="140" height="238" rx="4" fill="#263238" stroke="#000" stroke-width="1.5" />
+<path d="M619,313 A11,11 0 0 0 641,313" fill="none" stroke="#90a4ae" stroke-width="1.5" class="w"/>
+<circle cx="568" cy="320" r="2.6" fill="#90a4ae" stroke="none" stroke-width="0"/>
+<text x="630" y="303" font-size="13" fill="#1a1a18" text-anchor="middle" class="b">74HC574 (DIP-20, 3.3 V)</text>
+<text x="630" y="567" font-size="9.5" fill="#546e7a" text-anchor="middle" class="i">notch up · dot = pin 1</text>
+<rect x="546" y="328" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="566" y="335" font-size="10" fill="#eceff1" class="m sb"> 1 /OE</text>
+<rect x="700" y="328" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="694" y="335" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">VCC 20</text>
+<rect x="546" y="350" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="566" y="357" font-size="10" fill="#eceff1" class="m sb"> 2 D0</text>
+<rect x="700" y="350" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="694" y="357" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q0 19</text>
+<rect x="546" y="372" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="566" y="379" font-size="10" fill="#eceff1" class="m sb"> 3 D1</text>
+<rect x="700" y="372" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="694" y="379" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q1 18</text>
+<rect x="546" y="394" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="566" y="401" font-size="10" fill="#eceff1" class="m sb"> 4 D2</text>
+<rect x="700" y="394" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="694" y="401" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q2 17</text>
+<rect x="546" y="416" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="566" y="423" font-size="10" fill="#eceff1" class="m sb"> 5 D3</text>
+<rect x="700" y="416" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="694" y="423" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q3 16</text>
+<rect x="546" y="438" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="566" y="445" font-size="10" fill="#eceff1" class="m sb"> 6 D4</text>
+<rect x="700" y="438" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="694" y="445" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q4 15</text>
+<rect x="546" y="460" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="566" y="467" font-size="10" fill="#eceff1" class="m sb"> 7 D5</text>
+<rect x="700" y="460" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="694" y="467" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q5 14</text>
+<rect x="546" y="482" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="566" y="489" font-size="10" fill="#eceff1" class="m sb"> 8 D6</text>
+<rect x="700" y="482" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="694" y="489" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q6 13</text>
+<rect x="546" y="504" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="566" y="511" font-size="10" fill="#eceff1" class="m sb"> 9 D7</text>
+<rect x="700" y="504" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="694" y="511" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q7 12</text>
+<rect x="546" y="526" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="566" y="533" font-size="10" fill="#eceff1" class="m sb">10 GND</text>
+<rect x="700" y="526" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="694" y="533" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">CP 11</text>
+<path d="M214,518 L264,518 Q270,518 270,512 L270,359 Q270,353 276,353 L546,353" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M214,518 L264,518 Q270,518 270,512 L270,359 Q270,353 276,353 L546,353" fill="none" stroke="#8d6e63" stroke-width="2.4" class="w"/>
+<path d="M214,496 L294,496 Q300,496 300,490 L300,381 Q300,375 306,375 L546,375" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M214,496 L294,496 Q300,496 300,490 L300,381 Q300,375 306,375 L546,375" fill="none" stroke="#ec407a" stroke-width="2.4" class="w"/>
+<path d="M214,474 L324,474 Q330,474 330,468 L330,403 Q330,397 336,397 L546,397" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M214,474 L324,474 Q330,474 330,468 L330,403 Q330,397 336,397 L546,397" fill="none" stroke="#ffa000" stroke-width="2.4" class="w"/>
+<path d="M214,452 L354,452 Q360,452 360,446 L360,425 Q360,419 366,419 L546,419" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M214,452 L354,452 Q360,452 360,446 L360,425 Q360,419 366,419 L546,419" fill="none" stroke="#c0ca33" stroke-width="2.4" class="w"/>
+<path d="M214,430 L384,430 Q390,430 390,436 L390,436 Q390,441 396,441 L546,441" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M214,430 L384,430 Q390,430 390,436 L390,436 Q390,441 396,441 L546,441" fill="none" stroke="#43a047" stroke-width="2.4" class="w"/>
+<path d="M214,386 L414,386 Q420,386 420,392 L420,457 Q420,463 426,463 L546,463" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M214,386 L414,386 Q420,386 420,392 L420,457 Q420,463 426,463 L546,463" fill="none" stroke="#039be5" stroke-width="2.4" class="w"/>
+<path d="M214,364 L444,364 Q450,364 450,370 L450,479 Q450,485 456,485 L546,485" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M214,364 L444,364 Q450,364 450,370 L450,479 Q450,485 456,485 L546,485" fill="none" stroke="#7e57c2" stroke-width="2.4" class="w"/>
+<path d="M214,342 L474,342 Q480,342 480,348 L480,501 Q480,507 486,507 L546,507" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M214,342 L474,342 Q480,342 480,348 L480,501 Q480,507 486,507 L546,507" fill="none" stroke="#78909c" stroke-width="2.4" class="w"/>
+<path d="M214,320 L230,320 Q236,320 236,326 L236,612 Q236,618 242,618 L724,618 Q730,618 730,612 L730,535 Q730,529 724,529 L714,529" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M214,320 L230,320 Q236,320 236,326 L236,612 Q236,618 242,618 L724,618 Q730,618 730,612 L730,535 Q730,529 724,529 L714,529" fill="none" stroke="#c2185b" stroke-width="2.6" class="w"/>
+<rect x="359" y="609" width="202" height="17" rx="8" fill="#ffffff" stroke="#c2185b" stroke-width="1.1" />
+<text x="460" y="622" font-size="10.5" fill="#c2185b" text-anchor="middle" class="sb">IO24 → CP (pin 11) latch clock</text>
+<path d="M546,331 L538,331 Q532,331 532,325 L532,276" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M546,331 L538,331 Q532,331 532,325 L532,276" fill="none" stroke="#263238" stroke-width="2.6" class="w"/>
+<circle cx="532" cy="276" r="4.2" fill="#263238" stroke="#fff" stroke-width="1.2"/>
+<text x="526" y="301" font-size="9.5" fill="#263238" text-anchor="end" class="i">/OE → GND</text>
+<path d="M546,529 L532,529" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M546,529 L532,529" fill="none" stroke="#263238" stroke-width="2.6" class="w"/>
+<line x1="532" y1="529" x2="532" y2="541" stroke="#263238" stroke-width="2"/>
+<line x1="523" y1="541" x2="541" y2="541" stroke="#263238" stroke-width="2"/>
+<line x1="526" y1="545" x2="538" y2="545" stroke="#263238" stroke-width="2"/>
+<line x1="529" y1="549" x2="535" y2="549" stroke="#263238" stroke-width="2"/>
+<path d="M714,331 L724,331 Q730,331 730,325 L730,166" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M714,331 L724,331 Q730,331 730,325 L730,166" fill="none" stroke="#d32f2f" stroke-width="2.6" class="w"/>
+<circle cx="730" cy="166" r="4.2" fill="#d32f2f" stroke="#fff" stroke-width="1.2"/>
+<line x1="770" y1="166" x2="770" y2="276" stroke="#9e9e9e" stroke-width="1.8"/>
+<circle cx="770" cy="221" r="8" fill="#ffb74d" stroke="#e65100" stroke-width="1.1"/>
+<text x="782" y="225" font-size="10" fill="#bf360c" class="b">0.1 µF at pins 20↔10</text>
+<circle cx="770" cy="166" r="4.2" fill="#d32f2f" stroke="#fff" stroke-width="1.2"/>
+<circle cx="770" cy="276" r="4.2" fill="#263238" stroke="#fff" stroke-width="1.2"/>
+<path d="M714,353 L814,353 Q820,353 820,359 L820,394 Q820,400 826,400 L860,400" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M714,353 L814,353 Q820,353 820,359 L820,394 Q820,400 826,400 L860,400" fill="none" stroke="#8d6e63" stroke-width="2.4" class="w"/>
+<text x="854" y="392" font-size="10" fill="#8d6e63" text-anchor="end" class="b">Q0</text>
+<line x1="860" y1="400" x2="930" y2="400" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="878" y="394" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="895" y="389" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="930" y1="400" x2="1000" y2="400" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="948" y="394" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="965" y="389" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="1000" y1="400" x2="1050" y2="400" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1008" y="394" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1025" y="389" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<path d="M1050,400 L1220,400" fill="none" stroke="#ffffff" stroke-width="4.2" class="w"/>
+<path d="M1050,400 L1220,400" fill="none" stroke="#607d8b" stroke-width="1.8" class="w"/>
+<path d="M714,375 L802,375 Q808,375 808,381 L808,450 Q808,456 814,456 L860,456" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M714,375 L802,375 Q808,375 808,381 L808,450 Q808,456 814,456 L860,456" fill="none" stroke="#ec407a" stroke-width="2.4" class="w"/>
+<text x="854" y="448" font-size="10" fill="#ec407a" text-anchor="end" class="b">Q1</text>
+<line x1="860" y1="456" x2="930" y2="456" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="878" y="450" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="895" y="445" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="930" y1="456" x2="1000" y2="456" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="948" y="450" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="965" y="445" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="1000" y1="456" x2="1050" y2="456" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1008" y="450" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1025" y="445" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<path d="M1050,456 L1220,456" fill="none" stroke="#ffffff" stroke-width="4.2" class="w"/>
+<path d="M1050,456 L1220,456" fill="none" stroke="#607d8b" stroke-width="1.8" class="w"/>
+<path d="M714,397 L790,397 Q796,397 796,403 L796,506 Q796,512 802,512 L860,512" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M714,397 L790,397 Q796,397 796,403 L796,506 Q796,512 802,512 L860,512" fill="none" stroke="#ffa000" stroke-width="2.4" class="w"/>
+<text x="854" y="504" font-size="10" fill="#ffa000" text-anchor="end" class="b">Q2</text>
+<line x1="860" y1="512" x2="930" y2="512" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="878" y="506" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="895" y="501" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="930" y1="512" x2="1000" y2="512" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="948" y="506" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="965" y="501" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="1000" y1="512" x2="1050" y2="512" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1008" y="506" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1025" y="501" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<path d="M1050,512 L1220,512" fill="none" stroke="#ffffff" stroke-width="4.2" class="w"/>
+<path d="M1050,512 L1220,512" fill="none" stroke="#607d8b" stroke-width="1.8" class="w"/>
+<path d="M714,419 L778,419 Q784,419 784,425 L784,562 Q784,568 790,568 L860,568" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M714,419 L778,419 Q784,419 784,425 L784,562 Q784,568 790,568 L860,568" fill="none" stroke="#c0ca33" stroke-width="2.4" class="w"/>
+<text x="854" y="560" font-size="10" fill="#c0ca33" text-anchor="end" class="b">Q3</text>
+<line x1="860" y1="568" x2="930" y2="568" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="878" y="562" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="895" y="557" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="930" y1="568" x2="1000" y2="568" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="948" y="562" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="965" y="557" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="1000" y1="568" x2="1050" y2="568" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1008" y="562" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1025" y="557" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<path d="M1050,568 L1220,568" fill="none" stroke="#ffffff" stroke-width="4.2" class="w"/>
+<path d="M1050,568 L1220,568" fill="none" stroke="#607d8b" stroke-width="1.8" class="w"/>
+<path d="M714,441 L766,441 Q772,441 772,447 L772,618 Q772,624 778,624 L860,624" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M714,441 L766,441 Q772,441 772,447 L772,618 Q772,624 778,624 L860,624" fill="none" stroke="#43a047" stroke-width="2.4" class="w"/>
+<text x="854" y="616" font-size="10" fill="#43a047" text-anchor="end" class="b">Q4</text>
+<line x1="860" y1="624" x2="930" y2="624" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="878" y="618" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="895" y="613" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="930" y1="624" x2="1000" y2="624" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="948" y="618" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="965" y="613" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="1000" y1="624" x2="1050" y2="624" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1008" y="618" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1025" y="613" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<path d="M1050,624 L1220,624" fill="none" stroke="#ffffff" stroke-width="4.2" class="w"/>
+<path d="M1050,624 L1220,624" fill="none" stroke="#607d8b" stroke-width="1.8" class="w"/>
+<path d="M714,463 L754,463 Q760,463 760,469 L760,674 Q760,680 766,680 L860,680" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M714,463 L754,463 Q760,463 760,469 L760,674 Q760,680 766,680 L860,680" fill="none" stroke="#039be5" stroke-width="2.4" class="w"/>
+<text x="854" y="672" font-size="10" fill="#039be5" text-anchor="end" class="b">Q5</text>
+<line x1="860" y1="680" x2="930" y2="680" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="878" y="674" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="895" y="669" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="930" y1="680" x2="1000" y2="680" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="948" y="674" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="965" y="669" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="1000" y1="680" x2="1050" y2="680" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1008" y="674" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1025" y="669" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<path d="M1050,680 L1220,680" fill="none" stroke="#ffffff" stroke-width="4.2" class="w"/>
+<path d="M1050,680 L1220,680" fill="none" stroke="#607d8b" stroke-width="1.8" class="w"/>
+<path d="M714,485 L742,485 Q748,485 748,491 L748,730 Q748,736 754,736 L860,736" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M714,485 L742,485 Q748,485 748,491 L748,730 Q748,736 754,736 L860,736" fill="none" stroke="#7e57c2" stroke-width="2.4" class="w"/>
+<text x="854" y="728" font-size="10" fill="#7e57c2" text-anchor="end" class="b">Q6</text>
+<line x1="860" y1="736" x2="930" y2="736" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="878" y="730" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="895" y="725" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="930" y1="736" x2="1000" y2="736" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="948" y="730" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="965" y="725" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="1000" y1="736" x2="1050" y2="736" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1008" y="730" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1025" y="725" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<path d="M1050,736 L1220,736" fill="none" stroke="#ffffff" stroke-width="4.2" class="w"/>
+<path d="M1050,736 L1220,736" fill="none" stroke="#607d8b" stroke-width="1.8" class="w"/>
+<path d="M714,507 L730,507 Q736,507 736,513 L736,786 Q736,792 742,792 L860,792" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M714,507 L730,507 Q736,507 736,513 L736,786 Q736,792 742,792 L860,792" fill="none" stroke="#78909c" stroke-width="2.4" class="w"/>
+<text x="854" y="784" font-size="10" fill="#78909c" text-anchor="end" class="b">Q7</text>
+<line x1="860" y1="792" x2="930" y2="792" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="878" y="786" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="895" y="781" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="930" y1="792" x2="1000" y2="792" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="948" y="786" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="965" y="781" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<line x1="1000" y1="792" x2="1050" y2="792" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1008" y="786" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1025" y="781" font-size="10" fill="#0d47a1" text-anchor="middle" class="b"></text>
+<path d="M1050,792 L1220,792" fill="none" stroke="#ffffff" stroke-width="4.2" class="w"/>
+<path d="M1050,792 L1220,792" fill="none" stroke="#607d8b" stroke-width="1.8" class="w"/>
+<circle cx="1220" cy="400" r="5" fill="#37474f" stroke="#fff" stroke-width="1.2"/>
+<text x="1232" y="392" font-size="10" fill="#37474f" class="b">node 0</text>
+<line x1="1220" y1="400" x2="1220" y2="456" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1214" y="411" width="13" height="34" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1231" y="432" font-size="10" fill="#0d47a1" class="b">1 kΩ</text>
+<circle cx="1220" cy="456" r="5" fill="#37474f" stroke="#fff" stroke-width="1.2"/>
+<text x="1232" y="448" font-size="10" fill="#37474f" class="b">node 1</text>
+<line x1="1220" y1="456" x2="1220" y2="512" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1214" y="467" width="13" height="34" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1231" y="488" font-size="10" fill="#0d47a1" class="b">1 kΩ</text>
+<circle cx="1220" cy="512" r="5" fill="#37474f" stroke="#fff" stroke-width="1.2"/>
+<text x="1232" y="504" font-size="10" fill="#37474f" class="b">node 2</text>
+<line x1="1220" y1="512" x2="1220" y2="568" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1214" y="523" width="13" height="34" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1231" y="544" font-size="10" fill="#0d47a1" class="b">1 kΩ</text>
+<circle cx="1220" cy="568" r="5" fill="#37474f" stroke="#fff" stroke-width="1.2"/>
+<text x="1232" y="560" font-size="10" fill="#37474f" class="b">node 3</text>
+<line x1="1220" y1="568" x2="1220" y2="624" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1214" y="579" width="13" height="34" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1231" y="600" font-size="10" fill="#0d47a1" class="b">1 kΩ</text>
+<circle cx="1220" cy="624" r="5" fill="#37474f" stroke="#fff" stroke-width="1.2"/>
+<text x="1232" y="616" font-size="10" fill="#37474f" class="b">node 4</text>
+<line x1="1220" y1="624" x2="1220" y2="680" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1214" y="635" width="13" height="34" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1231" y="656" font-size="10" fill="#0d47a1" class="b">1 kΩ</text>
+<circle cx="1220" cy="680" r="5" fill="#37474f" stroke="#fff" stroke-width="1.2"/>
+<text x="1232" y="672" font-size="10" fill="#37474f" class="b">node 5</text>
+<line x1="1220" y1="680" x2="1220" y2="736" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1214" y="691" width="13" height="34" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1231" y="712" font-size="10" fill="#0d47a1" class="b">1 kΩ</text>
+<circle cx="1220" cy="736" r="5" fill="#37474f" stroke="#fff" stroke-width="1.2"/>
+<text x="1232" y="728" font-size="10" fill="#37474f" class="b">node 6</text>
+<line x1="1220" y1="736" x2="1220" y2="792" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1214" y="747" width="13" height="34" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1231" y="768" font-size="10" fill="#0d47a1" class="b">1 kΩ</text>
+<circle cx="1220" cy="792" r="5" fill="#37474f" stroke="#fff" stroke-width="1.2"/>
+<text x="1232" y="784" font-size="10" fill="#37474f" class="b">node 7</text>
+<text x="895" y="346" font-size="10.5" fill="#0d47a1" text-anchor="middle" class="b">33 Ω</text>
+<text x="1000" y="346" font-size="10.5" fill="#0d47a1" text-anchor="middle" class="b">2R = 1 kΩ + 1 kΩ</text>
+<text x="895" y="361" font-size="9" fill="#546e7a" text-anchor="middle" class="i">(skip on breadboard)</text>
+<line x1="1220" y1="400" x2="1220" y2="338" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1214" y="352" width="13" height="34" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1231" y="373" font-size="10" fill="#0d47a1" class="b"></text>
+<line x1="1220" y1="338" x2="1220" y2="276" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="1214" y="290" width="13" height="34" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="1231" y="311" font-size="10" fill="#0d47a1" class="b"></text>
+<circle cx="1220" cy="276" r="4.2" fill="#263238" stroke="#fff" stroke-width="1.2"/>
+<text x="1234" y="330" font-size="10" fill="#0d47a1" class="b">2R terminator</text>
+<text x="1234" y="344" font-size="9.5" fill="#0d47a1">(1 kΩ + 1 kΩ to GND)</text>
+<circle cx="1380" cy="792" r="6" fill="#fff" stroke="#5e35b1" stroke-width="2.4"/>
+<text x="1368" y="796" font-size="11" fill="#5e35b1" text-anchor="end" class="b"></text>
+<path d="M1220,792 L1380,792" fill="none" stroke="#ffffff" stroke-width="5.4" class="w"/>
+<path d="M1220,792 L1380,792" fill="none" stroke="#5e35b1" stroke-width="3" class="w"/>
+<text x="1380" y="818" font-size="12" fill="#311b92" text-anchor="middle" class="b">LADDER OUT</text>
+<text x="1380" y="834" font-size="10" fill="#5e35b1" text-anchor="middle">→ Stage 6 · meter · scope</text>
+<text x="40" y="660" font-size="12" fill="#1a1a18" class="b">Build notes</text>
+<text x="40" y="678" font-size="11" fill="#37474f">• IO16→D0 (pin 2) … IO23→D7 (pin 9): wire colours match bits on both sides of the chip.</text>
+<text x="40" y="695" font-size="11" fill="#37474f">• The '574's outputs are reversed: Q7 = pin 12 … Q0 = pin 19. Q7 (MSB) feeds node 7 = the output end.</text>
+<text x="40" y="712" font-size="11" fill="#37474f">• Parts: 25 × 1 kΩ (16 in the 2R arms, 2 in the terminator, 7 R links) + 8 × 33 Ω (soldered build only).</text>
+<text x="40" y="729" font-size="11" fill="#37474f">• With the '574 pulled out, before power: each Q wire → its node = 2 kΩ;</text>
+<text x="40" y="746" font-size="11" fill="#37474f">  node 0 → GND = 2 kΩ; node 7 → GND = 9 kΩ. Anything else = a resistor in the wrong hole.</text>
+<text x="40" y="763" font-size="11" fill="#37474f">• Firmware for the gate must write the code AND pulse CP (IO24): Stage 2's sketch never clocks the latch.</text>
+<text x="40" y="780" font-size="11" fill="#37474f">• /OE = output enable, active low: tied to GND the outputs are always on (Stage 9 moves it to IO8).</text>
+<text x="900" y="854" font-size="11" fill="#37474f">Static-test gate: codes 0 / 64 / 128 / 192 / 255 read ≈ 0 / 0.82 / 1.65 / 2.47 / 3.29 V,</text>
+<text x="900" y="871" font-size="11" fill="#37474f">and every single step going 0 → 255 must read higher than the one before.</text>
+</svg>

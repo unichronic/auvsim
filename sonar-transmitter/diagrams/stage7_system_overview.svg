@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820">
+<style>text{font-family:'DejaVu Sans',Arial,sans-serif}.m{font-family:'DejaVu Sans Mono',Menlo,monospace}.b{font-weight:700}.sb{font-weight:600}.i{font-style:italic}.w{stroke-linecap:round;stroke-linejoin:round}</style><defs><g id="pa"><circle r="5.6" fill="#e0c060" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g><g id="pd"><circle r="5.6" fill="#d8d3c0" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g></defs>
+<rect width="1400" height="820" fill="#fbfbf9"/>
+<text x="24" y="34" font-size="21" fill="#1a1a18" class="b">Stage 7 — real waveforms (firmware only: no new wiring)</text>
+<text x="24" y="58" font-size="13" fill="#546e7a">This sheet is the whole system as built after Stages 3–6, so you can see every connection at once.</text>
+<rect x="560" y="110" width="190" height="478" rx="10" fill="#1b7a3a" stroke="#0d4d22" stroke-width="2" />
+<rect x="629" y="98" width="52" height="26" rx="6" fill="#cfd8dc" stroke="#78909c" stroke-width="1.5" />
+<text x="655" y="140" font-size="10" fill="#e8f5e9" text-anchor="middle">USB-C</text>
+<rect x="630" y="280" width="52" height="52" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="656" y="310" font-size="9" fill="#bdbdbd" text-anchor="middle">RP2040</text>
+<rect x="636" y="410" width="40" height="40" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="656" y="434" font-size="9" fill="#bdbdbd" text-anchor="middle">FPGA</text>
+<rect x="570" y="148" width="11" height="11" fill="#e0c060" stroke="#6b5b1e" stroke-width="1" />
+<text x="588" y="158" font-size="10.5" fill="#fff" class="m b">5V</text>
+<use href="#pa" x="576" y="176"/>
+<text x="588" y="180" font-size="10.5" fill="#fff" class="m b">3.3V</text>
+<use href="#pa" x="576" y="198"/>
+<text x="588" y="202" font-size="10.5" fill="#fff" class="m b">IO5</text>
+<use href="#pa" x="576" y="220"/>
+<text x="588" y="224" font-size="10.5" fill="#fff" class="m b">IO6</text>
+<use href="#pa" x="576" y="242"/>
+<text x="588" y="246" font-size="10.5" fill="#fff" class="m b">IO7</text>
+<use href="#pd" x="576" y="264"/>
+<text x="588" y="268" font-size="10.5" fill="#a5d6a7" class="m">IO8</text>
+<use href="#pa" x="576" y="286"/>
+<text x="588" y="290" font-size="10.5" fill="#fff" class="m b">IO9</text>
+<use href="#pa" x="576" y="308"/>
+<text x="588" y="312" font-size="10.5" fill="#fff" class="m b">GND</text>
+<use href="#pa" x="576" y="330"/>
+<text x="588" y="334" font-size="10.5" fill="#fff" class="m b">IO10</text>
+<use href="#pa" x="576" y="352"/>
+<text x="588" y="356" font-size="10.5" fill="#fff" class="m b">IO11</text>
+<use href="#pd" x="576" y="374"/>
+<text x="588" y="378" font-size="10.5" fill="#a5d6a7" class="m">IO14</text>
+<use href="#pd" x="576" y="396"/>
+<text x="588" y="400" font-size="10.5" fill="#a5d6a7" class="m">IO15</text>
+<use href="#pd" x="576" y="418"/>
+<text x="588" y="422" font-size="10.5" fill="#a5d6a7" class="m">GND</text>
+<use href="#pd" x="576" y="440"/>
+<text x="588" y="444" font-size="10.5" fill="#a5d6a7" class="m">F17</text>
+<use href="#pd" x="576" y="462"/>
+<text x="588" y="466" font-size="10.5" fill="#a5d6a7" class="m">F18</text>
+<use href="#pd" x="576" y="484"/>
+<text x="588" y="488" font-size="10.5" fill="#a5d6a7" class="m">F0</text>
+<use href="#pd" x="576" y="506"/>
+<text x="588" y="510" font-size="10.5" fill="#a5d6a7" class="m">F1</text>
+<use href="#pd" x="576" y="528"/>
+<text x="588" y="532" font-size="10.5" fill="#a5d6a7" class="m">F2</text>
+<use href="#pd" x="576" y="550"/>
+<text x="588" y="554" font-size="10.5" fill="#a5d6a7" class="m">F7</text>
+<rect x="728" y="148" width="11" height="11" fill="#d8d3c0" stroke="#6b5b1e" stroke-width="1" />
+<text x="722" y="158" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">5V</text>
+<use href="#pd" x="734" y="176"/>
+<text x="722" y="180" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">3.3V</text>
+<use href="#pd" x="734" y="198"/>
+<text x="722" y="202" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO29</text>
+<use href="#pd" x="734" y="220"/>
+<text x="722" y="224" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO28</text>
+<use href="#pd" x="734" y="242"/>
+<text x="722" y="246" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO27</text>
+<use href="#pd" x="734" y="264"/>
+<text x="722" y="268" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO26</text>
+<use href="#pd" x="734" y="286"/>
+<text x="722" y="290" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<use href="#pa" x="734" y="308"/>
+<text x="722" y="312" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO25</text>
+<use href="#pa" x="734" y="330"/>
+<text x="722" y="334" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO24</text>
+<use href="#pa" x="734" y="352"/>
+<text x="722" y="356" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO23</text>
+<use href="#pa" x="734" y="374"/>
+<text x="722" y="378" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO22</text>
+<use href="#pa" x="734" y="396"/>
+<text x="722" y="400" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO21</text>
+<use href="#pd" x="734" y="418"/>
+<text x="722" y="422" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<use href="#pa" x="734" y="440"/>
+<text x="722" y="444" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO20</text>
+<use href="#pa" x="734" y="462"/>
+<text x="722" y="466" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO19</text>
+<use href="#pa" x="734" y="484"/>
+<text x="722" y="488" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO18</text>
+<use href="#pa" x="734" y="506"/>
+<text x="722" y="510" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO17</text>
+<use href="#pa" x="734" y="528"/>
+<text x="722" y="532" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO16</text>
+<use href="#pd" x="734" y="550"/>
+<text x="722" y="554" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<text x="655" y="608" font-size="11" fill="#1a1a18" text-anchor="middle" class="sb">Shrike Lite (USB-C at top)</text>
+<rect x="60" y="120" width="330" height="170" rx="10" fill="#ffffff" stroke="#1e88e5" stroke-width="2.2" />
+<text x="74" y="144" font-size="13" fill="#1e88e5" class="b">Sensors (Stage 3)</text>
+<text x="74" y="166" font-size="10.5" fill="#37474f">DS18B20 temp → IO5 (1-Wire)</text>
+<text x="74" y="183" font-size="10.5" fill="#37474f">ADS1115: A0 turbidity, A1 depth pot</text>
+<text x="74" y="200" font-size="10.5" fill="#37474f">INA219 power monitor</text>
+<text x="74" y="217" font-size="10.5" fill="#37474f">I²C: SDA IO6 · SCL IO7</text>
+<text x="74" y="234" font-size="10.5" fill="#37474f">3.3 V + 5 V + GND rails</text>
+<rect x="60" y="330" width="330" height="150" rx="10" fill="#ffffff" stroke="#6d4c41" stroke-width="2.2" />
+<text x="74" y="354" font-size="13" fill="#6d4c41" class="b">Digital pot (Stage 6)</text>
+<text x="74" y="376" font-size="10.5" fill="#37474f">MCP41010 on 3.3 V</text>
+<text x="74" y="393" font-size="10.5" fill="#37474f">/CS IO9 · SCK IO10 · SI IO11</text>
+<text x="74" y="410" font-size="10.5" fill="#37474f">sets amplitude in analog</text>
+<rect x="900" y="120" width="420" height="150" rx="10" fill="#ffffff" stroke="#5e35b1" stroke-width="2.2" />
+<text x="914" y="144" font-size="13" fill="#5e35b1" class="b">Latch + ladder DAC (Stage 4)</text>
+<text x="914" y="166" font-size="10.5" fill="#37474f">IO16–23 → D0–D7 · IO24 → CP (PIO side-set)</text>
+<text x="914" y="183" font-size="10.5" fill="#37474f">74HC574 → R-2R ladder → LADDER OUT</text>
+<text x="914" y="200" font-size="10.5" fill="#37474f">8-bit, idle code 128 = 1.65 V</text>
+<rect x="900" y="320" width="420" height="150" rx="10" fill="#ffffff" stroke="#00897b" stroke-width="2.2" />
+<text x="914" y="344" font-size="13" fill="#00897b" class="b">Filter + output amp (Stage 6)</text>
+<text x="914" y="366" font-size="10.5" fill="#37474f">Sallen-Key + RC ≈ 700 kHz low-pass</text>
+<text x="914" y="383" font-size="10.5" fill="#37474f">digital-pot volume → op-amp B (gain 1.47)</text>
+<text x="914" y="400" font-size="10.5" fill="#37474f">47 Ω → BNC (module boundary)</text>
+<rect x="900" y="520" width="420" height="110" rx="10" fill="#ffffff" stroke="#0288d1" stroke-width="2.2" />
+<text x="914" y="544" font-size="13" fill="#0288d1" class="b">Scope (Stage 5)</text>
+<text x="914" y="566" font-size="10.5" fill="#37474f">CH1 ← BNC  ·  CH2 ← TRIG (IO25 via 100 Ω)</text>
+<text x="914" y="583" font-size="10.5" fill="#37474f">trigger on CH2 rising edge</text>
+<path d="M390,205 L548,205" fill="none" stroke="#ffffff" stroke-width="6.4" class="w"/>
+<path d="M390,205 L548,205" fill="none" stroke="#1e88e5" stroke-width="4" class="w"/>
+<rect x="417" y="196" width="106" height="17" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="1.1" />
+<text x="470" y="209" font-size="10.5" fill="#1e88e5" text-anchor="middle" class="sb">IO5 · IO6 · IO7</text>
+<path d="M390,405 L464,405 Q470,405 470,399 L470,336 Q470,330 476,330 L548,330" fill="none" stroke="#ffffff" stroke-width="6.4" class="w"/>
+<path d="M390,405 L464,405 Q470,405 470,399 L470,336 Q470,330 476,330 L548,330" fill="none" stroke="#6d4c41" stroke-width="4" class="w"/>
+<rect x="446" y="361" width="48" height="17" rx="8" fill="#ffffff" stroke="#6d4c41" stroke-width="1.1" />
+<text x="470" y="374" font-size="10.5" fill="#6d4c41" text-anchor="middle" class="sb">IO9–11</text>
+<path d="M740,480 L834,480 Q840,480 840,474 L840,201 Q840,195 846,195 L900,195" fill="none" stroke="#ffffff" stroke-width="6.4" class="w"/>
+<path d="M740,480 L834,480 Q840,480 840,474 L840,201 Q840,195 846,195 L900,195" fill="none" stroke="#5e35b1" stroke-width="4" class="w"/>
+<rect x="813" y="291" width="55" height="17" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="1.1" />
+<text x="840" y="304" font-size="10.5" fill="#5e35b1" text-anchor="middle" class="sb">IO16–24</text>
+<path d="M1110,270 L1110,320" fill="none" stroke="#ffffff" stroke-width="6.4" class="w"/>
+<path d="M1110,270 L1110,320" fill="none" stroke="#5e35b1" stroke-width="4" class="w"/>
+<rect x="1073" y="286" width="74" height="17" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="1.1" />
+<text x="1110" y="299" font-size="10.5" fill="#5e35b1" text-anchor="middle" class="sb">LADDER OUT</text>
+<path d="M1110,470 L1110,520" fill="none" stroke="#ffffff" stroke-width="6.4" class="w"/>
+<path d="M1110,470 L1110,520" fill="none" stroke="#00897b" stroke-width="4" class="w"/>
+<rect x="1095" y="486" width="29" height="17" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="1.1" />
+<text x="1110" y="499" font-size="10.5" fill="#00897b" text-anchor="middle" class="sb">BNC</text>
+<path d="M740,308 L794,308 Q800,308 800,314 L800,594 Q800,600 806,600 L900,600" fill="none" stroke="#ffffff" stroke-width="5.4" class="w"/>
+<path d="M740,308 L794,308 Q800,308 800,314 L800,594 Q800,600 806,600 L900,600" fill="none" stroke="#f9a825" stroke-width="3" class="w"/>
+<rect x="766" y="551" width="68" height="17" rx="8" fill="#ffffff" stroke="#f57f17" stroke-width="1.1" />
+<text x="800" y="564" font-size="10.5" fill="#f57f17" text-anchor="middle" class="sb">IO25 TRIG</text>
+<text x="60" y="690" font-size="12" fill="#1a1a18" class="b">What changes in this stage (firmware)</text>
+<text x="60" y="708" font-size="11" fill="#37474f">• Build all three modulation types: LFM chirp, geometric sweep, Barker-13 phase code. Make them switchable at runtime.</text>
+<text x="60" y="725" font-size="11" fill="#37474f">• Window the chirps (Hann or Blackman; avoid Hamming: it leaves an 8 % step). NEVER window the Barker code: use rectangular.</text>
+<text x="60" y="742" font-size="11" fill="#37474f">• Stream the Sim-0 tables (sim/sim0/out/firmware/*.h) and check their CRC-32 on the board; run the clock at 120 or 200 MHz.</text>
+<text x="60" y="759" font-size="11" fill="#37474f">Gate: all three types switchable on the scope, plus the rectangular-vs-Hann sidelobe capture for the submission.</text>
+</svg>

@@ -1,0 +1,218 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="860" viewBox="0 0 1440 860">
+<style>text{font-family:'DejaVu Sans',Arial,sans-serif}.m{font-family:'DejaVu Sans Mono',Menlo,monospace}.b{font-weight:700}.sb{font-weight:600}.i{font-style:italic}.w{stroke-linecap:round;stroke-linejoin:round}</style><defs><g id="pa"><circle r="5.6" fill="#e0c060" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g><g id="pd"><circle r="5.6" fill="#d8d3c0" stroke="#6b5b1e"/><circle r="2.1" fill="#333"/></g></defs>
+<rect width="1440" height="860" fill="#fbfbf9"/>
+<text x="24" y="34" font-size="21" fill="#1a1a18" class="b">Stage 9 — power optimisation, pod and rehearsal</text>
+<text x="24" y="58" font-size="13" fill="#546e7a">Three hardware changes, each shown with a before/after INA219 reading as low-power evidence.</text>
+<rect x="560" y="100" width="190" height="478" rx="10" fill="#1b7a3a" stroke="#0d4d22" stroke-width="2" />
+<rect x="629" y="88" width="52" height="26" rx="6" fill="#cfd8dc" stroke="#78909c" stroke-width="1.5" />
+<text x="655" y="130" font-size="10" fill="#e8f5e9" text-anchor="middle">USB-C</text>
+<rect x="630" y="270" width="52" height="52" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="656" y="300" font-size="9" fill="#bdbdbd" text-anchor="middle">RP2040</text>
+<rect x="636" y="400" width="40" height="40" rx="3" fill="#212121" stroke="#000" stroke-width="1.2" />
+<text x="656" y="424" font-size="9" fill="#bdbdbd" text-anchor="middle">FPGA</text>
+<rect x="570" y="138" width="11" height="11" fill="#e0c060" stroke="#6b5b1e" stroke-width="1" />
+<text x="588" y="148" font-size="10.5" fill="#fff" class="m b">5V</text>
+<use href="#pd" x="576" y="166"/>
+<text x="588" y="170" font-size="10.5" fill="#a5d6a7" class="m">3.3V</text>
+<use href="#pd" x="576" y="188"/>
+<text x="588" y="192" font-size="10.5" fill="#a5d6a7" class="m">IO5</text>
+<use href="#pd" x="576" y="210"/>
+<text x="588" y="214" font-size="10.5" fill="#a5d6a7" class="m">IO6</text>
+<use href="#pd" x="576" y="232"/>
+<text x="588" y="236" font-size="10.5" fill="#a5d6a7" class="m">IO7</text>
+<use href="#pa" x="576" y="254"/>
+<text x="588" y="258" font-size="10.5" fill="#fff" class="m b">IO8</text>
+<use href="#pd" x="576" y="276"/>
+<text x="588" y="280" font-size="10.5" fill="#a5d6a7" class="m">IO9</text>
+<use href="#pd" x="576" y="298"/>
+<text x="588" y="302" font-size="10.5" fill="#a5d6a7" class="m">GND</text>
+<use href="#pd" x="576" y="320"/>
+<text x="588" y="324" font-size="10.5" fill="#a5d6a7" class="m">IO10</text>
+<use href="#pd" x="576" y="342"/>
+<text x="588" y="346" font-size="10.5" fill="#a5d6a7" class="m">IO11</text>
+<use href="#pd" x="576" y="364"/>
+<text x="588" y="368" font-size="10.5" fill="#a5d6a7" class="m">IO14</text>
+<use href="#pd" x="576" y="386"/>
+<text x="588" y="390" font-size="10.5" fill="#a5d6a7" class="m">IO15</text>
+<use href="#pd" x="576" y="408"/>
+<text x="588" y="412" font-size="10.5" fill="#a5d6a7" class="m">GND</text>
+<use href="#pd" x="576" y="430"/>
+<text x="588" y="434" font-size="10.5" fill="#a5d6a7" class="m">F17</text>
+<use href="#pd" x="576" y="452"/>
+<text x="588" y="456" font-size="10.5" fill="#a5d6a7" class="m">F18</text>
+<use href="#pd" x="576" y="474"/>
+<text x="588" y="478" font-size="10.5" fill="#a5d6a7" class="m">F0</text>
+<use href="#pd" x="576" y="496"/>
+<text x="588" y="500" font-size="10.5" fill="#a5d6a7" class="m">F1</text>
+<use href="#pd" x="576" y="518"/>
+<text x="588" y="522" font-size="10.5" fill="#a5d6a7" class="m">F2</text>
+<use href="#pd" x="576" y="540"/>
+<text x="588" y="544" font-size="10.5" fill="#a5d6a7" class="m">F7</text>
+<rect x="728" y="138" width="11" height="11" fill="#d8d3c0" stroke="#6b5b1e" stroke-width="1" />
+<text x="722" y="148" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">5V</text>
+<use href="#pd" x="734" y="166"/>
+<text x="722" y="170" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">3.3V</text>
+<use href="#pd" x="734" y="188"/>
+<text x="722" y="192" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO29</text>
+<use href="#pd" x="734" y="210"/>
+<text x="722" y="214" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO28</text>
+<use href="#pa" x="734" y="232"/>
+<text x="722" y="236" font-size="10.5" fill="#fff" text-anchor="end" class="m b">IO27</text>
+<use href="#pd" x="734" y="254"/>
+<text x="722" y="258" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO26</text>
+<use href="#pd" x="734" y="276"/>
+<text x="722" y="280" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<use href="#pd" x="734" y="298"/>
+<text x="722" y="302" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO25</text>
+<use href="#pd" x="734" y="320"/>
+<text x="722" y="324" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO24</text>
+<use href="#pd" x="734" y="342"/>
+<text x="722" y="346" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO23</text>
+<use href="#pd" x="734" y="364"/>
+<text x="722" y="368" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO22</text>
+<use href="#pd" x="734" y="386"/>
+<text x="722" y="390" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO21</text>
+<use href="#pd" x="734" y="408"/>
+<text x="722" y="412" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<use href="#pd" x="734" y="430"/>
+<text x="722" y="434" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO20</text>
+<use href="#pd" x="734" y="452"/>
+<text x="722" y="456" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO19</text>
+<use href="#pd" x="734" y="474"/>
+<text x="722" y="478" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO18</text>
+<use href="#pd" x="734" y="496"/>
+<text x="722" y="500" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO17</text>
+<use href="#pd" x="734" y="518"/>
+<text x="722" y="522" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">IO16</text>
+<use href="#pd" x="734" y="540"/>
+<text x="722" y="544" font-size="10.5" fill="#a5d6a7" text-anchor="end" class="m">GND</text>
+<text x="655" y="598" font-size="11" fill="#1a1a18" text-anchor="middle" class="sb">Shrike Lite (USB-C at top)</text>
+<rect x="170" y="236" width="140" height="238" rx="4" fill="#263238" stroke="#000" stroke-width="1.5" />
+<path d="M229,236 A11,11 0 0 0 251,236" fill="none" stroke="#90a4ae" stroke-width="1.5" class="w"/>
+<circle cx="178" cy="243" r="2.6" fill="#90a4ae" stroke="none" stroke-width="0"/>
+<text x="240" y="226" font-size="13" fill="#1a1a18" text-anchor="middle" class="b">74HC574 (rest as Stage 4)</text>
+<rect x="156" y="250" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="176" y="258" font-size="10" fill="#eceff1" class="m sb"> 1 /OE</text>
+<rect x="310" y="250" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="304" y="258" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">VCC 20</text>
+<rect x="156" y="272" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="176" y="280" font-size="10" fill="#eceff1" class="m sb"> 2 D0</text>
+<rect x="310" y="272" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="304" y="280" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q0 19</text>
+<rect x="156" y="294" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="176" y="302" font-size="10" fill="#eceff1" class="m sb"> 3 D1</text>
+<rect x="310" y="294" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="304" y="302" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q1 18</text>
+<rect x="156" y="316" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="176" y="324" font-size="10" fill="#eceff1" class="m sb"> 4 D2</text>
+<rect x="310" y="316" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="304" y="324" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q2 17</text>
+<rect x="156" y="338" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="176" y="346" font-size="10" fill="#eceff1" class="m sb"> 5 D3</text>
+<rect x="310" y="338" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="304" y="346" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q3 16</text>
+<rect x="156" y="360" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="176" y="368" font-size="10" fill="#eceff1" class="m sb"> 6 D4</text>
+<rect x="310" y="360" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="304" y="368" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q4 15</text>
+<rect x="156" y="382" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="176" y="390" font-size="10" fill="#eceff1" class="m sb"> 7 D5</text>
+<rect x="310" y="382" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="304" y="390" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q5 14</text>
+<rect x="156" y="404" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="176" y="412" font-size="10" fill="#eceff1" class="m sb"> 8 D6</text>
+<rect x="310" y="404" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="304" y="412" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q6 13</text>
+<rect x="156" y="426" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="176" y="434" font-size="10" fill="#eceff1" class="m sb"> 9 D7</text>
+<rect x="310" y="426" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="304" y="434" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">Q7 12</text>
+<rect x="156" y="448" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="176" y="456" font-size="10" fill="#eceff1" class="m sb">10 GND</text>
+<rect x="310" y="448" width="14" height="7" fill="#cfd8dc" stroke="#78909c" stroke-width="0.8" />
+<text x="304" y="456" font-size="10" fill="#eceff1" text-anchor="end" class="m sb">CP 11</text>
+<path d="M156,254 L146,254 Q140,254 140,248 L140,166 Q140,160 146,160 L464,160 Q470,160 470,166 L470,248 Q470,254 476,254 L576,254" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M156,254 L146,254 Q140,254 140,248 L140,166 Q140,160 146,160 L464,160 Q470,160 470,166 L470,248 Q470,254 476,254 L576,254" fill="none" stroke="#c2185b" stroke-width="2.6" class="w"/>
+<rect x="196" y="151" width="208" height="17" rx="8" fill="#ffffff" stroke="#c2185b" stroke-width="1.1" />
+<text x="300" y="164" font-size="10.5" fill="#c2185b" text-anchor="middle" class="sb">① /OE (pin 1) → IO8   (was GND)</text>
+<text x="170" y="486" font-size="10.5" fill="#37474f">IO8 LOW = outputs on (during a ping)</text>
+<text x="170" y="502" font-size="10.5" fill="#37474f">IO8 HIGH = outputs off: ladder draws nothing</text>
+<rect x="120" y="560" width="150" height="168" rx="6" fill="#6a1b9a" stroke="#0b0b2b" stroke-width="1.6" />
+<text x="183" y="580" font-size="12.5" fill="#fff" text-anchor="middle" class="b">INA219</text>
+<use href="#pd" x="256" y="596"/>
+<text x="244" y="600" font-size="10.5" fill="#9fa8da" text-anchor="end" class="m">VCC</text>
+<use href="#pd" x="256" y="618"/>
+<text x="244" y="622" font-size="10.5" fill="#9fa8da" text-anchor="end" class="m">GND</text>
+<use href="#pd" x="256" y="640"/>
+<text x="244" y="644" font-size="10.5" fill="#9fa8da" text-anchor="end" class="m">SCL</text>
+<use href="#pd" x="256" y="662"/>
+<text x="244" y="666" font-size="10.5" fill="#9fa8da" text-anchor="end" class="m">SDA</text>
+<use href="#pa" x="256" y="684"/>
+<text x="244" y="688" font-size="10.5" fill="#fff" text-anchor="end" class="m b">VIN-</text>
+<use href="#pa" x="256" y="706"/>
+<text x="244" y="710" font-size="10.5" fill="#fff" text-anchor="end" class="m b">VIN+</text>
+<path d="M256,706 L494,706 Q500,706 500,700 L500,150 Q500,144 506,144 L576,144" fill="none" stroke="#ffffff" stroke-width="5.4" class="w"/>
+<path d="M256,706 L494,706 Q500,706 500,700 L500,150 Q500,144 506,144 L576,144" fill="none" stroke="#ef6c00" stroke-width="3" class="w"/>
+<rect x="437" y="531" width="125" height="17" rx="8" fill="#ffffff" stroke="#ef6c00" stroke-width="1.1" />
+<text x="500" y="544" font-size="10.5" fill="#ef6c00" text-anchor="middle" class="sb">② Shrike 5V → VIN+</text>
+<circle cx="360" cy="684" r="6" fill="#fff" stroke="#ef6c00" stroke-width="2.4"/>
+<text x="348" y="688" font-size="11" fill="#ef6c00" text-anchor="end" class="b"></text>
+<path d="M256,684 L360,684" fill="none" stroke="#ffffff" stroke-width="5.4" class="w"/>
+<path d="M256,684 L360,684" fill="none" stroke="#ef6c00" stroke-width="3" class="w"/>
+<text x="372" y="688" font-size="10.5" fill="#e65100" class="b">VIN− → 5 V rail</text>
+<text x="120" y="760" font-size="10.5" fill="#37474f">VCC/GND/SCL/SDA stay as in Stage 3. The breadboard 5 V rail</text>
+<text x="120" y="776" font-size="10.5" fill="#37474f" class="b">must now be fed ONLY through the INA219, or it measures nothing.</text>
+<path d="M976,470 L1024,470 L1024,442 A24,24 0 0 0 976,442 Z" fill="#263238" stroke="#212121" stroke-width="1.2" class="w"/>
+<text x="1000" y="412" font-size="11" fill="#1a1a18" text-anchor="middle" class="b">2N2222</text>
+<line x1="986" y1="470" x2="986" y2="496" stroke="#9e9e9e" stroke-width="2.2"/>
+<text x="986" y="464" font-size="11" fill="#ffffff" text-anchor="middle" class="m b">E</text>
+<line x1="1000" y1="470" x2="1000" y2="496" stroke="#9e9e9e" stroke-width="2.2"/>
+<text x="1000" y="464" font-size="11" fill="#ffffff" text-anchor="middle" class="m b">B</text>
+<line x1="1014" y1="470" x2="1014" y2="496" stroke="#9e9e9e" stroke-width="2.2"/>
+<text x="1014" y="464" font-size="11" fill="#ffffff" text-anchor="middle" class="m b">C</text>
+<path d="M734,232 L820,232" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M734,232 L820,232" fill="none" stroke="#c2185b" stroke-width="2.6" class="w"/>
+<line x1="820" y1="232" x2="900" y2="232" stroke="#9e9e9e" stroke-width="1.8"/>
+<rect x="843" y="226" width="34" height="13" rx="5" fill="#90caf9" stroke="#1565c0" stroke-width="1.1" />
+<text x="860" y="221" font-size="10" fill="#0d47a1" text-anchor="middle" class="b">1 kΩ</text>
+<path d="M900,232 L934,232 Q940,232 940,238 L940,584 Q940,590 946,590 L994,590 Q1000,590 1000,584 L1000,496" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M900,232 L934,232 Q940,232 940,238 L940,584 Q940,590 946,590 L994,590 Q1000,590 1000,584 L1000,496" fill="none" stroke="#c2185b" stroke-width="2.6" class="w"/>
+<rect x="801" y="187" width="138" height="17" rx="8" fill="#ffffff" stroke="#c2185b" stroke-width="1.1" />
+<text x="870" y="200" font-size="10.5" fill="#c2185b" text-anchor="middle" class="sb">③ IO27 → 1 kΩ → base</text>
+<path d="M986,496 L986,514 Q986,520 980,520 L962,520" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M986,496 L986,514 Q986,520 980,520 L962,520" fill="none" stroke="#263238" stroke-width="2.6" class="w"/>
+<line x1="962" y1="520" x2="962" y2="532" stroke="#263238" stroke-width="2"/>
+<line x1="953" y1="532" x2="971" y2="532" stroke="#263238" stroke-width="2"/>
+<line x1="956" y1="536" x2="968" y2="536" stroke="#263238" stroke-width="2"/>
+<line x1="959" y1="540" x2="965" y2="540" stroke="#263238" stroke-width="2"/>
+<rect x="1180" y="330" width="190" height="102" rx="6" fill="#4e342e" stroke="#0b0b2b" stroke-width="1.6" />
+<text x="1287" y="350" font-size="12.5" fill="#fff" text-anchor="middle" class="b">Turbidity AZDM01</text>
+<use href="#pa" x="1194" y="366"/>
+<text x="1206" y="370" font-size="10.5" fill="#fff" class="m b">VCC</text>
+<use href="#pa" x="1194" y="388"/>
+<text x="1206" y="392" font-size="10.5" fill="#fff" class="m b">GND</text>
+<use href="#pa" x="1194" y="410"/>
+<text x="1206" y="414" font-size="10.5" fill="#fff" class="m b">AOUT</text>
+<path d="M1194,388 L1126,388 Q1120,388 1120,394 L1120,624 Q1120,630 1114,630 L1020,630 Q1014,630 1014,624 L1014,496" fill="none" stroke="#ffffff" stroke-width="4.8" class="w"/>
+<path d="M1194,388 L1126,388 Q1120,388 1120,394 L1120,624 Q1120,630 1114,630 L1020,630 Q1014,630 1014,624 L1014,496" fill="none" stroke="#263238" stroke-width="2.4" class="w"/>
+<text x="1126" y="620" font-size="10" fill="#263238" class="i">sensor GND → collector</text>
+<circle cx="1110" cy="366" r="6" fill="#fff" stroke="#ef6c00" stroke-width="2.4"/>
+<text x="1098" y="370" font-size="11" fill="#ef6c00" text-anchor="end" class="b"></text>
+<path d="M1110,366 L1194,366" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M1110,366 L1194,366" fill="none" stroke="#ef6c00" stroke-width="2.6" class="w"/>
+<text x="1100" y="370" font-size="10" fill="#e65100" text-anchor="end" class="b">VCC stays on the 5 V rail</text>
+<circle cx="1220" cy="520" r="6" fill="#fff" stroke="#00897b" stroke-width="2.4"/>
+<text x="1208" y="524" font-size="11" fill="#00897b" text-anchor="end" class="b"></text>
+<path d="M1194,410 L1156,410 Q1150,410 1150,416 L1150,514 Q1150,520 1156,520 L1220,520" fill="none" stroke="#ffffff" stroke-width="5" class="w"/>
+<path d="M1194,410 L1156,410 Q1150,410 1150,416 L1150,514 Q1150,520 1156,520 L1220,520" fill="none" stroke="#00897b" stroke-width="2.6" class="w"/>
+<text x="1232" y="524" font-size="10" fill="#00897b" class="b">AOUT → 10 k/10 k divider → A0</text>
+<text x="1060" y="670" font-size="10.5" fill="#37474f" text-anchor="middle">2N2222 plastic TO-92: flat face towards you, legs down = E · B · C.</text>
+<text x="1060" y="686" font-size="10.5" fill="#b71c1c" text-anchor="middle" class="b">Check YOUR part's datasheet: metal-can and some clones differ.</text>
+<text x="560" y="700" font-size="12" fill="#1a1a18" class="b">Notes</text>
+<text x="560" y="718" font-size="11" fill="#37474f">• Firmware: IO27 HIGH powers the turbidity sensor; wait ~100 ms to settle, read, then LOW. Read only while powered.</text>
+<text x="560" y="735" font-size="11" fill="#37474f">• IO27 and IO8 are new pin assignments (both were spare): add them to the pin map in COMPONENTS.md.</text>
+<text x="560" y="752" font-size="11" fill="#37474f">• Log INA219 power before and after ① and ③: that table is the evidence for the low-power requirement.</text>
+<text x="560" y="769" font-size="11" fill="#37474f">• As wired, the INA219 sees the 5 V rail only (sensors + analog), NOT the RP2040. Say so in the submission, or feed</text>
+<text x="560" y="786" font-size="11" fill="#37474f">  the whole board through it (check Vicharak's schematic before back-feeding the 5V pin).</text>
+<text x="560" y="803" font-size="11" fill="#37474f">• Then: print the pod, fit everything inside, run from the power bank with no laptop, rehearse twice end to end.</text>
+</svg>
